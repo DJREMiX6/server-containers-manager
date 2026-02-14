@@ -1,6 +1,0 @@
-@ServerContainersManager_HostAddress = http://localhost:5137
-
-GET {{ServerContainersManager_HostAddress}}/weatherforecast/
-Accept: application/json
-
-###

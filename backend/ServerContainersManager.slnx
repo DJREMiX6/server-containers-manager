@@ -1,5 +1,5 @@
 <Solution>
+  <Project Path="ServerContainerManager.API/ServerContainerManager.API.csproj" />
   <Project Path="ServerContainersManager.AppHost/ServerContainersManager.AppHost.csproj" />
   <Project Path="ServerContainersManager.ServiceDefaults/ServerContainersManager.ServiceDefaults.csproj" />
-  <Project Path="ServerContainersManager/ServerContainersManager.csproj" />
 </Solution>

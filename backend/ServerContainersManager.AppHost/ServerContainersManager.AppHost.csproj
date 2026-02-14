@@ -9,7 +9,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\ServerContainersManager\ServerContainersManager.csproj" />
+    <ProjectReference Include="..\ServerContainerManager.API\ServerContainerManager.API.csproj" />
   </ItemGroup>
 
 </Project>

@@ -1,4 +1,4 @@
-namespace ServerContainersManager;
+namespace ServerContainerManager.API;
 
 public class WeatherForecast
 {
