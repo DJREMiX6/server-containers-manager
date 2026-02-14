@@ -1,0 +1,5 @@
+<Solution>
+  <Project Path="ServerContainersManager.AppHost/ServerContainersManager.AppHost.csproj" />
+  <Project Path="ServerContainersManager.ServiceDefaults/ServerContainersManager.ServiceDefaults.csproj" />
+  <Project Path="ServerContainersManager/ServerContainersManager.csproj" />
+</Solution>
