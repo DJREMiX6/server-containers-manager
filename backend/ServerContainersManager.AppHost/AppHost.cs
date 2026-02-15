@@ -1,5 +1,10 @@
+using System.Net.Sockets;
+
 var builder = DistributedApplication.CreateBuilder(args);
 
-builder.AddProject<Projects.ServerContainerManager_API>("servercontainermanager-api");
+var serverContainerManagerApi = builder.AddContainer("server-container-manager-api", "server-container-manager-api")
+    .WithDockerfile("..")
+    .WithBindMount("/var/run/docker.sock", "/var/run/docker.sock")
+    .WithEndpoint(port: 8080, targetPort: 8080, name: "http");
 
-builder.Build().Run();
+await builder.Build().RunAsync();

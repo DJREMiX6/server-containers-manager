@@ -1,4 +1,6 @@
 using Serilog;
+using ServerContainerManager.API.Services;
+using Scalar.AspNetCore;
 
 Log.Logger = new LoggerConfiguration()
     .ReadFrom
@@ -26,20 +28,20 @@ try
     builder.Services.AddControllers();
     builder.Services.AddOpenApi();
 
+    builder.Services.AddSingleton<DockerClientService>();
+
     var app = builder.Build();
 
-    app.MapDefaultEndpoints();
-
     // Configure the HTTP request pipeline.
-    if (app.Environment.IsDevelopment())
-    {
+    /*if (app.Environment.IsDevelopment())
+    {*/
         app.MapOpenApi();
-    }
+        app.MapScalarApiReference();
+    /*}*/
 
+    app.MapDefaultEndpoints();
     app.UseHttpsRedirection();
-
     app.UseAuthorization();
-
     app.MapControllers();
 
     Log.Information("Running");
@@ -51,5 +53,6 @@ catch (Exception ex)
 }
 finally
 {
-    Log.CloseAndFlush();
+    Log.Information("Shutting down");
+    await Log.CloseAndFlushAsync();
 }
