@@ -1,6 +1,7 @@
 using Serilog;
 using ServerContainerManager.API.Services;
 using Scalar.AspNetCore;
+using System.Text.Json.Serialization;
 
 Log.Logger = new LoggerConfiguration()
     .ReadFrom
@@ -28,7 +29,12 @@ try
     builder.Services.AddControllers();
     builder.Services.AddOpenApi();
 
-    builder.Services.AddSingleton<DockerClientService>();
+    builder.Services.ConfigureHttpJsonOptions(options =>
+    {
+        options.SerializerOptions.Converters.Add(new JsonStringEnumConverter());
+    });
+
+    builder.Services.AddSingleton<DockerQueryService>();
 
     var app = builder.Build();
 

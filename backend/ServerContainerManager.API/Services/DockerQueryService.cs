@@ -3,13 +3,15 @@ using Docker.DotNet.Models;
 
 namespace ServerContainerManager.API.Services
 {
-    public class DockerClientService
+    public class DockerQueryService
     {
+        private const string DockerSocketUriPath = "unix:///var/run/docker.sock";
+
         private readonly DockerClient _dockerClient;
 
-        public DockerClientService()
+        public DockerQueryService()
         {
-            var dockerSocketUri = new Uri("unix:///var/run/docker.sock");
+            var dockerSocketUri = new Uri(DockerSocketUriPath);
             _dockerClient = new DockerClientConfiguration(dockerSocketUri).CreateClient();
         }
 
