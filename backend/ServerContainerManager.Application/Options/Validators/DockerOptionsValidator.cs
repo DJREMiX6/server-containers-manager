@@ -1,6 +1,6 @@
 ﻿using FluentValidation;
 
-namespace ServerContainerManager.API.Options.Validators
+namespace ServerContainerManager.Application.Options.Validators
 {
     public sealed class DockerOptionsValidator : AbstractValidator<DockerOptions>
     {

@@ -2,8 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using ServerContainerManager.API.Models.Responses;
 using ServerContainerManager.API.Models.Responses.Extensions;
-using ServerContainerManager.API.Services;
-using ServerContainerManager.API.Services.Abstraction;
+using ServerContainerManager.Application.Services.Abstraction;
 
 namespace ServerContainerManager.API.Controllers
 {

@@ -16,9 +16,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Docker.DotNet" Version="3.125.15" />
-    <PackageReference Include="FluentValidation" Version="12.1.1" />
-    <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="12.1.1" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.3" />
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.23.0" />
     <PackageReference Include="Scalar.AspNetCore" Version="2.12.41" />
@@ -29,6 +26,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\ServerContainerManager.Application\ServerContainerManager.Application.csproj" />
     <ProjectReference Include="..\ServerContainersManager.ServiceDefaults\ServerContainersManager.ServiceDefaults.csproj" />
   </ItemGroup>
 

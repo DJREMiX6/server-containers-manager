@@ -1,5 +1,5 @@
 using Serilog;
-using ServerContainerManager.API.Services;
+using ServerContainerManager.Application.Services;
 using Scalar.AspNetCore;
 using System.Text.Json.Serialization;
 
@@ -34,7 +34,7 @@ try
         options.SerializerOptions.Converters.Add(new JsonStringEnumConverter());
     });
 
-    builder.Services.RegisterServerContainerManagerServices();
+    builder.Services.RegisterServerContainerManagerApplicationServices();
 
     var app = builder.Build();
 

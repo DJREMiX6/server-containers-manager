@@ -1,8 +1,8 @@
 ﻿using Docker.DotNet;
 using Docker.DotNet.Models;
-using ServerContainerManager.API.Services.Abstraction;
+using ServerContainerManager.Application.Services.Abstraction;
 
-namespace ServerContainerManager.API.Services
+namespace ServerContainerManager.Application.Services
 {
     public class DockerQueryService(DockerClient dockerClient) : IDockerQueryService
     {

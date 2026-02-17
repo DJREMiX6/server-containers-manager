@@ -1,4 +1,4 @@
-﻿namespace ServerContainerManager.API.Options
+﻿namespace ServerContainerManager.Application.Options
 {
     public sealed class DockerOptions
     {

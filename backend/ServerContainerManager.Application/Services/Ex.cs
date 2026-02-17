@@ -1,16 +1,16 @@
 ﻿using Docker.DotNet;
 using FluentValidation;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
-using ServerContainerManager.API.Extensions;
-using ServerContainerManager.API.Options;
-using ServerContainerManager.API.Options.Validators;
-using ServerContainerManager.API.Services.Abstraction;
+using ServerContainerManager.Application.Extensions;
+using ServerContainerManager.Application.Options;
+using ServerContainerManager.Application.Services.Abstraction;
 
-namespace ServerContainerManager.API.Services
+namespace ServerContainerManager.Application.Services
 {
     public static class Ex
     {
-        public static IServiceCollection RegisterServerContainerManagerServices(this IServiceCollection services)
+        public static IServiceCollection RegisterServerContainerManagerApplicationServices(this IServiceCollection services)
         {
             services.AddValidatorsFromAssembly(typeof(Ex).Assembly);
             services.RegisterDockerQueryService();

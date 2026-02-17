@@ -1,6 +1,6 @@
-﻿using System.Runtime.CompilerServices;
+﻿using Microsoft.Extensions.DependencyInjection;
 
-namespace ServerContainerManager.API.Extensions
+namespace ServerContainerManager.Application.Extensions
 {
     public static class IServiceCollectionExtensions
     {

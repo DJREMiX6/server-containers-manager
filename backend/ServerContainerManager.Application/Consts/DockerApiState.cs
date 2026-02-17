@@ -1,4 +1,4 @@
-﻿namespace ServerContainerManager.API.Consts
+﻿namespace ServerContainerManager.Application.Consts
 {
     public static class DockerApiState
     {

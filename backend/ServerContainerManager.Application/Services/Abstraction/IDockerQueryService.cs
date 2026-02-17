@@ -1,6 +1,6 @@
 ﻿using Docker.DotNet.Models;
 
-namespace ServerContainerManager.API.Services.Abstraction
+namespace ServerContainerManager.Application.Services.Abstraction
 {
     public interface IDockerQueryService
     {

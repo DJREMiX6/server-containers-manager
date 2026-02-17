@@ -1,8 +1,8 @@
-﻿using FluentValidation;
+﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
-using ServerContainerManager.API.Options.Validators;
+using ServerContainerManager.Application.Options.Validators;
 
-namespace ServerContainerManager.API.Extensions
+namespace ServerContainerManager.Application.Extensions
 {
     public static class OptionsBuilderExtensions
     {

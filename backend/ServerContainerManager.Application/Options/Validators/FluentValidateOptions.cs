@@ -1,8 +1,8 @@
 ﻿using FluentValidation;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
-using System.ComponentModel.DataAnnotations;
 
-namespace ServerContainerManager.API.Options.Validators
+namespace ServerContainerManager.Application.Options.Validators
 {
     public class FluentValidateOptions<TOptions>(IServiceProvider serviceProvider, string name) : IValidateOptions<TOptions> where TOptions : class
     {
