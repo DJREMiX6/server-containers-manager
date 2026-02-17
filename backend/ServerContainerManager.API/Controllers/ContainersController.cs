@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using ServerContainerManager.API.Models.Responses;
 using ServerContainerManager.API.Models.Responses.Extensions;
 using ServerContainerManager.API.Services;
+using ServerContainerManager.API.Services.Abstraction;
 
 namespace ServerContainerManager.API.Controllers
 {
@@ -11,9 +12,9 @@ namespace ServerContainerManager.API.Controllers
     public class ContainersController : ControllerBase
     {
         private readonly ILogger<ContainersController> logger;
-        private readonly DockerQueryService dockerClientService;
+        private readonly IDockerQueryService dockerClientService;
 
-        public ContainersController(ILogger<ContainersController> logger, DockerQueryService dockerClientService)
+        public ContainersController(ILogger<ContainersController> logger, IDockerQueryService dockerClientService)
         {
             this.logger = logger;
             this.dockerClientService = dockerClientService;

@@ -34,7 +34,7 @@ try
         options.SerializerOptions.Converters.Add(new JsonStringEnumConverter());
     });
 
-    builder.Services.AddSingleton<DockerQueryService>();
+    builder.Services.RegisterServerContainerManagerServices();
 
     var app = builder.Build();
 

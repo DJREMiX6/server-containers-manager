@@ -1,23 +1,16 @@
 ﻿using Docker.DotNet;
 using Docker.DotNet.Models;
+using ServerContainerManager.API.Services.Abstraction;
 
 namespace ServerContainerManager.API.Services
 {
-    public class DockerQueryService
+    public class DockerQueryService(DockerClient dockerClient) : IDockerQueryService
     {
-        private const string DockerSocketUriPath = "unix:///var/run/docker.sock";
-
-        private readonly DockerClient _dockerClient;
-
-        public DockerQueryService()
-        {
-            var dockerSocketUri = new Uri(DockerSocketUriPath);
-            _dockerClient = new DockerClientConfiguration(dockerSocketUri).CreateClient();
-        }
+        private readonly DockerClient _dockerClient = dockerClient;
 
         public async Task<IEnumerable<ContainerListResponse>> GetContainers(CancellationToken cancellationToken = default)
         {
-            return await _dockerClient.Containers.ListContainersAsync(new Docker.DotNet.Models.ContainersListParameters() { All = true }, cancellationToken);
+            return await _dockerClient.Containers.ListContainersAsync(new ContainersListParameters() { All = true }, cancellationToken);
         }
     }
 }

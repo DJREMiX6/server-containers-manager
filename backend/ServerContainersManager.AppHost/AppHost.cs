@@ -1,8 +1,10 @@
 using Microsoft.Extensions.Hosting;
+using Projects;
 
 var builder = DistributedApplication.CreateBuilder(args);
 
-var aspNetCoreDevEnvironment = builder.AddParameter("aspnetcoreDevEnvironment", Environments.Development);
+// Uncomment the following code to run the API project as a container in development environment.
+/*var aspNetCoreDevEnvironment = builder.AddParameter("aspnetcoreDevEnvironment", Environments.Development);
 var dotNetDevEnvironment = builder.AddParameter("dotNetDevEnvironment", Environments.Development);
 
 var serverContainerManagerApi = builder.AddContainer(
@@ -13,6 +15,8 @@ var serverContainerManagerApi = builder.AddContainer(
     .WithBindMount("/var/run/docker.sock", "/var/run/docker.sock")
     .WithEndpoint(port: 8080, targetPort: 8080, name: "http", scheme: "http")
     .WithEnvironment("ASPNETCORE_ENVIRONMENT", aspNetCoreDevEnvironment)
-    .WithEnvironment("DOTNET_ENVIRONMENT", dotNetDevEnvironment);
+    .WithEnvironment("DOTNET_ENVIRONMENT", dotNetDevEnvironment);*/
+
+var serverContainerManagerApi = builder.AddProject<ServerContainerManager_API>("server-container-manager-api");
 
 await builder.Build().RunAsync();
