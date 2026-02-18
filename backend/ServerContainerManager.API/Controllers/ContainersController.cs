@@ -2,7 +2,8 @@
 using Microsoft.AspNetCore.Mvc;
 using ServerContainerManager.API.Models.Responses;
 using ServerContainerManager.API.Models.Responses.Extensions;
-using ServerContainerManager.Application.Services.Abstraction;
+using ServerContainerManager.Application.Commands;
+using ServerContainerManager.Application.Commands.Abstraction;
 
 namespace ServerContainerManager.API.Controllers
 {
@@ -11,19 +12,21 @@ namespace ServerContainerManager.API.Controllers
     public class ContainersController : ControllerBase
     {
         private readonly ILogger<ContainersController> logger;
-        private readonly IDockerQueryService dockerClientService;
 
-        public ContainersController(ILogger<ContainersController> logger, IDockerQueryService dockerClientService)
+        public ContainersController(ILogger<ContainersController> logger)
         {
             this.logger = logger;
-            this.dockerClientService = dockerClientService;
         }
 
         [HttpGet]
-        public async Task<Ok<IEnumerable<GetContainerListResponse>>> GetAllContainers()
+        public async Task<Ok<IEnumerable<GetContainerListResponse>>> GetAllContainers(
+            [FromServices] IGetContainerListCommandHandler commandHandler,
+            CancellationToken cancellationToken = default)
         {
-            var containers = await dockerClientService.GetContainers();
-            return TypedResults.Ok(containers.ToGetContainerListResponse());
+            var command = new GetContainerListCommand();
+            var result = await commandHandler.HandleAsync(command, cancellationToken);
+
+            return TypedResults.Ok(result.ToContract());
         }
     }
 }

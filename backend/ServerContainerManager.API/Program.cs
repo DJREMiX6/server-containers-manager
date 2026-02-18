@@ -2,6 +2,7 @@ using Serilog;
 using ServerContainerManager.Application.Services;
 using Scalar.AspNetCore;
 using System.Text.Json.Serialization;
+using ServerContainerManager.Application;
 
 Log.Logger = new LoggerConfiguration()
     .ReadFrom
@@ -34,7 +35,7 @@ try
         options.SerializerOptions.Converters.Add(new JsonStringEnumConverter());
     });
 
-    builder.Services.RegisterServerContainerManagerApplicationServices();
+    builder.Services.RegisterApplicationLayerServices();
 
     var app = builder.Build();
 

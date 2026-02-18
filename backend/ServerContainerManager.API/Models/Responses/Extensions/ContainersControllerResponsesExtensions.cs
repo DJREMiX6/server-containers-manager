@@ -1,24 +1,23 @@
 ﻿using Docker.DotNet.Models;
 using ServerContainerManager.API.Models.Enums;
+using ServerContainerManager.Application.Commands;
 
 namespace ServerContainerManager.API.Models.Responses.Extensions
 {
     public static class ContainersControllerResponsesExtensions
     {
-        private static IEnumerable<ushort> ToContainerResponsePorts(this IList<Port> ports) => ports.Select(p => p.PrivatePort);
-
-        public static GetContainerListResponse ToGetContainerListResponse(this ContainerListResponse containerListResponse) => 
-            new ()
+        public static GetContainerListResponse ToContract(this GetContainerListCommandResult response) => 
+            new GetContainerListResponse()
             {
-                Id = containerListResponse.ID,
-                Status = ContainerStateHelper.FromDockerApiStatus(containerListResponse.State),
-                Created = containerListResponse.Created,
-                Labels = containerListResponse.Labels,
-                Name = containerListResponse.Names[0],
-                Ports = containerListResponse.Ports.ToContainerResponsePorts(),
+                Id = response.Id,
+                Status = ContainerStateHelper.FromDockerApiStatus(response.Status),
+                Created = response.Created,
+                Labels = response.Labels,
+                Name = response.Name,
+                Ports = response.PublicPorts,
             };
 
-        public static IEnumerable<GetContainerListResponse> ToGetContainerListResponse(this IEnumerable<ContainerListResponse> containerListResponses) =>
-            containerListResponses.Select(ToGetContainerListResponse);
+        public static IEnumerable<GetContainerListResponse> ToContract(this IEnumerable<GetContainerListCommandResult> responses) =>
+            responses.Select(ToContract);
     }
 }

@@ -4,21 +4,19 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using ServerContainerManager.Application.Extensions;
 using ServerContainerManager.Application.Options;
-using ServerContainerManager.Application.Services.Abstraction;
 
 namespace ServerContainerManager.Application.Services
 {
-    public static class Ex
+    internal static class Ex
     {
-        public static IServiceCollection RegisterServerContainerManagerApplicationServices(this IServiceCollection services)
+        internal static IServiceCollection RegisterServices(this IServiceCollection services)
         {
-            services.AddValidatorsFromAssembly(typeof(Ex).Assembly);
-            services.RegisterDockerQueryService();
+            services.RegisterDockerService();
 
             return services; 
         }
 
-        private static IServiceCollection RegisterDockerQueryService(this IServiceCollection services)
+        private static IServiceCollection RegisterDockerService(this IServiceCollection services)
         {
             services.AddFluentValidatedOptions<DockerOptions>(DockerOptions.SectionName);
 
@@ -27,7 +25,6 @@ namespace ServerContainerManager.Application.Services
                 var dockerOptions = sp.GetRequiredService<IOptions<DockerOptions>>().Value;
                 return new DockerClientConfiguration(new Uri(dockerOptions.Endpoint)).CreateClient();
             });
-            services.AddSingleton<IDockerQueryService, DockerQueryService>();
 
             return services;
         }
