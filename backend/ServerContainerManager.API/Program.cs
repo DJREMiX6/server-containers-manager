@@ -1,5 +1,4 @@
 using Serilog;
-using ServerContainerManager.Application.Services;
 using Scalar.AspNetCore;
 using System.Text.Json.Serialization;
 using ServerContainerManager.Application;
