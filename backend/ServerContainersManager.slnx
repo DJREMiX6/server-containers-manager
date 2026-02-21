@@ -1,5 +1,6 @@
 <Solution>
   <Folder Name="/Solution Items/">
+    <File Path="../.gitignore" />
     <File Path="Dockerfile" />
   </Folder>
   <Project Path="ServerContainerManager.API/ServerContainerManager.API.csproj" />
