@@ -2,6 +2,7 @@ using Serilog;
 using Scalar.AspNetCore;
 using System.Text.Json.Serialization;
 using ServerContainerManager.Application;
+using ServerContainerManager.Application.Entities.Extensions;
 
 Log.Logger = new LoggerConfiguration()
     .ReadFrom
@@ -34,7 +35,7 @@ try
         options.SerializerOptions.Converters.Add(new JsonStringEnumConverter());
     });
 
-    builder.Services.RegisterApplicationLayerServices();
+    builder.Services.RegisterApplicationLayerServices(builder.Configuration);
 
     var app = builder.Build();
 
@@ -49,6 +50,9 @@ try
     app.UseHttpsRedirection();
     app.UseAuthorization();
     app.MapControllers();
+
+    await app.InitializeDatabaseAsync();
+    await app.CreateAdminUserIfNotExists();
 
     Log.Information("Running");
     await app.RunAsync();
