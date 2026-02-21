@@ -1,9 +1,11 @@
-﻿using Microsoft.AspNetCore.Http.HttpResults;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using ServerContainerManager.API.Models.Responses;
 using ServerContainerManager.API.Models.Responses.Extensions;
 using ServerContainerManager.Application.Commands;
 using ServerContainerManager.Application.Commands.Abstraction;
+using ServerContainerManager.Application.Consts;
 
 namespace ServerContainerManager.API.Controllers
 {
@@ -19,6 +21,7 @@ namespace ServerContainerManager.API.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = UserRoles.Member)]
         public async Task<Ok<IEnumerable<GetContainerListResponse>>> GetAllContainers(
             [FromServices] IGetContainerListCommandHandler commandHandler,
             CancellationToken cancellationToken = default)

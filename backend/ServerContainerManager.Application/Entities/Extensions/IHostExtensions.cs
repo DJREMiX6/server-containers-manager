@@ -37,16 +37,20 @@ namespace ServerContainerManager.Application.Entities.Extensions
             var services = scope.ServiceProvider;
             var userManager = services.GetRequiredService<UserManager<AppUser>>();
 
-            if ((await userManager.GetUsersInRoleAsync(UserRoles.Admin)).Count > 0)
+            var adminUsers = await userManager.GetUsersInRoleAsync(UserRoles.Admin);
+            if (adminUsers.Count > 0)
                 return host;
 
             var adminUser = AppUser.Create("Admin", []);
             var adminPassword = "Admin123!";
 
             var createResult = await userManager.CreateAsync(adminUser, adminPassword);
-
             if (!createResult.Succeeded)
                 throw new InvalidOperationException(string.Join('\n', createResult.Errors.Select(e => $"{e.Code}: {e.Description}")));
+
+            var roleAssignResult = await userManager.AddToRolesAsync(adminUser, [UserRoles.Admin, UserRoles.Member]);
+            if (!roleAssignResult.Succeeded)
+                throw new InvalidOperationException(string.Join('\n', roleAssignResult.Errors.Select(e => $"{e.Code}: {e.Description}")));
 
             return host;
         }

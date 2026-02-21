@@ -6,17 +6,16 @@ namespace ServerContainerManager.Application.Entities
 {
     internal static class Ex
     {
-        internal static IServiceCollection RegisterDbs(this IServiceCollection services, IConfiguration configuration)
+        internal static IServiceCollection RegisterDbs(this IServiceCollection services, Action<DbContextOptionsBuilder> appDbOptionsBuilder)
         {
-            services.RegisterAppDb(configuration);
+            services.RegisterAppDb(appDbOptionsBuilder);
 
             return services;
         }
 
-        private static IServiceCollection RegisterAppDb(this IServiceCollection services, IConfiguration configuration)
+        private static IServiceCollection RegisterAppDb(this IServiceCollection services, Action<DbContextOptionsBuilder> appDbOptionsBuilder)
         {
-            services.AddDbContext<AppDbContext>(options =>
-            options.UseSqlite(configuration.GetConnectionString("AppDb")));
+            services.AddDbContext<AppDbContext>(appDbOptionsBuilder);
 
             return services;
         }

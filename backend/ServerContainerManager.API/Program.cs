@@ -3,6 +3,8 @@ using Scalar.AspNetCore;
 using System.Text.Json.Serialization;
 using ServerContainerManager.Application;
 using ServerContainerManager.Application.Entities.Extensions;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity;
 
 Log.Logger = new LoggerConfiguration()
     .ReadFrom
@@ -35,7 +37,34 @@ try
         options.SerializerOptions.Converters.Add(new JsonStringEnumConverter());
     });
 
-    builder.Services.RegisterApplicationLayerServices(builder.Configuration);
+    builder.Services.RegisterApplicationLayerServices(
+        appDbOptionsBuilder: options =>
+            options.UseSqlite(builder.Configuration.GetConnectionString("AppDb")));
+
+    builder.Services.Configure<IdentityOptions>(options =>
+    {
+        options.Password.RequireDigit = true;
+        options.Password.RequireNonAlphanumeric = true;
+        options.Password.RequireUppercase = true;
+        options.Password.RequireLowercase = true;
+        options.Password.RequiredLength = 6;
+        options.Password.RequiredUniqueChars = 1;
+
+        options.Lockout.AllowedForNewUsers = true;
+        options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5);
+        options.Lockout.MaxFailedAccessAttempts = 3;
+
+        options.User.AllowedUserNameCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._@+!?";
+        options.User.RequireUniqueEmail = false;
+    });
+
+    builder.Services.ConfigureApplicationCookie(options =>
+    {
+        options.Cookie.HttpOnly = true;
+        options.ExpireTimeSpan = TimeSpan.FromMinutes(5);
+
+        options.SlidingExpiration = true;
+    });
 
     var app = builder.Build();
 

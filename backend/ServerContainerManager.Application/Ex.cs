@@ -1,5 +1,6 @@
 ﻿using FluentValidation;
-using Microsoft.Extensions.Configuration;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using ServerContainerManager.Application.Commands;
 using ServerContainerManager.Application.Entities;
@@ -10,14 +11,15 @@ namespace ServerContainerManager.Application
 {
     public static class Ex
     {
-        public static IServiceCollection RegisterApplicationLayerServices(this IServiceCollection services, IConfiguration configuration)
+        public static IServiceCollection RegisterApplicationLayerServices(
+            this IServiceCollection services, 
+            Action<DbContextOptionsBuilder> appDbOptionsBuilder)
         {
             services.AddValidatorsFromAssembly(typeof(Ex).Assembly);
             services.RegisterServices();
             services.RegisterCommands();
-            services.RegisterDbs(configuration);
-            services.RegisterIdentity();
-            
+            services.RegisterDbs(appDbOptionsBuilder);
+            services.RegisterIdentity();            
 
             return services;
         }
@@ -25,7 +27,8 @@ namespace ServerContainerManager.Application
         private static IServiceCollection RegisterIdentity(this IServiceCollection services)
         {
             services.AddIdentity<AppUser, AppRole>()
-                .AddEntityFrameworkStores<AppDbContext>();
+                .AddEntityFrameworkStores<AppDbContext>()
+                .AddDefaultTokenProviders();
 
             return services;
         }
