@@ -1,6 +1,4 @@
 ﻿namespace ServerContainerManager.Application.Commands
 {
-    public class GetContainerListCommand
-    {
-    }
+    public sealed record GetContainerListCommand();
 }

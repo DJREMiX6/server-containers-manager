@@ -11,19 +11,14 @@ namespace ServerContainerManager.API.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class ContainersController : ControllerBase
+    public class ContainersController(ILogger<ContainersController> logger) : ControllerBase
     {
-        private readonly ILogger<ContainersController> logger;
-
-        public ContainersController(ILogger<ContainersController> logger)
-        {
-            this.logger = logger;
-        }
+        private readonly ILogger<ContainersController> _logger;
 
         [HttpGet]
         [Authorize(Roles = UserRoles.Member)]
         public async Task<Ok<IEnumerable<GetContainerListResponse>>> GetAllContainers(
-            [FromServices] IGetContainerListCommandHandler commandHandler,
+            [FromServices] ICommandHandler<GetContainerListCommand, IEnumerable<GetContainerListCommandResult>> commandHandler,
             CancellationToken cancellationToken = default)
         {
             var command = new GetContainerListCommand();

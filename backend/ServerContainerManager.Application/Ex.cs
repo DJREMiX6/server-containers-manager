@@ -17,7 +17,7 @@ namespace ServerContainerManager.Application
         {
             services.AddValidatorsFromAssembly(typeof(Ex).Assembly);
             services.RegisterServices();
-            services.RegisterCommands();
+            services.RegisterCommandsFromAssembly(typeof(Ex).Assembly);
             services.RegisterDbs(appDbOptionsBuilder);
             services.RegisterIdentity();            
 

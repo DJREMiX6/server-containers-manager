@@ -4,7 +4,7 @@ using ServerContainerManager.Application.Commands.Abstraction;
 
 namespace ServerContainerManager.Application.Commands
 {
-    internal class GetContainerListCommandHandler(DockerClient dockerClient) : IGetContainerListCommandHandler
+    internal class GetContainerListCommandHandler(DockerClient dockerClient) : ICommandHandler<GetContainerListCommand, IEnumerable<GetContainerListCommandResult>>
     {
         private readonly DockerClient _dockerClient = dockerClient;
 
