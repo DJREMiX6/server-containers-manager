@@ -1,11 +1,14 @@
-﻿using Microsoft.AspNetCore.Http.HttpResults;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using ServerContainerManager.API.Extensions;
 using ServerContainerManager.API.Models.Requests;
 using ServerContainerManager.Application.Commands.Abstraction;
+using ServerContainerManager.Application.Commands.CreateUser;
 using ServerContainerManager.Application.Commands.SignIn;
 using ServerContainerManager.Application.Commands.SignOut;
+using ServerContainerManager.Application.Consts;
 using ServerContainerManager.Domain.Entities.Auth;
 
 namespace ServerContainerManager.API.Controllers
@@ -45,6 +48,23 @@ namespace ServerContainerManager.API.Controllers
                 signOutResult.Errors.ToProblemHttpResult();
 
             return TypedResults.Ok();
+        }
+
+        [HttpPost("users")]
+        [Authorize(Roles = UserRoles.Admin)]
+        public async Task<Results<Ok<Guid>, ProblemHttpResult>> CreateUser(
+            CreateUserRequest request,
+            ICommandHandler<CreateUserCommand, CreateUserCommandResult> handler,
+            CancellationToken cancellationToken = default)
+        {
+            var command = new CreateUserCommand(request.Username, request.Password);
+
+            var createUserResult = await handler.HandleAsync(command, cancellationToken);
+
+            if (createUserResult.IsError)
+                return createUserResult.Errors.ToProblemHttpResult();
+
+            return TypedResults.Ok(createUserResult.UserId);
         }
     }
 }

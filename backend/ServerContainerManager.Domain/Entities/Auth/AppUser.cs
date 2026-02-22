@@ -16,6 +16,7 @@ namespace ServerContainerManager.Domain.Entities.Auth
             _namespaces = [.. namespaces];
         }
 
+        // TODO: Implemente ErrorOr result with Domain validation
         public static AppUser Create(string username, IEnumerable<Namespace> namespaces)
         {
             return new AppUser(username, namespaces);
