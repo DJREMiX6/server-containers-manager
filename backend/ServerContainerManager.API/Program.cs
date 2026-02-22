@@ -5,6 +5,7 @@ using ServerContainerManager.Application;
 using ServerContainerManager.Application.Entities.Extensions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
+using ServerContainerManager.API.ErrorHandling;
 
 Log.Logger = new LoggerConfiguration()
     .ReadFrom
@@ -66,6 +67,9 @@ try
         options.SlidingExpiration = true;
     });
 
+    builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
+    builder.Services.AddProblemDetails();
+
     var app = builder.Build();
 
     // Configure the HTTP request pipeline.
@@ -79,6 +83,8 @@ try
     app.UseHttpsRedirection();
     app.UseAuthorization();
     app.MapControllers();
+
+    app.UseExceptionHandler();
 
     await app.InitializeDatabaseAsync();
     await app.CreateAdminUserIfNotExists();
