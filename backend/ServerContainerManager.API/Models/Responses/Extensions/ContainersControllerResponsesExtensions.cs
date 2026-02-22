@@ -1,6 +1,6 @@
 ﻿using Docker.DotNet.Models;
 using ServerContainerManager.API.Models.Enums;
-using ServerContainerManager.Application.Commands;
+using ServerContainerManager.Application.Commands.GetContainerList;
 
 namespace ServerContainerManager.API.Models.Responses.Extensions
 {

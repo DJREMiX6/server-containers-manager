@@ -1,6 +1,6 @@
 ﻿using Docker.DotNet.Models;
 
-namespace ServerContainerManager.Application.Commands
+namespace ServerContainerManager.Application.Commands.GetContainerList
 {
     public record GetContainerListCommandResult
     {

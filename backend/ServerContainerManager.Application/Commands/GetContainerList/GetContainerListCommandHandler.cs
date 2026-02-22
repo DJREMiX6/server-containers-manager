@@ -2,7 +2,7 @@
 using Docker.DotNet.Models;
 using ServerContainerManager.Application.Commands.Abstraction;
 
-namespace ServerContainerManager.Application.Commands
+namespace ServerContainerManager.Application.Commands.GetContainerList
 {
     internal class GetContainerListCommandHandler(DockerClient dockerClient) : ICommandHandler<GetContainerListCommand, IEnumerable<GetContainerListCommandResult>>
     {
