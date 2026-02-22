@@ -33,5 +33,13 @@ namespace ServerContainerManager.API.Controllers
 
             return TypedResults.Ok();
         }
+
+        [HttpPost("signout")]
+        public async Task<Ok> SignOut()
+        {
+            await _signInManager.SignOutAsync();
+
+            return TypedResults.Ok();
+        }
     }
 }
