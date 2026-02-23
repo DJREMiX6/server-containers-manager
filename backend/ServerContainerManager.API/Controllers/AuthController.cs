@@ -4,8 +4,11 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using ServerContainerManager.API.Extensions;
 using ServerContainerManager.API.Models.Requests;
+using ServerContainerManager.API.Models.Responses;
+using ServerContainerManager.API.Models.Responses.Extensions;
 using ServerContainerManager.Application.Commands.Abstraction;
 using ServerContainerManager.Application.Commands.CreateUser;
+using ServerContainerManager.Application.Commands.GetUserList;
 using ServerContainerManager.Application.Commands.SignIn;
 using ServerContainerManager.Application.Commands.SignOut;
 using ServerContainerManager.Application.Consts;
@@ -48,6 +51,18 @@ namespace ServerContainerManager.API.Controllers
                 signOutResult.Errors.ToProblemHttpResult();
 
             return TypedResults.Ok();
+        }
+
+        [HttpGet("users")]
+        [Authorize(Roles = UserRoles.Admin)]
+        public async Task<Ok<IEnumerable<GetUserListResponse>>> GetUserList(
+            ICommandHandler<GetUserListCommand, IEnumerable<GetUserListCommandResult>> handler,
+            CancellationToken cancellationToken = default)
+        {
+            var command = new GetUserListCommand();
+            var getUserListResult = await handler.HandleAsync(command, cancellationToken);
+
+            return TypedResults.Ok(getUserListResult.ToContract());
         }
 
         [HttpPost("users")]
