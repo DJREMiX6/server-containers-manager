@@ -21,8 +21,8 @@ namespace ServerContainerManager.API.Controllers
     public class AuthController(ILogger<AuthController> logger) : ControllerBase
     {
         private readonly ILogger<AuthController> _logger = logger;
-        
 
+        [AllowAnonymous]
         [HttpPost("signin")]
         public async Task<Results<Ok<SignInResponse>, ProblemHttpResult>> SignIn(
             SignInRequest request,
@@ -39,6 +39,7 @@ namespace ServerContainerManager.API.Controllers
             return TypedResults.Ok(signInResult.ToContract());
         }
 
+        [AllowAnonymous]
         [HttpPost("signout")]
         public async Task<Results<Ok, ProblemHttpResult>> SignOut(
             ICommandHandler<SignOutCommand, SignOutCommandResult> handler,
@@ -51,35 +52,6 @@ namespace ServerContainerManager.API.Controllers
                 signOutResult.Errors.ToProblemHttpResult();
 
             return TypedResults.Ok();
-        }
-
-        [HttpGet("users")]
-        [Authorize(Roles = UserRoles.Admin)]
-        public async Task<Ok<IEnumerable<GetUserListResponse>>> GetUserList(
-            ICommandHandler<GetUserListCommand, IEnumerable<GetUserListCommandResult>> handler,
-            CancellationToken cancellationToken = default)
-        {
-            var command = new GetUserListCommand();
-            var getUserListResult = await handler.HandleAsync(command, cancellationToken);
-
-            return TypedResults.Ok(getUserListResult.ToContract());
-        }
-
-        [HttpPost("users")]
-        [Authorize(Roles = UserRoles.Admin)]
-        public async Task<Results<Ok<Guid>, ProblemHttpResult>> CreateUser(
-            CreateUserRequest request,
-            ICommandHandler<CreateUserCommand, CreateUserCommandResult> handler,
-            CancellationToken cancellationToken = default)
-        {
-            var command = new CreateUserCommand(request.Username, request.Password);
-
-            var createUserResult = await handler.HandleAsync(command, cancellationToken);
-
-            if (createUserResult.IsError)
-                return createUserResult.Errors.ToProblemHttpResult();
-
-            return TypedResults.Ok(createUserResult.UserId);
         }
     }
 }

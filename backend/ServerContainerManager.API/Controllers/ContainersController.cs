@@ -9,6 +9,8 @@ using ServerContainerManager.Application.Consts;
 
 namespace ServerContainerManager.API.Controllers
 {
+
+    [Authorize]
     [ApiController]
     [Route("api/[controller]")]
     public class ContainersController(ILogger<ContainersController> logger) : ControllerBase
