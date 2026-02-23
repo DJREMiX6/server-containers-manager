@@ -24,7 +24,7 @@ namespace ServerContainerManager.API.Controllers
         
 
         [HttpPost("signin")]
-        public async Task<Results<Ok, ProblemHttpResult>> SignIn(
+        public async Task<Results<Ok<SignInResponse>, ProblemHttpResult>> SignIn(
             SignInRequest request,
             ICommandHandler<SignInCommand, SignInCommandResult> handler,
             CancellationToken cancellationToken = default)
@@ -36,7 +36,7 @@ namespace ServerContainerManager.API.Controllers
             if (signInResult.IsError)
                 return signInResult.Errors.ToProblemHttpResult();
 
-            return TypedResults.Ok();
+            return TypedResults.Ok(signInResult.ToContract());
         }
 
         [HttpPost("signout")]

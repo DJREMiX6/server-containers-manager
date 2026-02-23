@@ -1,4 +1,5 @@
 ﻿using ServerContainerManager.Application.Commands.GetUserList;
+using ServerContainerManager.Application.Commands.SignIn;
 
 namespace ServerContainerManager.API.Models.Responses.Extensions
 {
@@ -12,5 +13,11 @@ namespace ServerContainerManager.API.Models.Responses.Extensions
                 Namespaces: r.Namespaces
                     .Select(n => new GetUserListResponseNamespace(Id: n.Id, Name: n.Name))));
 
+        public static SignInResponse ToContract(this SignInCommandResult result) => new(
+            Id: result.UserId,
+            Username: result.Username,
+            Roles: result.Roles,
+            Namespaces: result.Namespaces
+                .Select(n => new SignInResponseNamespace(Id: n.Id, Name: n.Name)));
     }
 }
