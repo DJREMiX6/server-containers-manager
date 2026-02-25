@@ -1,32 +1,34 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using ErrorOr;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using ServerContainerManager.Application.Commands.Abstraction;
+using ServerContainerManager.Application.Commands.Models;
 using ServerContainerManager.Domain.Entities.Auth;
 
 namespace ServerContainerManager.Application.Commands.GetUserList
 {
-    internal class GetUserListCommandHandler(UserManager<AppUser> userManager) : ICommandHandler<GetUserListCommand, IEnumerable<GetUserListCommandResult>>
+    internal class GetUserListCommandHandler(UserManager<AppUser> userManager) : ICommandHandler<GetUserListCommand, GetUserListCommandResult>
     {
         private readonly UserManager<AppUser> _userManager = userManager;
 
-        public async Task<IEnumerable<GetUserListCommandResult>> HandleAsync(GetUserListCommand command, CancellationToken cancellationToken = default)
+        public async Task<ErrorOr<GetUserListCommandResult>> HandleAsync(GetUserListCommand command, CancellationToken cancellationToken = default)
         {
             var users = await _userManager.Users
                 .Include(u => u.Namespaces)
                 .ToListAsync(cancellationToken);
-            var result = new List<GetUserListCommandResult>();
+            var userInfoList = new List<GetUserListCommandResultUserInfo>();
 
             users.ForEach(async u =>
             {
                 var roles = await _userManager.GetRolesAsync(u);
-                result.Add(new GetUserListCommandResult(
-                    Id: u.Id,
-                    Username: u.UserName!,
-                    Roles: roles,
-                    Namespaces: u.Namespaces.Select(n => new GetUserListCommandResultNamespace(Id: n.Id, Name: n.Name))));
+                userInfoList.Add(new(
+                    id: u.Id,
+                    username: u.UserName!,
+                    roles: roles,
+                    namespaces: [.. u.Namespaces.Select(n => new NamespaceInfo(id: n.Id, name: n.Name))]));
             });
 
-            return result;
+            return new GetUserListCommandResult(userInfoList);
         }
     }
 }

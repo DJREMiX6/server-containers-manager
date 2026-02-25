@@ -1,15 +1,41 @@
-﻿using Docker.DotNet.Models;
-
-namespace ServerContainerManager.Application.Commands.GetContainerList
+﻿namespace ServerContainerManager.Application.Commands.GetContainerList
 {
+    public record GetContainerListCommandResultContainerInfo
+    {
+        public string Id { get; }
+        public string Name { get; }
+        public string Status { get; }
+        public DateTime Created { get; }
+        public IDictionary<string, string> Labels { get; }
+        public IList<ushort> PrivatePorts { get; }
+        public IList<ushort> PublicPorts { get; }
+
+        public GetContainerListCommandResultContainerInfo(
+            string id,
+            string name,
+            string status,
+            DateTime created,
+            IDictionary<string, string> labels,
+            IList<ushort> privatePorts,
+            IList<ushort> publicPorts)
+        {
+            Id = id;
+            Name = name;
+            Status = status;
+            Created = created;
+            Labels = labels;
+            PrivatePorts = privatePorts;
+            PublicPorts = publicPorts;
+        }
+    }
+
     public record GetContainerListCommandResult
     {
-        public string Id { get; init; }
-        public string Name { get; init; }
-        public string Status { get; init; }
-        public DateTime Created { get; init; }
-        public IDictionary<string, string> Labels { get; init; }
-        public IEnumerable<ushort> PrivatePorts { get; init; }
-        public IEnumerable<ushort> PublicPorts { get; init; }
+        public IReadOnlyList<GetContainerListCommandResultContainerInfo> Containers { get; }
+
+        public GetContainerListCommandResult(IList<GetContainerListCommandResultContainerInfo> containers)
+        {
+            Containers = [.. containers];
+        }
     }
 }

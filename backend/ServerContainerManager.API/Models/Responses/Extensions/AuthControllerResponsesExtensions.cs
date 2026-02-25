@@ -1,14 +1,14 @@
-﻿using ServerContainerManager.Application.Commands.SignIn;
+﻿using ServerContainerManager.API.Models.Responses.AuthController;
+using ServerContainerManager.Application.Commands.GetSessionInfo;
 
 namespace ServerContainerManager.API.Models.Responses.Extensions
 {
     public static class AuthControllerResponsesExtensions
     {
-        public static SignInResponse ToContract(this SignInCommandResult result) => new(
-            Id: result.UserId,
-            Username: result.Username,
-            Roles: result.Roles,
-            Namespaces: result.Namespaces
-                .Select(n => new SignInResponseNamespace(Id: n.Id, Name: n.Name)));
+        public static GetSessionInfoResponse ToContract(this GetSessionInfoCommandResult result) => new(
+            id: result.UserId,
+            username: result.Username,
+            roles: result.Roles,
+            namespaces: [.. result.Namespaces.ToResponseModel()]);
     }
 }

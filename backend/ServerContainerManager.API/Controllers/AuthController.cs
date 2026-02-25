@@ -3,11 +3,13 @@ using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using ServerContainerManager.API.Extensions;
-using ServerContainerManager.API.Models.Requests;
-using ServerContainerManager.API.Models.Responses;
+using ServerContainerManager.API.Models.Requests.Auth;
+using ServerContainerManager.API.Models.Responses.AuthController;
 using ServerContainerManager.API.Models.Responses.Extensions;
 using ServerContainerManager.Application.Commands.Abstraction;
+using ServerContainerManager.Application.Commands.ChangePassword;
 using ServerContainerManager.Application.Commands.CreateUser;
+using ServerContainerManager.Application.Commands.GetSessionInfo;
 using ServerContainerManager.Application.Commands.GetUserList;
 using ServerContainerManager.Application.Commands.SignIn;
 using ServerContainerManager.Application.Commands.SignOut;
@@ -24,19 +26,19 @@ namespace ServerContainerManager.API.Controllers
 
         [AllowAnonymous]
         [HttpPost("signin")]
-        public async Task<Results<Ok<SignInResponse>, ProblemHttpResult>> SignIn(
+        public async Task<Results<Ok, ProblemHttpResult>> SignIn(
             SignInRequest request,
             ICommandHandler<SignInCommand, SignInCommandResult> handler,
             CancellationToken cancellationToken = default)
         {
-            var command = new SignInCommand(request.Username, request.Password, IsPersistent: true, LockOutOnFailure: true);
+            var command = new SignInCommand(request.Username, request.Password, isPersistent: true, lockOutOnFailure: true);
 
             var signInResult = await handler.HandleAsync(command, cancellationToken);
 
             if (signInResult.IsError)
                 return signInResult.Errors.ToProblemHttpResult();
 
-            return TypedResults.Ok(signInResult.ToContract());
+            return TypedResults.Ok();
         }
 
         [AllowAnonymous]
@@ -52,6 +54,35 @@ namespace ServerContainerManager.API.Controllers
                 signOutResult.Errors.ToProblemHttpResult();
 
             return TypedResults.Ok();
+        }
+
+        [HttpGet("session")]
+        public async Task<Results<Ok<GetSessionInfoResponse>, ProblemHttpResult>> GetSessionInfo(
+            ICommandHandler<GetSessionInfoCommand, GetSessionInfoCommandResult> handler,
+            CancellationToken cancellationToken = default)
+        {
+            var command = new GetSessionInfoCommand(User.GetUserId());
+            var getSessionInfoResult = await handler.HandleAsync(command, cancellationToken);
+
+            if(getSessionInfoResult.IsError)
+                return getSessionInfoResult.Errors.ToProblemHttpResult();
+
+            return TypedResults.Ok(getSessionInfoResult.Value.ToContract());
+        }
+
+        [HttpPost("change-password")]
+        public async Task<Results<NoContent, ProblemHttpResult>> ChangePassword(
+            ChangePasswordRequest request,
+            ICommandHandler<ChangePasswordCommand, ChangePasswordCommandResult> handler,
+            CancellationToken cancellationToken = default)
+        {
+            var command = new ChangePasswordCommand(User.GetUserId(), request.CurrentPassword, request.NewPassword);
+            var result = await handler.HandleAsync(command, cancellationToken);
+
+            if (result.IsError)
+                return result.Errors.ToProblemHttpResult();
+
+            return TypedResults.NoContent();
         }
     }
 }

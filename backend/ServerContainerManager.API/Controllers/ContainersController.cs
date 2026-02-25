@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
-using ServerContainerManager.API.Models.Responses;
+using ServerContainerManager.API.Models.Responses.ContainersController;
 using ServerContainerManager.API.Models.Responses.Extensions;
 using ServerContainerManager.Application.Commands.Abstraction;
 using ServerContainerManager.Application.Commands.GetContainerList;
@@ -19,14 +19,14 @@ namespace ServerContainerManager.API.Controllers
 
         [HttpGet]
         [Authorize(Roles = UserRoles.Member)]
-        public async Task<Ok<IEnumerable<GetContainerListResponse>>> GetAllContainers(
-            [FromServices] ICommandHandler<GetContainerListCommand, IEnumerable<GetContainerListCommandResult>> commandHandler,
+        public async Task<Results<Ok<GetContainerListResponse>, ProblemHttpResult>> GetAllContainers(
+            [FromServices] ICommandHandler<GetContainerListCommand, GetContainerListCommandResult> commandHandler,
             CancellationToken cancellationToken = default)
         {
             var command = new GetContainerListCommand();
             var result = await commandHandler.HandleAsync(command, cancellationToken);
 
-            return TypedResults.Ok(result.ToContract());
+            return TypedResults.Ok(result.Value.ToContract());
         }
     }
 }

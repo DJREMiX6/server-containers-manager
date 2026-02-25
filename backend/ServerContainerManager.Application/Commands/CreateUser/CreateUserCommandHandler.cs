@@ -10,23 +10,21 @@ namespace ServerContainerManager.Application.Commands.CreateUser
     {
         private readonly UserManager<AppUser> _userManager = userManager;
 
-        public async Task<CreateUserCommandResult> HandleAsync(CreateUserCommand command, CancellationToken cancellationToken = default)
+        public async Task<ErrorOr<CreateUserCommandResult>> HandleAsync(CreateUserCommand command, CancellationToken cancellationToken = default)
         {
             var user = AppUser.Create(command.Username, []);
 
             var createResult = await _userManager.CreateAsync(user, command.Password);
             if (!createResult.Succeeded)
-            {
-                var errors = createResult.Errors.Select(e => Error.Validation(e.Code, e.Description)).ToList();
-                return new CreateUserCommandResult(errors);
-            }
+                return createResult.Errors
+                    .Select(e => Error.Validation(e.Code, e.Description))
+                    .ToList();
 
             var assignRoleResult = await _userManager.AddToRoleAsync(user, UserRoles.Member);
             if (!assignRoleResult.Succeeded)
-            {
-                var errors = assignRoleResult.Errors.Select(e => Error.Validation(e.Code, e.Description)).ToList();
-                return new CreateUserCommandResult(errors);
-            }
+                return assignRoleResult.Errors
+                    .Select(e => Error.Validation(e.Code, e.Description))
+                    .ToList();
 
             var userId = (await _userManager.FindByNameAsync(command.Username))!.Id;
             return new CreateUserCommandResult(userId);

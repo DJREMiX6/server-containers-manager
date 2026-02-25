@@ -6,6 +6,8 @@ using ServerContainerManager.Application.Entities.Extensions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
 using ServerContainerManager.API.ErrorHandling;
+using FluentValidation;
+using SharpGrip.FluentValidation.AutoValidation.Mvc.Extensions;
 
 Log.Logger = new LoggerConfiguration()
     .ReadFrom
@@ -32,6 +34,8 @@ try
 
     builder.Services.AddControllers();
     builder.Services.AddOpenApi();
+    builder.Services.AddValidatorsFromAssembly(typeof(Program).Assembly);
+    builder.Services.AddFluentValidationAutoValidation();
 
     builder.Services.ConfigureHttpJsonOptions(options =>
     {

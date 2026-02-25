@@ -1,4 +1,4 @@
 ﻿namespace ServerContainerManager.Application.Commands.SignOut
 {
-    public record SignOutCommand;
+    public record SignOutCommand();
 }
