@@ -63,6 +63,11 @@ try
         options.User.RequireUniqueEmail = false;
     });
 
+    builder.Services.Configure<SecurityStampValidatorOptions>(options =>
+    {
+        options.ValidationInterval = TimeSpan.Zero; // Always validate the user to ensure correct forced logout and deletion
+    });
+
     builder.Services.ConfigureApplicationCookie(options =>
     {
         options.Cookie.HttpOnly = true;

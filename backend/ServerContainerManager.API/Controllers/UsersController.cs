@@ -8,12 +8,13 @@ using ServerContainerManager.API.Models.Responses.UsersController;
 using ServerContainerManager.Application.Commands.Abstraction;
 using ServerContainerManager.Application.Commands.ChangePassword;
 using ServerContainerManager.Application.Commands.CreateUser;
+using ServerContainerManager.Application.Commands.DeleteUser;
 using ServerContainerManager.Application.Commands.GetUserList;
 using ServerContainerManager.Application.Consts;
 
 namespace ServerContainerManager.API.Controllers
 {
-    [Authorize]
+    [Authorize(Roles = UserRoles.Admin)]
     [ApiController]
     [Route("api/[controller]")]
     public class UsersController(ILogger<UsersController> logger) : Controller
@@ -21,7 +22,6 @@ namespace ServerContainerManager.API.Controllers
         private readonly ILogger<UsersController> _logger = logger;
 
         [HttpGet]
-        [Authorize(Roles = UserRoles.Admin)]
         public async Task<Ok<GetUserListResponse>> GetUserList(
             ICommandHandler<GetUserListCommand, GetUserListCommandResult> handler,
             CancellationToken cancellationToken = default)
@@ -33,7 +33,6 @@ namespace ServerContainerManager.API.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = UserRoles.Admin)]
         public async Task<Results<Ok<Guid>, ProblemHttpResult>> CreateUser(
             CreateUserRequest request,
             ICommandHandler<CreateUserCommand, CreateUserCommandResult> handler,
@@ -50,7 +49,6 @@ namespace ServerContainerManager.API.Controllers
         }
 
         [HttpPatch("{userId:guid}/change-password")]
-        [Authorize(Roles = UserRoles.Admin)]
         public async Task<Results<Ok, ProblemHttpResult>> ChangeUserPassword(
             Guid userId,
             ChangePasswordRequest request,
@@ -68,6 +66,21 @@ namespace ServerContainerManager.API.Controllers
                 return changePasswordResult.Errors.ToProblemHttpResult();
 
             return TypedResults.Ok();
+        }
+
+        [HttpDelete("{userId:guid}")]
+        public async Task<Results<NoContent, ProblemHttpResult>> DeleteUser(
+            Guid userId,
+            ICommandHandler<DeleteUserCommand, DeleteUserCommandResult> handler,
+            CancellationToken cancellationToken = default)
+        {
+            var command = new DeleteUserCommand(userId);
+            var result = await handler.HandleAsync(command, cancellationToken);
+
+            if (result.IsError)
+                return result.Errors.ToProblemHttpResult();
+
+            return TypedResults.NoContent();
         }
     }
 }

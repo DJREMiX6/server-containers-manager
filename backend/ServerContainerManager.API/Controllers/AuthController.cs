@@ -18,6 +18,7 @@ using ServerContainerManager.Domain.Entities.Auth;
 
 namespace ServerContainerManager.API.Controllers
 {
+    [Authorize]
     [ApiController]
     [Route("api/[controller]")]
     public class AuthController(ILogger<AuthController> logger) : ControllerBase
