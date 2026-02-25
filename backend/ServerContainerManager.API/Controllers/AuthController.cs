@@ -4,10 +4,12 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using ServerContainerManager.API.Extensions;
 using ServerContainerManager.API.Models.Requests.Auth;
+using ServerContainerManager.API.Models.Requests.AuthController;
 using ServerContainerManager.API.Models.Responses.AuthController;
 using ServerContainerManager.API.Models.Responses.Extensions;
 using ServerContainerManager.Application.Commands.Abstraction;
 using ServerContainerManager.Application.Commands.ChangePassword;
+using ServerContainerManager.Application.Commands.ChangeUsername;
 using ServerContainerManager.Application.Commands.CreateUser;
 using ServerContainerManager.Application.Commands.GetSessionInfo;
 using ServerContainerManager.Application.Commands.GetUserList;
@@ -72,7 +74,7 @@ namespace ServerContainerManager.API.Controllers
         }
 
         [HttpPost("change-password")]
-        public async Task<Results<NoContent, ProblemHttpResult>> ChangePassword(
+        public async Task<Results<Ok, ProblemHttpResult>> ChangePassword(
             ChangePasswordRequest request,
             ICommandHandler<ChangePasswordCommand, ChangePasswordCommandResult> handler,
             CancellationToken cancellationToken = default)
@@ -83,7 +85,17 @@ namespace ServerContainerManager.API.Controllers
             if (result.IsError)
                 return result.Errors.ToProblemHttpResult();
 
-            return TypedResults.NoContent();
+            return TypedResults.Ok();
         }
+
+        [HttpPatch()]
+        public async Task<Results<Ok, ProblemHttpResult>> ChangeUsername(
+            ChangeUsernameRequest request,
+            ICommandHandler<ChangeUsernameCommand, ChangeUsernameCommandResult> handler,
+            CancellationToken cancellationToken = default)
+        {
+
+        }
+
     }
 }
