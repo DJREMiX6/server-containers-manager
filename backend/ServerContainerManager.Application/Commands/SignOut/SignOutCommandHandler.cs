@@ -1,12 +1,14 @@
 ﻿using ErrorOr;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Logging;
 using ServerContainerManager.Application.Commands.Abstraction;
 using ServerContainerManager.Domain.Entities.Auth;
 
 namespace ServerContainerManager.Application.Commands.SignOut
 {
-    internal class SignOutCommandHandler(SignInManager<AppUser> signInManager) : ICommandHandler<SignOutCommand, SignOutCommandResult>
+    internal class SignOutCommandHandler(ILogger<SignOutCommandHandler> logger, SignInManager<AppUser> signInManager) : ICommandHandler<SignOutCommand, SignOutCommandResult>
     {
+        private readonly ILogger<SignOutCommandHandler> logger = logger;
         private readonly SignInManager<AppUser> _signInManager = signInManager;
 
         public async Task<ErrorOr<SignOutCommandResult>> HandleAsync(SignOutCommand command, CancellationToken cancellationToken = default)

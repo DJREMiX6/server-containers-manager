@@ -1,4 +1,4 @@
 ﻿namespace ServerContainerManager.API.Models.Requests.AuthController
 {
-    public class ChangeUsernameRequest(string NewUsername);
+    public record ChangeUsernameRequest(string NewUsername);
 }

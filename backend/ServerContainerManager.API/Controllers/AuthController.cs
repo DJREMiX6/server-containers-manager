@@ -73,7 +73,7 @@ namespace ServerContainerManager.API.Controllers
             return TypedResults.Ok(getSessionInfoResult.Value.ToContract());
         }
 
-        [HttpPost("change-password")]
+        [HttpPost("user/change-password")]
         public async Task<Results<Ok, ProblemHttpResult>> ChangePassword(
             ChangePasswordRequest request,
             ICommandHandler<ChangePasswordCommand, ChangePasswordCommandResult> handler,
@@ -88,13 +88,19 @@ namespace ServerContainerManager.API.Controllers
             return TypedResults.Ok();
         }
 
-        [HttpPatch()]
+        [HttpPatch("user")]
         public async Task<Results<Ok, ProblemHttpResult>> ChangeUsername(
             ChangeUsernameRequest request,
             ICommandHandler<ChangeUsernameCommand, ChangeUsernameCommandResult> handler,
             CancellationToken cancellationToken = default)
         {
+            var command = new ChangeUsernameCommand(User.GetUserId(), request.NewUsername);
+            var result = await handler.HandleAsync(command, cancellationToken);
 
+            if (result.IsError)
+                return result.Errors.ToProblemHttpResult();
+
+            return TypedResults.Ok();
         }
 
     }

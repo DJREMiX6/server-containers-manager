@@ -9,6 +9,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="CommunityToolkit.Aspire.Hosting.Sqlite" Version="13.1.2-beta.518" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\ServerContainerManager.API\ServerContainerManager.API.csproj" />
   </ItemGroup>
 

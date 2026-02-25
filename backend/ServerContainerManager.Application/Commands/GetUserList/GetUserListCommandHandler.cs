@@ -1,18 +1,24 @@
 ﻿using ErrorOr;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using ServerContainerManager.Application.Commands.Abstraction;
 using ServerContainerManager.Application.Commands.Models;
+using ServerContainerManager.Application.Entities;
 using ServerContainerManager.Domain.Entities.Auth;
 
 namespace ServerContainerManager.Application.Commands.GetUserList
 {
-    internal class GetUserListCommandHandler(UserManager<AppUser> userManager) : ICommandHandler<GetUserListCommand, GetUserListCommandResult>
+    internal class GetUserListCommandHandler(ILogger<GetUserListCommandHandler> logger, AppDbContext appDbContext, UserManager<AppUser> userManager) : ICommandHandler<GetUserListCommand, GetUserListCommandResult>
     {
+        private readonly ILogger<GetUserListCommandHandler> logger = logger;
+        private readonly AppDbContext _appDbContext = appDbContext;
         private readonly UserManager<AppUser> _userManager = userManager;
 
         public async Task<ErrorOr<GetUserListCommandResult>> HandleAsync(GetUserListCommand command, CancellationToken cancellationToken = default)
         {
+            using var transaction = await _appDbContext.Database.BeginTransactionAsync(cancellationToken);
+
             var users = await _userManager.Users
                 .Include(u => u.Namespaces)
                 .ToListAsync(cancellationToken);
@@ -27,6 +33,8 @@ namespace ServerContainerManager.Application.Commands.GetUserList
                     roles: roles,
                     namespaces: [.. u.Namespaces.Select(n => new NamespaceInfo(id: n.Id, name: n.Name))]));
             });
+
+            await transaction.CommitAsync(cancellationToken);
 
             return new GetUserListCommandResult(userInfoList);
         }

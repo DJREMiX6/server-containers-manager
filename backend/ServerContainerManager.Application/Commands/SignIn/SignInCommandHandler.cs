@@ -2,11 +2,13 @@
 using ServerContainerManager.Application.Commands.Abstraction;
 using ServerContainerManager.Domain.Entities.Auth;
 using ErrorOr;
+using Microsoft.Extensions.Logging;
 
 namespace ServerContainerManager.Application.Commands.SignIn
 {
-    internal class SignInCommandHandler(SignInManager<AppUser> signInManager) : ICommandHandler<SignInCommand, SignInCommandResult>
+    internal class SignInCommandHandler(ILogger<SignInCommandHandler> logger, SignInManager<AppUser> signInManager) : ICommandHandler<SignInCommand, SignInCommandResult>
     {
+        private readonly ILogger<SignInCommandHandler> _logger = logger;
         private readonly SignInManager<AppUser> _signInManager = signInManager;
 
         public async Task<ErrorOr<SignInCommandResult>> HandleAsync(SignInCommand command, CancellationToken cancellationToken = default)
