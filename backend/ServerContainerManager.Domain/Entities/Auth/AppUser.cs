@@ -1,13 +1,14 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using ErrorOr;
+using Microsoft.AspNetCore.Identity;
 using ServerContainerManager.Domain.Entities.Namespaces;
 
 namespace ServerContainerManager.Domain.Entities.Auth
 {
     public sealed class AppUser : IdentityUser<Guid>
     {
-        private readonly List<Namespace> _namespaces;
+        private List<Namespace> _namespaces;
 
-        public IEnumerable<Namespace> Namespaces => _namespaces;
+        public IReadOnlyList<Namespace> Namespaces => _namespaces;
 
         private AppUser() { } // EF
 
@@ -16,10 +17,17 @@ namespace ServerContainerManager.Domain.Entities.Auth
             _namespaces = [.. namespaces];
         }
 
-        // TODO: Implemente ErrorOr result with Domain validation
+        // TODO: Implement ErrorOr result with Domain validation
         public static AppUser Create(string username, IEnumerable<Namespace> namespaces)
         {
             return new AppUser(username, namespaces);
+        }
+
+        public ErrorOr<Success> UpsertNamespaces(IList<Namespace> namespaces)
+        {
+            _namespaces = [.. namespaces];
+
+            return Result.Success;
         }
     }
 }
