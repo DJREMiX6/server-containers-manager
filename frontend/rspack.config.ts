@@ -11,14 +11,14 @@ export default createConfig(
       index: './src/index.html',
       browser: './src/main.ts',
       tsConfig: './tsconfig.app.json',
-      inlineStyleLanguage: 'scss',
+      inlineStyleLanguage: 'css',
       assets: [
         {
           glob: '**/*',
           input: './public',
         },
       ],
-      styles: ['./src/styles.scss'],
+      styles: ['./src/styles.css'],
       devServer: {},
     },
   },
