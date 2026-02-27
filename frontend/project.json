@@ -7,6 +7,12 @@
   "sourceRoot": "./src",
   "tags": [],
   "targets": {
+    "build": {
+      "syncGenerators": ["@juristr/nx-tailwind-sync:source-directives"]
+    },
+    "serve": {
+      "syncGenerators": ["@juristr/nx-tailwind-sync:source-directives"]
+    },
     "extract-i18n": {
       "executor": "@angular-devkit/build-angular:extract-i18n",
       "options": {

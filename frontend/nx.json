@@ -70,5 +70,8 @@
       "unitTestRunner": "vitest-analog"
     }
   },
-  "defaultProject": "frontend"
+  "defaultProject": "frontend",
+  "sync": {
+    "applyChanges": true
+  }
 }
