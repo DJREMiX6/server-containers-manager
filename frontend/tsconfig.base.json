@@ -1,0 +1,18 @@
+{
+  "compileOnSave": false,
+  "compilerOptions": {
+    "moduleResolution": "bundler",
+    "emitDecoratorMetadata": false,
+    "target": "es2022",
+    "module": "preserve",
+    "lib": ["es2020", "dom"],
+    "baseUrl": ".",
+    "paths": {
+      "@scm/auth/features": ["libs/auth/features/src/index.ts"],
+      "@scm/auth/domain": ["libs/auth/domain/src/index.ts"],
+      "@scm/auth/infrastructure": ["libs/auth/infrastructure/src/index.ts"],
+      "@scm/auth/application": ["libs/auth/application/src/index.ts"]
+    }
+  },
+  "exclude": ["node_modules", "tmp"]
+}
