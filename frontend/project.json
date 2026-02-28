@@ -44,7 +44,8 @@
           "sourceMap": true
         }
       },
-      "defaultConfiguration": "production"
+      "defaultConfiguration": "production",
+      "syncGenerators": ["@juristr/nx-tailwind-sync:source-directives"]
     },
     "serve": {
       "continuous": true,
@@ -57,7 +58,8 @@
           "buildTarget": "frontend:build:development"
         }
       },
-      "defaultConfiguration": "development"
+      "defaultConfiguration": "development",
+      "syncGenerators": ["@juristr/nx-tailwind-sync:source-directives"]
     },
     "lint": {
       "executor": "@nx/eslint:lint",

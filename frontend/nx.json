@@ -51,5 +51,8 @@
       "unitTestRunner": "vitest-angular"
     }
   },
-  "defaultProject": "frontend"
+  "defaultProject": "frontend",
+  "sync": {
+    "applyChanges": true
+  }
 }
