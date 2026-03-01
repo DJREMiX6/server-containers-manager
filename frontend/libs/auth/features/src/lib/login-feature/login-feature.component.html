@@ -82,22 +82,34 @@
         <div class="text-center text-3xl">Welcome Back</div>
       </div>
       <div class="w-full">
-        <p-icon-field iconPosition="left">
-          <p-inputIcon class="pi pi-user"></p-inputIcon>
-          <input class="w-full" type="text" pInputText placeholder="Username">
-        </p-icon-field>
+        <p-float-label variant="on">
+          <p-icon-field iconPosition="left">
+            <p-inputIcon class="pi pi-user"></p-inputIcon>
+            <input [formField]="loginForm.username" id="usernameInput" class="w-full" type="text" pInputText [class.p-invalid]="loginForm.username().touched() && loginForm.username().invalid()">
+          </p-icon-field>
+          <label for="usernameInput">Username</label>
+        </p-float-label>
+        @if(loginForm.username().touched() && loginForm.username().invalid()) {
+          <p-message severity="error" variant="simple" size="small">{{loginForm.username().errors()[0].message}}</p-message>
+        }
       </div>
       <div class="w-full">
-        <p-icon-field iconPosition="left">
-          <p-inputIcon class="pi pi-lock"></p-inputIcon>
-          <input class="w-full" type="password" pInputText placeholder="Password">
-        </p-icon-field>
+        <p-float-label variant="on">
+          <p-icon-field iconPosition="left">
+            <p-inputIcon class="pi pi-lock"></p-inputIcon>
+            <input [formField]="loginForm.password" id="passwordInput" class="w-full" type="password" pInputText [class.p-invalid]="loginForm.password().touched() && loginForm.password().invalid()">
+          </p-icon-field>
+          <label for="passwordInput">Password</label>
+        </p-float-label>
+        @if(loginForm.password().touched() && loginForm.password().invalid()) {
+          <p-message severity="error" variant="simple" size="small">{{loginForm.password().errors()[0].message}}</p-message>
+        }
       </div>
       <div class="w-full">
         <div class="text-xs">Forgot your password? Contact the administrator</div>
       </div>
       <div class="w-full mt-4">
-        <p-button [fluid]="true" label="Login"></p-button>
+        <p-button [fluid]="true" label="Login" (onClick)="loginBtnClicked_evt()"></p-button>
       </div>
     </div>
 </div>
