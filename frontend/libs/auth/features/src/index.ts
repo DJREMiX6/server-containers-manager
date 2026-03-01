@@ -1,1 +1,1 @@
-export * from './lib/libs-auth-features/libs-auth-features';
+export { routes } from './lib/lib.routes';

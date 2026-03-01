@@ -1,16 +1,16 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { LibsAuthFeatures } from './libs-auth-features';
+import { LoginFeatureComponent } from './login-feature.component';
 
-describe('LibsAuthFeatures', () => {
-  let component: LibsAuthFeatures;
-  let fixture: ComponentFixture<LibsAuthFeatures>;
+describe('LoginFeatureComponent', () => {
+  let component: LoginFeatureComponent;
+  let fixture: ComponentFixture<LoginFeatureComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [LibsAuthFeatures],
+      imports: [LoginFeatureComponent],
     }).compileComponents();
 
-    fixture = TestBed.createComponent(LibsAuthFeatures);
+    fixture = TestBed.createComponent(LoginFeatureComponent);
     component = fixture.componentInstance;
     await fixture.whenStable();
   });

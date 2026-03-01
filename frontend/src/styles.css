@@ -3,4 +3,5 @@
 @import 'primeicons/primeicons.css';
 
 /* nx-tailwind-sources:start */
+@source "../libs/auth/features";
 /* nx-tailwind-sources:end */
