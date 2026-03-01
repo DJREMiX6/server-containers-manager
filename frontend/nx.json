@@ -56,5 +56,8 @@
       "style": "css",
       "unitTestRunner": "vitest-angular"
     }
+  },
+  "sync": {
+    "applyChanges": true
   }
 }
