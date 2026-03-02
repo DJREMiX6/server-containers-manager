@@ -12,7 +12,6 @@ import { ButtonModule } from 'primeng/button';
 import { FloatLabelModule } from 'primeng/floatlabel';
 import { form, FormField, required, submit } from '@angular/forms/signals';
 import { LoginFormModel } from '../models/login-form-model';
-import { AuthService, LoginRequest } from '@scm/auth/data';
 
 @Component({
   selector: 'lib-login-feature.component',
@@ -30,8 +29,6 @@ import { AuthService, LoginRequest } from '@scm/auth/data';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class LoginFeatureComponent {
-  private readonly authService = inject(AuthService);
-
   private loginModel = signal<LoginFormModel>({
     username: '',
     password: '',
@@ -44,15 +41,7 @@ export class LoginFeatureComponent {
 
   protected loginBtnClicked_evt() {
     submit(this.loginForm, async (form) => {
-      const loginRequest: LoginRequest = {
-        username: form().value().username,
-        password: form().value().password,
-      };
-
-      this.authService.login(loginRequest).subscribe({
-        next: () => console.log('success'),
-        error: (error) => console.log(error),
-      });
+      console.log('test');
     });
   }
 }
