@@ -3,5 +3,7 @@
 @import "primeicons/primeicons.css";
 
 /* nx-tailwind-sources:start */
+@source "../../../environments";
+@source "../../../libs/auth/data";
 @source "../../../libs/auth/features";
 /* nx-tailwind-sources:end */

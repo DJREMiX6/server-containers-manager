@@ -1,4 +1,9 @@
-import { Component, ChangeDetectionStrategy, signal } from '@angular/core';
+import {
+  Component,
+  ChangeDetectionStrategy,
+  signal,
+  inject,
+} from '@angular/core';
 import { IconFieldModule } from 'primeng/iconfield';
 import { InputIconModule } from 'primeng/inputicon';
 import { InputTextModule } from 'primeng/inputtext';
@@ -7,6 +12,7 @@ import { ButtonModule } from 'primeng/button';
 import { FloatLabelModule } from 'primeng/floatlabel';
 import { form, FormField, required, submit } from '@angular/forms/signals';
 import { LoginFormModel } from '../models/login-form-model';
+import { AuthService, LoginRequest } from '@scm/auth/data';
 
 @Component({
   selector: 'lib-login-feature.component',
@@ -24,6 +30,8 @@ import { LoginFormModel } from '../models/login-form-model';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class LoginFeatureComponent {
+  private readonly authService = inject(AuthService);
+
   private loginModel = signal<LoginFormModel>({
     username: '',
     password: '',
@@ -36,7 +44,15 @@ export class LoginFeatureComponent {
 
   protected loginBtnClicked_evt() {
     submit(this.loginForm, async (form) => {
-      console.log('test');
+      const loginRequest: LoginRequest = {
+        username: form().value().username,
+        password: form().value().password,
+      };
+
+      this.authService.login(loginRequest).subscribe({
+        next: () => console.log('success'),
+        error: (error) => console.log(error),
+      });
     });
   }
 }
