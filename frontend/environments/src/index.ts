@@ -1,1 +1,1 @@
-export { Environment } from "./lib/environment";
+export { Environment } from './lib/environment.dev';
