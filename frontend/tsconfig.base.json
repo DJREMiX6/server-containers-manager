@@ -15,7 +15,8 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "@scm/auth/features": ["libs/auth/features/src/index.ts"]
+      "@scm/auth/features": ["libs/auth/features/src/index.ts"],
+      "@scm/auth/data": ["libs/auth/data/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]

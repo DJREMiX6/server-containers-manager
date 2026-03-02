@@ -1,16 +1,16 @@
 {
-  "name": "auth-features",
+  "name": "auth-data",
   "$schema": "../../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "libs/auth/features/src",
+  "sourceRoot": "libs/auth/data/src",
   "prefix": "lib",
   "projectType": "library",
-  "tags": ["scope:auth", "type:features"],
+  "tags": ["scope:auth", "type:data"],
   "targets": {
     "test": {
       "executor": "@nx/vitest:test",
       "outputs": ["{options.reportsDirectory}"],
       "options": {
-        "reportsDirectory": "../../../coverage/libs/auth/features"
+        "reportsDirectory": "../../../coverage/libs/auth/data"
       }
     },
     "lint": {
