@@ -7,9 +7,7 @@ import { GetSessionInfoResponse } from '../models/responses';
 
 export const ApiBaseEndpoint = `${Environment.serverOrigin}/api/auth`;
 
-@Injectable({
-  providedIn: 'root',
-})
+@Injectable()
 export class AuthService {
   private readonly httpClient = inject(HttpClient);
 
