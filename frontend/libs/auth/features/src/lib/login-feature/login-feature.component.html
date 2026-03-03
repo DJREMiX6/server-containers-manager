@@ -109,7 +109,7 @@
         <div class="text-xs">Forgot your password? Contact the administrator</div>
       </div>
       <div class="w-full mt-4">
-        <p-button [fluid]="true" label="Login" (onClick)="loginBtnClicked_evt()"></p-button>
+        <p-button [fluid]="true" [disabled]="isLoginBuisy()" label="Login" (onClick)="loginBtnClicked_evt()"></p-button>
       </div>
     </div>
 </div>
