@@ -79,7 +79,24 @@ try
     builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
     builder.Services.AddProblemDetails();
 
+    builder.Services.AddCors(options =>
+    {
+        var allowedOrigins = builder.Configuration
+            .GetSection("Cors:AllowedOrigins")
+            .Get<string[]>()!;
+
+        options.AddPolicy("FrontendPolicy", policy =>
+        {
+            policy.WithOrigins(allowedOrigins)
+                .AllowAnyHeader()
+                .AllowAnyMethod()
+                .AllowCredentials();
+        });
+    });
+
     var app = builder.Build();
+
+    app.UseCors("FrontendPolicy");
 
     // Configure the HTTP request pipeline.
     if (app.Environment.IsDevelopment())

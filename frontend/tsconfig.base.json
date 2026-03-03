@@ -1,0 +1,26 @@
+{
+  "compileOnSave": false,
+  "compilerOptions": {
+    "rootDir": ".",
+    "sourceMap": true,
+    "declaration": false,
+    "moduleResolution": "node",
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "importHelpers": true,
+    "target": "es2015",
+    "module": "esnext",
+    "lib": ["es2020", "dom"],
+    "skipLibCheck": true,
+    "skipDefaultLibCheck": true,
+    "baseUrl": ".",
+    "paths": {
+      "@scm/auth/features": ["libs/auth/features/src/index.ts"],
+      "@scm/auth/data": ["libs/auth/data/src/index.ts"],
+      "@scm/environments": ["environments/src/index.ts"],
+      "@scm/auth/state": ["libs/auth/state/src/index.ts"],
+      "@scm/auth/utils": ["libs/auth/utils/src/index.ts"]
+    }
+  },
+  "exclude": ["node_modules", "tmp"]
+}

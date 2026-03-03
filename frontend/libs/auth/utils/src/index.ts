@@ -1,0 +1,1 @@
+export { provideAuthentication } from "./lib/auth-provider";
