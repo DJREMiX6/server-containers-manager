@@ -50,7 +50,11 @@ export const AuthStore = signalStore(
             },
           });
         } catch (error) {
-          patchState(state, { error: error as Error });
+          patchState(state, {
+            isAuthenticated: false,
+            user: null,
+            error: error as Error,
+          });
           throw error;
         }
       };
@@ -70,6 +74,11 @@ export const AuthStore = signalStore(
             error: null,
           });
         } catch {
+          patchState(state, {
+            isAuthenticated: false,
+            error: null,
+            user: null,
+          });
           router.navigate(['auth', 'login']);
         }
       };
