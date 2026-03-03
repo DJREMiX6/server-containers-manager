@@ -17,6 +17,16 @@ export class AuthService {
     });
   }
 
+  public logout(): Observable<void> {
+    return this.httpClient.post<void>(
+      `${ApiBaseEndpoint}/signout`,
+      {},
+      {
+        withCredentials: true,
+      },
+    );
+  }
+
   public getSessionInfo(): Observable<GetSessionInfoResponse> {
     return this.httpClient.get<GetSessionInfoResponse>(
       `${ApiBaseEndpoint}/session`,

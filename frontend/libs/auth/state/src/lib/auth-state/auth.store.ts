@@ -59,6 +59,17 @@ export const AuthStore = signalStore(
         }
       };
 
+      const logout = async () => {
+        try {
+          await firstValueFrom(authService.logout());
+        } finally {
+          patchState(state, {
+            isAuthenticated: false,
+            user: null,
+          });
+        }
+      };
+
       const checkAuth = async () => {
         try {
           const sessionInfo = await getSessionInfo();
@@ -83,7 +94,7 @@ export const AuthStore = signalStore(
         }
       };
 
-      return { login, checkAuth };
+      return { login, logout, checkAuth };
     },
   ),
 );

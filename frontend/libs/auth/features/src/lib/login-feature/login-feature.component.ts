@@ -3,6 +3,7 @@ import {
   ChangeDetectionStrategy,
   signal,
   inject,
+  OnInit,
 } from '@angular/core';
 import { IconFieldModule } from 'primeng/iconfield';
 import { InputIconModule } from 'primeng/inputicon';
@@ -31,7 +32,7 @@ import { Router } from '@angular/router';
   styleUrl: './login-feature.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class LoginFeatureComponent {
+export class LoginFeatureComponent implements OnInit {
   private readonly authStore = inject(AuthStore);
   private readonly toastService = inject(MessageService);
   private readonly router = inject(Router);
@@ -76,5 +77,9 @@ export class LoginFeatureComponent {
         });
       }
     }).finally(() => this.isLoginBuisy.set(false));
+  }
+
+  ngOnInit(): void {
+    this.authStore.logout();
   }
 }
