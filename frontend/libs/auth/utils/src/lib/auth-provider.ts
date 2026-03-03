@@ -1,6 +1,6 @@
 import { inject, makeEnvironmentProviders, provideAppInitializer } from "@angular/core"
 import { AuthService } from "@scm/auth/data";
-import { AuthStore } from "./auth-state/auth.store";
+import { AuthStore } from "@scm/auth/state";
 
 
 export function provideAuthentication() {

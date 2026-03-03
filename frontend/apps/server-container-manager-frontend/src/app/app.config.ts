@@ -7,7 +7,7 @@ import { appRoutes } from './app.routes';
 import { providePrimeNG } from 'primeng/config';
 import { MessageService } from 'primeng/api';
 import Aura from '@primeuix/themes/aura';
-import { provideAuthentication } from '@scm/auth/state';
+import { provideAuthentication } from '@scm/auth/utils';
 import { provideHttpClient } from '@angular/common/http';
 
 export const appConfig: ApplicationConfig = {
