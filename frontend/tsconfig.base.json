@@ -19,7 +19,8 @@
       "@scm/auth/data": ["libs/auth/data/src/index.ts"],
       "@scm/environments": ["environments/src/index.ts"],
       "@scm/auth/state": ["libs/auth/state/src/index.ts"],
-      "@scm/auth/utils": ["libs/auth/utils/src/index.ts"]
+      "@scm/auth/utils": ["libs/auth/utils/src/index.ts"],
+      "@scm/containers/features": ["libs/containers/features/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]
