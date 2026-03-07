@@ -25,11 +25,6 @@ export const appRoutes: Route[] = [
         loadChildren: () =>
           import('@scm/containers/features').then((m) => m.routes),
       },
-      {
-        path: 'users',
-        loadChildren: () =>
-          import('@scm/containers/features').then((m) => m.routes),
-      },
     ],
   },
 ];
