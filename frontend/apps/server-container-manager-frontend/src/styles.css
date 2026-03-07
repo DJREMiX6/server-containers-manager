@@ -7,4 +7,6 @@
 @source "../../../libs/auth/data";
 @source "../../../libs/auth/features";
 @source "../../../libs/auth/state";
+@source "../../../libs/auth/utils";
+@source "../../../libs/containers/features";
 /* nx-tailwind-sources:end */

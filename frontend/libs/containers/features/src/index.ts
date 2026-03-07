@@ -1,1 +1,1 @@
-export * from './lib/containers-features/containers-features';
+export { routes } from './lib/lib.routes';

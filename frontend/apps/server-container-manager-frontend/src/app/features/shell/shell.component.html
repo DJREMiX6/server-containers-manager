@@ -1,0 +1,8 @@
+<div class="w-screen h-screen flex flex-row">
+    <div class="h-full w-30 p-4">
+        <app-side-nav-menu [username]="authStore.user()!.username"></app-side-nav-menu>
+    </div>
+    <div class="grow h-full overflow-y-auto overflow-x-hidden">
+        <router-outlet></router-outlet>
+    </div>
+</div>
