@@ -1,8 +1,7 @@
 <div
-    class="w-full h-full flex flex-col justify-start justify-items-center items-center p-4 rounded-2xl bg-gray-50">
+    class="w-full h-full flex flex-col justify-start justify-items-center items-center">
 
-    <div class="w-full aspect-square flex align-middle justify-center items-center rounded-2xl">
-        <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" 
+    <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
           viewBox="0 0 297.001 297.001" xml:space="preserve">
         <g>
           <g>
@@ -77,14 +76,13 @@
             </g>
           </g>
         </g>
-        </svg>
-    </div>
+      </svg>
 
     <p-divider />
 
     <div class="w-full grow flex flex-col justify-start justify-items-center items-center gap-4">
         @for(navItem of navItems; track navItem.title) {
-            <div class="w-full aspect-square cursor-pointer flex align-middle justify-center items-center rounded-2xl"
+            <div class="w-full aspect-square cursor-pointer flex align-middle justify-center items-center rounded-lg"
                 [pTooltip]="navItem.title" [ngClass]="{
                     'bg-primary hover:bg-primary-emphasis': navItem.isActive, 
                     'bg:transparent hover:bg-emphasis': !navItem.isActive 
@@ -97,7 +95,7 @@
 
     <p-divider />
 
-    <div class="w-full aspect-square flex align-middle justify-center items-center cursor-pointer rounded-2xl">
+    <div class="w-full aspect-square flex align-middle justify-center items-center cursor-pointer">
         <button class="w-full aspect-square cursor-pointer flex align-middle justify-center items-center rounded-2xl bg:transparent hover:bg-emphasis"
                 pTooltip="Profile" (click)="ProfileBtnClick_evt()">
                 <p-avatar [label]="usernameInitials()" size="large" shape="circle" />

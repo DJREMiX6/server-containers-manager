@@ -17,8 +17,10 @@ export const appRoutes: Route[] = [
     children: [
       {
         path: 'dashboard',
-        loadChildren: () =>
-          import('@scm/containers/features').then((m) => m.routes),
+        loadComponent: () =>
+          import('@scm/containers/features').then(
+            (m) => m.ContainersOverviewComponent,
+          ),
       },
       {
         path: 'containers',
