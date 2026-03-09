@@ -9,4 +9,5 @@
 @source "../../../libs/auth/state";
 @source "../../../libs/auth/utils";
 @source "../../../libs/containers/features";
+@source "../../../libs/containers/ui";
 /* nx-tailwind-sources:end */

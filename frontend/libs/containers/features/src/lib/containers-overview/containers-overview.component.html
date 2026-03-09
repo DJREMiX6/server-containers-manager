@@ -1,3 +1,15 @@
-<div class="w-fulll h-full">
-    containers overview
+<div class="flex flex-col h-full gap-4">
+  <div
+    class="grow flex flex-wrap flex-row align-middle items-center justify-center gap-4"
+  >
+    @for (container of containers; track container.id) {
+      <lib-container-overview-card
+        [containerInfo]="container"
+        (startStopBtnClick)="startStopBtnClick_evt(container.id)"
+        (playPauseBtnClick)="playPauseBtnClick_evt(container.id)"
+        (restartBtnClick)="restartBtnClick_evt(container.id)"
+        (killBtnClick)="killBtnClick_evt(container.id)"
+      ></lib-container-overview-card>
+    }
+  </div>
 </div>
