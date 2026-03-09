@@ -2,13 +2,14 @@
   <div
     class="grow flex flex-wrap flex-row align-middle items-center justify-center gap-4"
   >
-    @for (container of containers; track container.id) {
+    @for (container of containers; track container.info.id) {
       <lib-container-overview-card
-        [containerInfo]="container"
-        (startStopBtnClick)="startStopBtnClick_evt(container.id)"
-        (playPauseBtnClick)="playPauseBtnClick_evt(container.id)"
-        (restartBtnClick)="restartBtnClick_evt(container.id)"
-        (killBtnClick)="killBtnClick_evt(container.id)"
+        [containerInfo]="container.info"
+        [containerResourcesData]="container.resourcesUsage"
+        (startStopBtnClick)="startStopBtnClick_evt(container.info.id)"
+        (playPauseBtnClick)="playPauseBtnClick_evt(container.info.id)"
+        (restartBtnClick)="restartBtnClick_evt(container.info.id)"
+        (killBtnClick)="killBtnClick_evt(container.info.id)"
       ></lib-container-overview-card>
     }
   </div>
