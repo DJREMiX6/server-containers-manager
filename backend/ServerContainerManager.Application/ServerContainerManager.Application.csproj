@@ -27,6 +27,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Commands\GetContainerList\" />
     <Folder Include="Migrations\" />
     <Folder Include="Services\Abstraction\" />
   </ItemGroup>

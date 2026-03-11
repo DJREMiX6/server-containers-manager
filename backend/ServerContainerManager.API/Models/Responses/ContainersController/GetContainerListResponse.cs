@@ -4,37 +4,17 @@ namespace ServerContainerManager.API.Models.Responses.ContainersController
 {
     public record GetContainerListItemResponse
     {
-        public string Id { get; }
-        public string Name { get; }
-        public ContainerState State { get; }
-        public DateTime Created { get; }
-        public IDictionary<string, string> Labels { get; }
-        public IList<ushort> PublicPorts { get; }
-
-        public GetContainerListItemResponse(
-            string id,
-            string name,
-            ContainerState state,
-            DateTime created,
-            IDictionary<string, string> labels,
-            IList<ushort> publicPorts)
-        {
-            Id = id;
-            Name = name;
-            State = state;
-            Created = created;
-            Labels = labels;
-            PublicPorts = [.. publicPorts];
-        }
+        public required string Id { get; init;  }
+        public required string Name { get; init; }
+        public required ContainerState State { get; init; }
+        public required DateTime Created { get; init; }
+        public required IDictionary<string, string> Labels { get; init; }
+        public required IList<ushort> PublicPorts { get; init; }
     }
 
     public record GetContainerListResponse
     {
-        public IList<GetContainerListItemResponse> Items { get; }
-
-        public GetContainerListResponse(IList<GetContainerListItemResponse> items)
-        {
-            Items = [.. items];
-        }
+        public required IList<GetContainerListItemResponse> Projects { get; init; }
+        public required int TotalCount { get; init;  }
     }
 }
