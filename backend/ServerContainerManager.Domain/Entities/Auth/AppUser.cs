@@ -17,9 +17,16 @@ namespace ServerContainerManager.Domain.Entities.Auth
             _namespaces = [.. namespaces];
         }
 
-        // TODO: Implement ErrorOr result with Domain validation
-        public static AppUser Create(string username, IEnumerable<Namespace> namespaces)
+        public static ErrorOr<AppUser> Create(string username, IEnumerable<Namespace> namespaces)
         {
+            var errors = new List<Error>();
+
+            if (string.IsNullOrEmpty(username) || username.Length < 3)
+                errors.Add(Error.Validation($"{nameof(AppUser)}.{nameof(Create)}", "Username must be at least 3 characters long"));
+
+            if (errors.Count > 0)
+                return errors;
+
             return new AppUser(username, namespaces);
         }
 

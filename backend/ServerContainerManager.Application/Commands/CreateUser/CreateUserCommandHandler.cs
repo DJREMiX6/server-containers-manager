@@ -18,15 +18,17 @@ namespace ServerContainerManager.Application.Commands.CreateUser
         {
             using var transaction = await _dbContext.Database.BeginTransactionAsync(cancellationToken);
 
-            var user = AppUser.Create(command.Username, []);
+            var createUserResult = AppUser.Create(command.Username, []);
+            if (createUserResult.IsError)
+                return createUserResult.Errors;
 
-            var createResult = await _userManager.CreateAsync(user, command.Password);
+            var createResult = await _userManager.CreateAsync(createUserResult.Value, command.Password);
             if (!createResult.Succeeded)
                 return createResult.Errors
                     .Select(e => Error.Validation(e.Code, e.Description))
                     .ToList();
 
-            var assignRoleResult = await _userManager.AddToRoleAsync(user, UserRoles.Member);
+            var assignRoleResult = await _userManager.AddToRoleAsync(createUserResult.Value, UserRoles.Member);
             if (!assignRoleResult.Succeeded)
                 return assignRoleResult.Errors
                     .Select(e => Error.Validation(e.Code, e.Description))
