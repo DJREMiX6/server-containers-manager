@@ -62,7 +62,7 @@ namespace ServerContainerManager.Application.Queries.GetContainerList
             var allContainers = await GetAllContainers(cancellationToken);
             var sorted = ApplySorting(allContainers, sortBy, order);
             var filtered = FilterByNamespaces(sorted, namespaces);
-            var totalCount = sorted.Count;
+            var totalCount = filtered.Count;
             var paged = ApplyPaging(filtered, skip, take);
             var parsed = Parse(paged);
 
