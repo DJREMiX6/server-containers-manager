@@ -98,7 +98,7 @@ namespace ServerContainerManager.Application.Queries.GetContainerList
                 .Any(n => c.Labels
                     .Contains(KeyValuePair
                         .Create(ContainersConsts.LabelNamespacePrefix, n.Id.ToString()))))
-            .ToList();
+            .ToList(); //TODO: The LabelNamespace refers to a label composed of all the Namespace Ids comma separated. Extract Ids, filter out and strip out the label at the end to avoid leaking it at API level
 
         private static List<ContainerListResponse> ApplyPaging(IList<ContainerListResponse> containers, int skip, int take) =>
             containers
