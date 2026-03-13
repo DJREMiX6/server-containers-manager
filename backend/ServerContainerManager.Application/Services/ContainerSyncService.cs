@@ -55,7 +55,7 @@ namespace ServerContainerManager.Application.Services
                     }
 
                     logger.LogError(ex, "Docker event stream disconnected. Reconnecting in 5s...");
-                    await Task.Delay(TimeSpan.FromSeconds(5), stoppingToken);
+                    await Task.Delay(ErrorRetryDelay, stoppingToken);
                     _retriesCount ++;
                 }
             }
