@@ -1,10 +1,10 @@
 ﻿using Docker.DotNet;
 using Docker.DotNet.Models;
-using ErrorOr;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using ServerContainerManager.Application.Consts;
 using ServerContainerManager.Application.Entities;
 using ServerContainerManager.Domain.Entities.Containers;
 
@@ -16,16 +16,56 @@ namespace ServerContainerManager.Application.Services
         private readonly DockerClient _dockerClient = dockerClient;
         private readonly IServiceScopeFactory _serviceScopeFactory = serviceScopeFactory;
 
+        private static readonly HashSet<string> TrackedActions = [DockerEventActions.Create, DockerEventActions.Destroy];
+        private static readonly TimeSpan ErrorRetryDelay = TimeSpan.FromSeconds(5);
+        private static readonly int MaxRetries = 10;
+
+        private int _retriesCount = 0;
+
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            await ReconcileAsync(stoppingToken).ConfigureAwait(false);
+            await ReconcileAsync(stoppingToken);
+            
+            var containerEventsParameters = new ContainerEventsParameters();
+            var progress = new Progress<Message>(async (message) => 
+            {
+                if (!TrackedActions.Contains(message.Action)) return;
+
+                await HandleContainerEventAsync(message, stoppingToken);
+            });
+
+            while(!stoppingToken.IsCancellationRequested)
+            {
+                try
+                {
+                    await _dockerClient.System.MonitorEventsAsync(containerEventsParameters, progress, stoppingToken);
+                    _retriesCount = 0;
+                }
+                catch(OperationCanceledException) when (stoppingToken.IsCancellationRequested)
+                {
+                    _logger.LogInformation("Cancellation requested, stopping service.");
+                    break;
+                }
+                catch(Exception ex)
+                {
+                    if(_retriesCount == MaxRetries)
+                    {
+                        _logger.LogError(ex, "Max retries reached");
+                        throw;
+                    }
+
+                    logger.LogError(ex, "Docker event stream disconnected. Reconnecting in 5s...");
+                    await Task.Delay(TimeSpan.FromSeconds(5), stoppingToken);
+                    _retriesCount ++;
+                }
+            }
         }
 
         private async Task ReconcileAsync(CancellationToken stoppingToken)
         {
-            logger.LogInformation("Reconciling all containers with Docker.");
+            _logger.LogInformation("Reconciling all containers with Docker.");
 
-            using var scope = _serviceScopeFactory.CreateScope();
+            await using var scope = _serviceScopeFactory.CreateAsyncScope();
             var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
 
             var containers = await _dockerClient.Containers.ListContainersAsync(
@@ -64,10 +104,39 @@ namespace ServerContainerManager.Application.Services
 
             await db.SaveChangesAsync(stoppingToken);
 
-            logger.LogInformation(
+            _logger.LogInformation(
                 "Reconciliation complete. {Added} added, {Removed} removed.",
                 added,
                 staleIds.Count);
+        }
+
+        private async Task HandleContainerEventAsync(Message message, CancellationToken stoppingToken)
+        {
+            await using var scope = _serviceScopeFactory.CreateAsyncScope();
+            var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+
+            switch(message.Action)
+            {
+                case DockerEventActions.Create:
+                    if (await db.Containers.FindAsync([message.ID], stoppingToken) != null) return;
+
+                    var containerCreateResult = Container.Create(message.ID, []);
+                    if (containerCreateResult.IsError)
+                        throw new InvalidOperationException(string.Join('\n', containerCreateResult.Errors.Select(e => $"Code: {e.Code}, Description: {e.Description}")));
+
+                    await db.Containers.AddAsync(containerCreateResult.Value, stoppingToken);
+                    break;
+                case DockerEventActions.Destroy:
+                    var container = await db.Containers.FindAsync([message.ID], stoppingToken);
+                    if(container == null) return;
+
+                    db.Containers.Remove(container);
+                    break;
+                default:
+                    throw new ArgumentException($"Invalid Action: {message.Action}.", nameof(message));
+            }
+
+            await db.SaveChangesAsync(stoppingToken);
         }
     }
 }
