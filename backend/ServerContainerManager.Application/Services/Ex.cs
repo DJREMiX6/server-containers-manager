@@ -1,5 +1,4 @@
 ﻿using Docker.DotNet;
-using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using ServerContainerManager.Application.Extensions;
@@ -12,6 +11,7 @@ namespace ServerContainerManager.Application.Services
         internal static IServiceCollection RegisterServices(this IServiceCollection services)
         {
             services.RegisterDockerService();
+            services.RegisterDockerReconciliationServices();
 
             return services; 
         }
@@ -25,6 +25,18 @@ namespace ServerContainerManager.Application.Services
                 var dockerOptions = sp.GetRequiredService<IOptions<DockerOptions>>().Value;
                 return new DockerClientConfiguration(new Uri(dockerOptions.Endpoint)).CreateClient();
             });
+
+            return services;
+        }
+
+        private static IServiceCollection RegisterDockerReconciliationServices(this IServiceCollection services)
+        {
+            services.AddFluentValidatedOptions<DockerContainersReconciliationOptions>(DockerContainersReconciliationOptions.SectionName);
+            services.AddHostedService<DockerContainersEventsListenerService>();
+            services.AddSingleton<DockerContainersEventsSignalsQueue>();
+            services.AddHostedService<PeriodicContainersReconciliator>();
+            services.AddHostedService<DockerContainersEventsSignalsProcessor>();
+            services.AddSingleton<DockerContainersReconciliator>();
 
             return services;
         }
