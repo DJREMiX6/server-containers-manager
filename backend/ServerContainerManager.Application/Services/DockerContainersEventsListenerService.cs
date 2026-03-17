@@ -28,16 +28,18 @@ namespace ServerContainerManager.Application.Services
         {
             var progress = new Progress<Message>((message) =>
             {
+                _logger.LogInformation("Received docker event {DockerEventAction} for {DockerId}", message.Action, message.ID);
                 var writeResult = _signalsQueue.TryWrite(true);
 
                 if (!writeResult)
                     _logger.LogError("Unable to write the following message: {Message}", message);
             });
 
-            while (stoppingToken.IsCancellationRequested) 
+            while (!stoppingToken.IsCancellationRequested) 
             {
                 try
                 {
+                    _logger.LogInformation("Waiting for docker event");
                     await _dockerClient.System.MonitorEventsAsync(containerEventsParameters, progress, stoppingToken);
                     RetriesCount = 0;
                 }

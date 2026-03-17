@@ -2,7 +2,7 @@
 
 namespace ServerContainerManager.Application.Options.Validators
 {
-    internal class DockerContainersReconciliationOptionsValidator : AbstractValidator<DockerContainersReconciliationOptions>
+    public sealed class DockerContainersReconciliationOptionsValidator : AbstractValidator<DockerContainersReconciliationOptions>
     {
         public DockerContainersReconciliationOptionsValidator()
         {

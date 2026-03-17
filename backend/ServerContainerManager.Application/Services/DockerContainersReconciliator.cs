@@ -30,6 +30,13 @@ namespace ServerContainerManager.Application.Services
             var addedContainersCount = await AddMissingContainersAsync(dbContext, dockerContainers, dbContainersIds, cancellationToken);
             var removedContainersCount = await RemoveStaleContainersAsync(dbContext, dockerContainers, dbContainersIds, cancellationToken);
 
+            if(addedContainersCount == 0 && removedContainersCount == 0)
+            {
+                _logger.LogInformation("No containers changes detected.");
+                await transaction.RollbackAsync(cancellationToken);
+                return;
+            }
+
             await dbContext.SaveChangesAsync(cancellationToken);
 
             _logger.LogInformation("Reconciling {TotalAffectedContainers} containers. adding {Added}, removing {Removed}.", 
@@ -64,8 +71,6 @@ namespace ServerContainerManager.Application.Services
                     added++;
                 }
             }
-
-            await dbContext.SaveChangesAsync(cancellationToken);
 
             return added;
         }

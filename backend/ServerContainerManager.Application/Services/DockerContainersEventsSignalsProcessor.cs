@@ -40,6 +40,7 @@ namespace ServerContainerManager.Application.Services
 
                 try
                 {
+                    _logger.LogInformation("Requesting reconciliation");
                     await _reconciliator.ReconciliateAsync(stoppingToken);
                 }
                 catch (Exception ex)
