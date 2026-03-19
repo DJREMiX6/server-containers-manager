@@ -11,7 +11,7 @@ using ServerContainerManager.Application.Entities;
 namespace ServerContainerManager.Application.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260221191229_InitialSetup")]
+    [Migration("20260319200935_InitialSetup")]
     partial class InitialSetup
     {
         /// <inheritdoc />
@@ -33,6 +33,21 @@ namespace ServerContainerManager.Application.Migrations
                     b.HasIndex("NamespacesId");
 
                     b.ToTable("AppUserNamespace");
+                });
+
+            modelBuilder.Entity("ContainerNamespace", b =>
+                {
+                    b.Property<string>("ContainerId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<Guid>("NamespacesId")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("ContainerId", "NamespacesId");
+
+                    b.HasIndex("NamespacesId");
+
+                    b.ToTable("ContainerNamespace");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>
@@ -226,6 +241,28 @@ namespace ServerContainerManager.Application.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
+            modelBuilder.Entity("ServerContainerManager.Domain.Entities.Containers.Container", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("State")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Containers");
+                });
+
             modelBuilder.Entity("ServerContainerManager.Domain.Entities.Namespaces.Namespace", b =>
                 {
                     b.Property<Guid>("Id")
@@ -250,6 +287,21 @@ namespace ServerContainerManager.Application.Migrations
                     b.HasOne("ServerContainerManager.Domain.Entities.Auth.AppUser", null)
                         .WithMany()
                         .HasForeignKey("AppUserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ServerContainerManager.Domain.Entities.Namespaces.Namespace", null)
+                        .WithMany()
+                        .HasForeignKey("NamespacesId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("ContainerNamespace", b =>
+                {
+                    b.HasOne("ServerContainerManager.Domain.Entities.Containers.Container", null)
+                        .WithMany()
+                        .HasForeignKey("ContainerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -309,6 +361,67 @@ namespace ServerContainerManager.Application.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("ServerContainerManager.Domain.Entities.Containers.Container", b =>
+                {
+                    b.OwnsMany("ServerContainerManager.Domain.Entities.Containers.ValueObjects.Label", "Labels", b1 =>
+                        {
+                            b1.Property<int>("Id")
+                                .ValueGeneratedOnAdd()
+                                .HasColumnType("INTEGER");
+
+                            b1.Property<string>("ContainerId")
+                                .IsRequired()
+                                .HasColumnType("TEXT");
+
+                            b1.Property<string>("Key")
+                                .IsRequired()
+                                .HasColumnType("TEXT");
+
+                            b1.Property<string>("Value")
+                                .IsRequired()
+                                .HasColumnType("TEXT");
+
+                            b1.HasKey("Id");
+
+                            b1.HasIndex("ContainerId");
+
+                            b1.ToTable("ContainerLabels", (string)null);
+
+                            b1.WithOwner()
+                                .HasForeignKey("ContainerId");
+                        });
+
+                    b.OwnsMany("ServerContainerManager.Domain.Entities.Containers.ValueObjects.Port", "Ports", b1 =>
+                        {
+                            b1.Property<int>("Id")
+                                .ValueGeneratedOnAdd()
+                                .HasColumnType("INTEGER");
+
+                            b1.Property<string>("ContainerId")
+                                .IsRequired()
+                                .HasColumnType("TEXT");
+
+                            b1.Property<ushort>("Private")
+                                .HasColumnType("INTEGER");
+
+                            b1.Property<ushort>("Public")
+                                .HasColumnType("INTEGER");
+
+                            b1.HasKey("Id");
+
+                            b1.HasIndex("ContainerId");
+
+                            b1.ToTable("ContainerPorts", (string)null);
+
+                            b1.WithOwner()
+                                .HasForeignKey("ContainerId");
+                        });
+
+                    b.Navigation("Labels");
+
+                    b.Navigation("Ports");
                 });
 #pragma warning restore 612, 618
         }

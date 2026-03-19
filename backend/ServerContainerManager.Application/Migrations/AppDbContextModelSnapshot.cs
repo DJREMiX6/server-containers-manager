@@ -243,6 +243,18 @@ namespace ServerContainerManager.Application.Migrations
                     b.Property<string>("Id")
                         .HasColumnType("TEXT");
 
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("State")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
                     b.HasKey("Id");
 
                     b.ToTable("Containers");
@@ -346,6 +358,67 @@ namespace ServerContainerManager.Application.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("ServerContainerManager.Domain.Entities.Containers.Container", b =>
+                {
+                    b.OwnsMany("ServerContainerManager.Domain.Entities.Containers.ValueObjects.Label", "Labels", b1 =>
+                        {
+                            b1.Property<int>("Id")
+                                .ValueGeneratedOnAdd()
+                                .HasColumnType("INTEGER");
+
+                            b1.Property<string>("ContainerId")
+                                .IsRequired()
+                                .HasColumnType("TEXT");
+
+                            b1.Property<string>("Key")
+                                .IsRequired()
+                                .HasColumnType("TEXT");
+
+                            b1.Property<string>("Value")
+                                .IsRequired()
+                                .HasColumnType("TEXT");
+
+                            b1.HasKey("Id");
+
+                            b1.HasIndex("ContainerId");
+
+                            b1.ToTable("ContainerLabels", (string)null);
+
+                            b1.WithOwner()
+                                .HasForeignKey("ContainerId");
+                        });
+
+                    b.OwnsMany("ServerContainerManager.Domain.Entities.Containers.ValueObjects.Port", "Ports", b1 =>
+                        {
+                            b1.Property<int>("Id")
+                                .ValueGeneratedOnAdd()
+                                .HasColumnType("INTEGER");
+
+                            b1.Property<string>("ContainerId")
+                                .IsRequired()
+                                .HasColumnType("TEXT");
+
+                            b1.Property<ushort>("Private")
+                                .HasColumnType("INTEGER");
+
+                            b1.Property<ushort>("Public")
+                                .HasColumnType("INTEGER");
+
+                            b1.HasKey("Id");
+
+                            b1.HasIndex("ContainerId");
+
+                            b1.ToTable("ContainerPorts", (string)null);
+
+                            b1.WithOwner()
+                                .HasForeignKey("ContainerId");
+                        });
+
+                    b.Navigation("Labels");
+
+                    b.Navigation("Ports");
                 });
 #pragma warning restore 612, 618
         }

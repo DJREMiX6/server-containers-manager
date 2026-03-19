@@ -4,7 +4,11 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using ServerContainerManager.Application.Entities;
+using ServerContainerManager.Application.Extensions;
 using ServerContainerManager.Domain.Entities.Containers;
+using ServerContainerManager.Domain.Entities.Containers.ValueObjects;
+using ContainerState = ServerContainerManager.Domain.Entities.Containers.Enums.ContainerState;
+using Port = ServerContainerManager.Domain.Entities.Containers.ValueObjects.Port;
 
 namespace ServerContainerManager.Application.Services
 {
@@ -29,8 +33,9 @@ namespace ServerContainerManager.Application.Services
 
             var addedContainersCount = await AddMissingContainersAsync(dbContext, dockerContainers, dbContainersIds, cancellationToken);
             var removedContainersCount = await RemoveStaleContainersAsync(dbContext, dockerContainers, dbContainersIds, cancellationToken);
+            var updatedContainersCount = await UpdateContainersAsync(dbContext, dockerContainers, dbContainersIds, cancellationToken);
 
-            if(addedContainersCount == 0 && removedContainersCount == 0)
+            if (addedContainersCount == 0 && removedContainersCount == 0)
             {
                 _logger.LogInformation("No containers changes detected.");
                 await transaction.RollbackAsync(cancellationToken);
@@ -39,47 +44,129 @@ namespace ServerContainerManager.Application.Services
 
             await dbContext.SaveChangesAsync(cancellationToken);
 
-            _logger.LogInformation("Reconciling {TotalAffectedContainers} containers. adding {Added}, removing {Removed}.", 
+            _logger.LogInformation("Reconciling {TotalAffectedContainers} containers. adding {Added}, updating {Updated}, removing {Removed}.", 
                 addedContainersCount + removedContainersCount, 
-                addedContainersCount, 
+                addedContainersCount,
+                updatedContainersCount,
                 removedContainersCount);
             await transaction.CommitAsync(cancellationToken);
 
             _logger.LogInformation(
-                "Reconciliation complete. {Added} added, {Removed} removed.",
+                "Reconciliation complete. {Added} added, {Updated} updated, {Removed} removed.",
                 addedContainersCount,
+                updatedContainersCount,
                 removedContainersCount);
         }
 
         /// <summary>
-        /// Inserts containers that are missing from the DB.
+        /// Inserts containers that are missing, into the DB.
         /// </summary>
         /// <returns>The number of added containers</returns>
-        private async Task<int> AddMissingContainersAsync(AppDbContext dbContext, IList<ContainerListResponse> dockerContainers, HashSet<string> dbContainersIds, CancellationToken cancellationToken)
+        private static async Task<int> AddMissingContainersAsync(AppDbContext dbContext, IList<ContainerListResponse> dockerContainers, HashSet<string> dbContainersIds, CancellationToken cancellationToken)
         {
             var added = 0;
 
             foreach (var dockerContainer in dockerContainers)
             {
-                if (!dbContainersIds.Contains(dockerContainer.ID))
-                {
-                    var result = Container.Create(dockerContainer.ID, []);
-                    if (result.IsError)
-                        throw new InvalidOperationException(string.Join("\n", result.Errors.Select(e => $"Code: {e.Code}, Description: {e.Description}")));
+                if (dbContainersIds.Contains(dockerContainer.ID))
+                    continue;
 
-                    dbContext.Containers.Add(result.Value);
-                    added++;
-                }
+                var portsResults = dockerContainer.Ports.Select(p => Port.Create(p.PublicPort, p.PrivatePort)).ToList();
+                if (portsResults.Any(p => p.IsError))
+                    throw new InvalidOperationException(string.Join('\n', portsResults.Where(p => p.IsError).SelectMany(e => e.Errors).Select(e => $"Code: {e.Code}, Description: {e.Description}.")));
+
+                var labelsResults = dockerContainer.Labels.Select((kv) => Label.Create(kv.Key, kv.Value));
+                if (labelsResults.Any(l => l.IsError))
+                    throw new InvalidOperationException(string.Join('\n', labelsResults.Where(l => l.IsError).SelectMany(e => e.Errors).Select(e => $"Code: {e.Code}, Description: {e.Description}.")));
+
+                var result = Container.Create(
+                    dockerContainer.ID,
+                    dockerContainer.Names[0],
+                    Enum.Parse<ContainerState>(dockerContainer.State, ignoreCase: true),
+                    dockerContainer.Created,
+                    [.. labelsResults.Select(l => l.Value)],
+                    [.. portsResults.Select(p => p.Value)],
+                    []);
+                if (result.IsError)
+                    throw new InvalidOperationException(string.Join("\n", result.Errors.Select(e => $"Code: {e.Code}, Description: {e.Description}")));
+
+                dbContext.Containers.Add(result.Value);
+                added++;
             }
+
+            await dbContext.SaveChangesAsync(cancellationToken);
 
             return added;
         }
 
         /// <summary>
-        /// Removes stale containers that are deleted from the DB.
+        /// Updates containers that mismatch, with the DB.
+        /// </summary>
+        /// <param name="dbContext"></param>
+        /// <param name="dockerContainers"></param>
+        /// <param name="dbContainersIds"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns>The number of containers updated.</returns>
+        /// <exception cref="InvalidOperationException"></exception>
+        private static async Task<int> UpdateContainersAsync(AppDbContext dbContext, IList<ContainerListResponse> dockerContainers, HashSet<string> dbContainersIds, CancellationToken cancellationToken)
+        {
+            var updated = 0;
+
+            foreach(var dockerContainer in dockerContainers)
+            {
+                if (!dbContainersIds.Contains(dockerContainer.ID))
+                    continue;
+
+                var container = await dbContext.Containers.FindAsync([dockerContainer.ID], cancellationToken);
+                if (container == null)
+                    throw new InvalidOperationException($"Cannot find container {dockerContainer.ID} to update.");
+
+                if (container.Name != dockerContainer.Names[0].Trim()[..1]){
+                    var renameResult = container.Rename(dockerContainer.Names[0]);
+                    if (renameResult.IsError)
+                        throw new InvalidOperationException(string.Join('\n', renameResult.Errors.Select(e => $"Code: {e.Code} Description: {e.Description}")));
+                }
+
+                var containerState = Enum.Parse<ContainerState>(dockerContainer.State, ignoreCase: true);
+                if (container.State != containerState){
+                    var updateStateResult = container.UpdateState(containerState);
+                    if (updateStateResult.IsError)
+                        throw new InvalidOperationException(string.Join('\n', updateStateResult.Errors.Select(e => $"Code: {e.Code} Description: {e.Description}")));
+                }
+
+                var labelsResults = dockerContainer.Labels.Select((kv) => Label.Create(kv.Key, kv.Value));
+                if (labelsResults.Any(l => l.IsError))
+                    throw new InvalidOperationException(string.Join('\n', labelsResults.Where(l => l.IsError).SelectMany(e => e.Errors).Select(e => $"Code: {e.Code}, Description: {e.Description}.")));
+                var labels = labelsResults.Select(l => l.Value).ToList();
+                if (!container.Labels.ContentEquals(labels)){
+                    var updateLabelsResult = container.UpdateLabels(labels);
+                    if (updateLabelsResult.IsError)
+                        throw new InvalidOperationException(string.Join('\n', updateLabelsResult.Errors.Select(e => $"Code: {e.Code} Description: {e.Description}")));
+                }
+
+                var portsResults = dockerContainer.Ports.Select(p => Port.Create(p.PublicPort, p.PrivatePort));
+                if (portsResults.Any(p => p.IsError))
+                    throw new InvalidOperationException(string.Join('\n', portsResults.Where(p => p.IsError).SelectMany(e => e.Errors).Select(e => $"Code: {e.Code}, Description: {e.Description}.")));
+                var containerPorts = portsResults.Select(p => p.Value).ToList();
+                if (!container.Ports.ContentEquals(containerPorts)){
+                    var updatePublicPortsResult = container.UpdatePorts(containerPorts);
+                    if (updatePublicPortsResult.IsError)
+                        throw new InvalidOperationException(string.Join('\n', updatePublicPortsResult.Errors.Select(e => $"Code: {e.Code} Description: {e.Description}")));
+                }
+
+                updated++;
+            }
+
+            await dbContext.SaveChangesAsync(cancellationToken);
+
+            return updated;
+        }
+
+        /// <summary>
+        /// Removes stale containers that are deleted, from the DB.
         /// </summary>
         /// <returns>The number of deleted stale containers</returns>
-        private async Task<int> RemoveStaleContainersAsync(AppDbContext dbContext, IList<ContainerListResponse> dockerContainers, HashSet<string> dbContainersIds, CancellationToken cancellationToken)
+        private static async Task<int> RemoveStaleContainersAsync(AppDbContext dbContext, IList<ContainerListResponse> dockerContainers, HashSet<string> dbContainersIds, CancellationToken cancellationToken)
         {
             var dockerContainersIds = dockerContainers.Select(c => c.ID).ToHashSet();
             var staleIds = dbContainersIds.Except(dockerContainersIds).ToList();
@@ -92,6 +179,8 @@ namespace ServerContainerManager.Application.Services
 
                 dbContext.Containers.RemoveRange(stale);
             }
+
+            await dbContext.SaveChangesAsync(cancellationToken);
 
             return staleIds.Count;
         }

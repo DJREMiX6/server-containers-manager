@@ -51,6 +51,20 @@ namespace ServerContainerManager.Application.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Containers",
+                columns: table => new
+                {
+                    Id = table.Column<string>(type: "TEXT", nullable: false),
+                    Name = table.Column<string>(type: "TEXT", maxLength: 200, nullable: false),
+                    State = table.Column<string>(type: "TEXT", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "TEXT", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Containers", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Namespaces",
                 columns: table => new
                 {
@@ -169,6 +183,48 @@ namespace ServerContainerManager.Application.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "ContainerLabels",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    Key = table.Column<string>(type: "TEXT", nullable: false),
+                    Value = table.Column<string>(type: "TEXT", nullable: false),
+                    ContainerId = table.Column<string>(type: "TEXT", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ContainerLabels", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_ContainerLabels_Containers_ContainerId",
+                        column: x => x.ContainerId,
+                        principalTable: "Containers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ContainerPorts",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    Public = table.Column<ushort>(type: "INTEGER", nullable: false),
+                    Private = table.Column<ushort>(type: "INTEGER", nullable: false),
+                    ContainerId = table.Column<string>(type: "TEXT", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ContainerPorts", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_ContainerPorts_Containers_ContainerId",
+                        column: x => x.ContainerId,
+                        principalTable: "Containers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "AppUserNamespace",
                 columns: table => new
                 {
@@ -186,6 +242,30 @@ namespace ServerContainerManager.Application.Migrations
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_AppUserNamespace_Namespaces_NamespacesId",
+                        column: x => x.NamespacesId,
+                        principalTable: "Namespaces",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ContainerNamespace",
+                columns: table => new
+                {
+                    ContainerId = table.Column<string>(type: "TEXT", nullable: false),
+                    NamespacesId = table.Column<Guid>(type: "TEXT", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ContainerNamespace", x => new { x.ContainerId, x.NamespacesId });
+                    table.ForeignKey(
+                        name: "FK_ContainerNamespace_Containers_ContainerId",
+                        column: x => x.ContainerId,
+                        principalTable: "Containers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_ContainerNamespace_Namespaces_NamespacesId",
                         column: x => x.NamespacesId,
                         principalTable: "Namespaces",
                         principalColumn: "Id",
@@ -235,6 +315,21 @@ namespace ServerContainerManager.Application.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
+                name: "IX_ContainerLabels_ContainerId",
+                table: "ContainerLabels",
+                column: "ContainerId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ContainerNamespace_NamespacesId",
+                table: "ContainerNamespace",
+                column: "NamespacesId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ContainerPorts_ContainerId",
+                table: "ContainerPorts",
+                column: "ContainerId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Namespaces_Name",
                 table: "Namespaces",
                 column: "Name",
@@ -263,13 +358,25 @@ namespace ServerContainerManager.Application.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
-                name: "Namespaces");
+                name: "ContainerLabels");
+
+            migrationBuilder.DropTable(
+                name: "ContainerNamespace");
+
+            migrationBuilder.DropTable(
+                name: "ContainerPorts");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");
+
+            migrationBuilder.DropTable(
+                name: "Namespaces");
+
+            migrationBuilder.DropTable(
+                name: "Containers");
         }
     }
 }

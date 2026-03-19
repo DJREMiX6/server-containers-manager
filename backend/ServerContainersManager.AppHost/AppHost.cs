@@ -16,11 +16,11 @@ var serverContainerManagerApi = builder.AddContainer(
     .WithEnvironment("ASPNETCORE_ENVIRONMENT", aspNetCoreDevEnvironment)
     .WithEnvironment("DOTNET_ENVIRONMENT", dotNetDevEnvironment);*/
 
-/*var sqliteDb = builder.AddSqlite("AppDb", databaseFileName: "data.sqlite")
-    .WithSqliteWeb();*/
+var sqliteDb = builder.AddSqlite("AppDb", databaseFileName: "data.sqlite")
+    .WithSqliteWeb();
 
 var serverContainerManagerApi = builder.AddProject<ServerContainerManager_API>("server-container-manager-api")
-    /*.WithReference(sqliteDb)
-    .WaitFor(sqliteDb)*/;
+    .WithReference(sqliteDb)
+    .WaitFor(sqliteDb);
 
 await builder.Build().RunAsync();
