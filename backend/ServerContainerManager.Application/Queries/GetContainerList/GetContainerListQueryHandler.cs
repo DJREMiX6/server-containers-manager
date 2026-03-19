@@ -1,24 +1,23 @@
-using Docker.DotNet;
-using Docker.DotNet.Models;
 using ErrorOr;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using ServerContainerManager.Application.Consts;
+using ServerContainerManager.Application.Entities;
 using ServerContainerManager.Application.Models;
 using ServerContainerManager.Application.Queries.Abstraction;
 using ServerContainerManager.Domain.Entities.Auth;
-using ServerContainerManager.Domain.Entities.Namespaces;
+using ServerContainerManager.Domain.Entities.Containers;
 
 namespace ServerContainerManager.Application.Queries.GetContainerList
 {
     internal class GetContainerListQueryHandler(
         ILogger<GetContainerListQueryHandler> logger,
-        DockerClient dockerClient,
+        AppDbContext dbContext,
         UserManager<AppUser> userManager) : IQueryHandler<GetContainerListQuery, GetContainerListQueryResult>
     {
         private readonly ILogger<GetContainerListQueryHandler> _logger = logger;
-        private readonly DockerClient _dockerClient = dockerClient;
+        private readonly AppDbContext _dbContext = dbContext;
         private readonly UserManager<AppUser> _userManager = userManager;
 
         public async Task<ErrorOr<GetContainerListQueryResult>> HandleAsync(GetContainerListQuery query, CancellationToken cancellationToken = default)
@@ -27,97 +26,68 @@ namespace ServerContainerManager.Application.Queries.GetContainerList
             if (user.IsError)
                 return user.Errors;
 
-            if (await _userManager.IsInRoleAsync(user.Value, UserRoles.Admin))
-                return await GetContainersForAdminUser(query.Skip, query.Take, query.SortBy, query.Order, cancellationToken);
-            else
-                return await GetContainersForMemberUser(query.Skip, query.Take, query.SortBy, query.Order, [.. user.Value.Namespaces], cancellationToken);
+            var containersQuery = _dbContext.Containers.AsQueryable();
+
+            if (!await _userManager.IsInRoleAsync(user.Value, UserRoles.Admin))
+                containersQuery = containersQuery.ApplyFiltering([.. user.Value.Namespaces.Select(n => n.Id)]);
+
+            var totalCount = await containersQuery.CountAsync(cancellationToken);
+            var containers = await containersQuery
+                .ApplySorting(query.SortBy, query.Order)
+                .ApplyPaging(query.Skip, query.Take)
+                .Parse()
+                .AsNoTracking()
+                .ToListAsync(cancellationToken);
+
+            return new GetContainerListQueryResult()
+            {
+                Containers = containers,
+                TotalCount = totalCount
+            };
         }
 
         private async Task<ErrorOr<AppUser>> GetUserAsync(Guid userId, CancellationToken cancellationToken)
         {
             var user = await _userManager.Users.Where(u => u.Id == userId).Include(u => u.Namespaces).FirstOrDefaultAsync(cancellationToken);
-            if(user == null)
+            if (user == null)
                 return Error.Unauthorized($"{nameof(GetContainerListQueryHandler)}.{nameof(GetUserAsync)}", $"Cannot find user {userId}");
 
             return user;
         }
+    }
 
-        private async Task<GetContainerListQueryResult> GetContainersForAdminUser(int skip, int take, ContainerSortBy sortBy, SortOrder order, CancellationToken cancellationToken)
-        {
-            var allContainers = await GetAllContainers(cancellationToken);
-            var sorted = ApplySorting(allContainers, sortBy, order);
-            var totalCount = sorted.Count;
-            var paged = ApplyPaging(sorted, skip, take);
-            var parsed = Parse(paged);
-
-            return new GetContainerListQueryResult
-            {
-                Containers = parsed,
-                TotalCount = totalCount
-            };
-        }
-
-        private async Task<GetContainerListQueryResult> GetContainersForMemberUser(int skip, int take, ContainerSortBy sortBy, SortOrder order, IList<Namespace> namespaces, CancellationToken cancellationToken)
-        {
-            var allContainers = await GetAllContainers(cancellationToken);
-            var sorted = ApplySorting(allContainers, sortBy, order);
-            var filtered = FilterByNamespaces(sorted, namespaces);
-            var totalCount = filtered.Count;
-            var paged = ApplyPaging(filtered, skip, take);
-            var parsed = Parse(paged);
-
-            return new GetContainerListQueryResult
-            {
-                Containers = parsed,
-                TotalCount = totalCount
-            };
-        }
-
-        private async Task<IList<ContainerListResponse>> GetAllContainers(CancellationToken cancellationToken) => 
-            await _dockerClient
-            .Containers
-            .ListContainersAsync(new ContainersListParameters() { All = true }, cancellationToken);
-
-        private static List<ContainerListResponse> ApplySorting(
-            IList<ContainerListResponse> containers,
+    file static class GetContainerListQueryExtensions
+    {
+        public static IQueryable<Container> ApplySorting(
+            this IQueryable<Container> query,
             ContainerSortBy sortBy,
             SortOrder order) => (sortBy, order) switch
             {
-                (ContainerSortBy.Name, SortOrder.Asc) => [.. containers.OrderBy(c => c.Names[0])],
-                (ContainerSortBy.Name, SortOrder.Desc) => [.. containers.OrderByDescending(c => c.Names[0])],
-                (ContainerSortBy.Status, SortOrder.Asc) => [.. containers.OrderBy(c => c.State)],
-                (ContainerSortBy.Status, SortOrder.Desc) => [.. containers.OrderByDescending(c => c.State)],
-                (ContainerSortBy.Created, SortOrder.Asc) => [.. containers.OrderBy(c => c.Created)],
-                (ContainerSortBy.Created, SortOrder.Desc) => [.. containers.OrderByDescending(c => c.Created)],
-                _ => [.. containers.OrderBy(c => c.Names[0])]
+                (ContainerSortBy.Name, SortOrder.Asc) => query.OrderBy(c => c.Name),
+                (ContainerSortBy.Name, SortOrder.Desc) => query.OrderByDescending(c => c.Name),
+                (ContainerSortBy.Status, SortOrder.Asc) => query.OrderBy(c => c.State),
+                (ContainerSortBy.Status, SortOrder.Desc) => query.OrderByDescending(c => c.State),
+                (ContainerSortBy.Created, SortOrder.Asc) => query.OrderBy(c => c.CreatedAt),
+                (ContainerSortBy.Created, SortOrder.Desc) => query.OrderByDescending(c => c.CreatedAt),
+                _ => query.OrderBy(c => c.Name)
             };
 
-        private static List<ContainerListResponse> FilterByNamespaces(IList<ContainerListResponse> containers, IList<Namespace> namespaces) => 
-            containers
-            .Where(c => namespaces
-                .Any(n => c.Labels
-                    .Contains(KeyValuePair
-                        .Create(ContainersConsts.LabelNamespacePrefix, n.Id.ToString()))))
-            .ToList(); //TODO: The LabelNamespace refers to a label composed of all the Namespace Ids comma separated. Extract Ids, filter out and strip out the label at the end to avoid leaking it at API level
+        public static IQueryable<Container> ApplyFiltering(this IQueryable<Container> query, IEnumerable<Guid> namespacesIds) =>
+            query.Where(c => c.Namespaces.Any(n => namespacesIds.Contains(n.Id)));
 
-        private static List<ContainerListResponse> ApplyPaging(IList<ContainerListResponse> containers, int skip, int take) =>
-            containers
-            .Skip(skip)
-            .Take(take)
-            .ToList();
+        public static IQueryable<Container> ApplyPaging(this IQueryable<Container> query, int skip, int take) =>
+            query.Skip(skip).Take(take);
 
-        private static List<GetContainerListQueryResultContainerInfo> Parse(IList<ContainerListResponse> containers) => 
-            containers
+        public static IQueryable<GetContainerListQueryResultContainerInfo> Parse(this IQueryable<Container> query) =>
+            query
             .Select(c => new GetContainerListQueryResultContainerInfo
             {
-                Id = c.ID,
-                Name = c.Names[0],
-                Status = c.State,
-                Created = c.Created,
+                Id = c.Id,
+                Name = c.Name,
+                State = c.State,
+                CreatedAt = c.CreatedAt,
                 Labels = c.Labels,
-                PrivatePorts = [.. c.Ports.Select(p => p.PrivatePort)],
-                PublicPorts = [.. c.Ports.Select(p => p.PublicPort)]
-            })
-            .ToList();
+                Ports = c.Ports,
+            });
     }
 }

@@ -1,4 +1,5 @@
-﻿using ServerContainerManager.API.Models.Enums;
+﻿using ServerContainerManager.Domain.Entities.Containers.Enums;
+using ServerContainerManager.Domain.Entities.Containers.ValueObjects;
 
 namespace ServerContainerManager.API.Models.Responses.ContainersController
 {
@@ -7,9 +8,9 @@ namespace ServerContainerManager.API.Models.Responses.ContainersController
         public required string Id { get; init;  }
         public required string Name { get; init; }
         public required ContainerState State { get; init; }
-        public required DateTime Created { get; init; }
-        public required IDictionary<string, string> Labels { get; init; }
-        public required IList<ushort> PublicPorts { get; init; }
+        public required DateTime CreatedAt { get; init; }
+        public required IReadOnlyCollection<Label> Labels { get; init; }
+        public required IReadOnlyCollection<Port> Ports { get; init; }
     }
 
     public record GetContainerListResponse

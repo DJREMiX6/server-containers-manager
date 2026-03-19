@@ -12,11 +12,11 @@ namespace ServerContainerManager.API.Models.Responses.Extensions
                 .Select(c => new GetContainerListItemResponse()
                 {
                     Id = c.Id,
-                    State = ContainerStateHelper.FromDockerApiStatus(c.Status),
-                    Created = c.Created,
+                    State = c.State,
+                    CreatedAt = c.CreatedAt,
                     Labels = c.Labels,
                     Name = c.Name,
-                    PublicPorts = [.. c.PublicPorts]
+                    Ports = [.. c.Ports]
                 })
                 .ToList(),
             TotalCount = result.TotalCount,
