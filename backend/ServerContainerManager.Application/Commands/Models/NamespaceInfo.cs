@@ -1,14 +1,16 @@
-﻿namespace ServerContainerManager.Application.Commands.Models
+﻿using ServerContainerManager.Domain.Entities.Namespaces;
+
+namespace ServerContainerManager.Application.Commands.Models
 {
     public record NamespaceInfo
     {
-        public Guid Id { get; }
-        public string Name { get; }
+        public required Guid Id { get; init; }
+        public required string Name { get; init; }
 
-        public NamespaceInfo(Guid id, string name)
+        public static NamespaceInfo FromDomain(Namespace @namespace) => new()
         {
-            Id = id;
-            Name = name;
-        }
+            Id = @namespace.Id,
+            Name = @namespace.Name,
+        };
     }
 }

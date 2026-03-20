@@ -11,7 +11,7 @@ using ServerContainerManager.Application.Entities;
 namespace ServerContainerManager.Application.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260319200935_InitialSetup")]
+    [Migration("20260320160416_InitialSetup")]
     partial class InitialSetup
     {
         /// <inheritdoc />

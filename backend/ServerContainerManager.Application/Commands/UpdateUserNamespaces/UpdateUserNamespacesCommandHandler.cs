@@ -39,7 +39,7 @@ namespace ServerContainerManager.Application.Commands.UpdateUserNamespaces
             await _dbContext.SaveChangesAsync(cancellationToken);
             await transaction.CommitAsync(cancellationToken);
 
-            return new UpdateUserNamespacesCommandResult([.. namespaces.Select(n => new NamespaceInfo(n.Id, n.Name))]);
+            return new UpdateUserNamespacesCommandResult([.. namespaces.Select(NamespaceInfo.FromDomain)]);
         }
     }
 }

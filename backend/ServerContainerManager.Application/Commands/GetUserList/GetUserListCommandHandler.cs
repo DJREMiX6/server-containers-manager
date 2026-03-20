@@ -31,7 +31,7 @@ namespace ServerContainerManager.Application.Commands.GetUserList
                     id: u.Id,
                     username: u.UserName!,
                     roles: roles,
-                    namespaces: [.. u.Namespaces.Select(n => new NamespaceInfo(id: n.Id, name: n.Name))]));
+                    namespaces: [.. u.Namespaces.Select(NamespaceInfo.FromDomain)]));
             });
 
             await transaction.CommitAsync(cancellationToken);

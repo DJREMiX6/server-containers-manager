@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using ServerContainerManager.Domain.Entities.Containers;
+using ServerContainerManager.Domain.Entities.Namespaces;
 
 namespace ServerContainerManager.Application.Entities.Configuration
 {
@@ -57,7 +58,10 @@ namespace ServerContainerManager.Application.Entities.Configuration
             });
 
             builder.HasMany(e => e.Namespaces)
-                .WithMany();
+                .WithMany()
+                .UsingEntity("ContainerNamespace",
+                    r => r.HasOne(typeof(Namespace)).WithMany().HasForeignKey("NamespacesId"),
+                    l => l.HasOne(typeof(Container)).WithMany().HasForeignKey("ContainerId"));
         }
     }
 }

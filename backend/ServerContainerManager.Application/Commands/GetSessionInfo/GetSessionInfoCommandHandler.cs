@@ -35,7 +35,7 @@ namespace ServerContainerManager.Application.Commands.GetSessionInfo
                 username: user.UserName!, 
                 roles: roles, 
                 namespaces: [.. user.Namespaces
-                    .Select(n => new NamespaceInfo(n.Id, n.Name))]);
+                    .Select(NamespaceInfo.FromDomain)]);
         }
     }
 }

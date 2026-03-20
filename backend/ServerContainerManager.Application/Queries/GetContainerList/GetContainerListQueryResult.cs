@@ -1,3 +1,5 @@
+using ServerContainerManager.Application.Commands.Models;
+using ServerContainerManager.Domain.Entities.Containers;
 using ServerContainerManager.Domain.Entities.Containers.Enums;
 using ServerContainerManager.Domain.Entities.Containers.ValueObjects;
 
@@ -11,6 +13,18 @@ namespace ServerContainerManager.Application.Queries.GetContainerList
         public required DateTime CreatedAt { get; init; }
         public required IReadOnlyCollection<Label> Labels { get; init; }
         public required IReadOnlyCollection<Port> Ports { get; init; }
+        public required IReadOnlyCollection<NamespaceInfo> Namespaces { get; init; }
+
+        public static GetContainerListQueryResultContainerInfo FromDomain(Container container, IReadOnlyCollection<NamespaceInfo> namespaces) => new ()
+        {
+            Id = container.Id,
+            Name = container.Name,
+            State = container.State,
+            CreatedAt = container.CreatedAt,
+            Labels = container.Labels,
+            Ports = container.Ports,
+            Namespaces = namespaces
+        };
     }
 
     public record GetContainerListQueryResult

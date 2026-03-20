@@ -137,7 +137,7 @@ namespace ServerContainerManager.Domain.Entities.Containers
                 .ToList();
             if (errors.Count > 0) return errors;
 
-            _namespaces.RemoveAll(namespaces.Contains);
+            _namespaces.RemoveAll(n => _namespaces.Any(x => x.Id == n.Id));
 
             return Result.Success;
         }

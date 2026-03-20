@@ -1,5 +1,4 @@
-﻿using ServerContainerManager.API.Models.Enums;
-using ServerContainerManager.API.Models.Responses.ContainersController;
+﻿using ServerContainerManager.API.Models.Responses.ContainersController;
 using ServerContainerManager.Application.Queries.GetContainerList;
 
 namespace ServerContainerManager.API.Models.Responses.Extensions
@@ -16,7 +15,8 @@ namespace ServerContainerManager.API.Models.Responses.Extensions
                     CreatedAt = c.CreatedAt,
                     Labels = c.Labels,
                     Name = c.Name,
-                    Ports = [.. c.Ports]
+                    Ports = [.. c.Ports],
+                    Namespaces = c.Namespaces.ToResponseModel().AsReadOnly()
                 })
                 .ToList(),
             TotalCount = result.TotalCount,
