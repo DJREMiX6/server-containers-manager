@@ -1,5 +1,5 @@
 ﻿using ServerContainerManager.API.Models.Responses.Models;
-using ServerContainerManager.Application.Commands.Models;
+using ServerContainerManager.Application.Models;
 
 namespace ServerContainerManager.API.Models.Responses.Extensions
 {
@@ -7,6 +7,6 @@ namespace ServerContainerManager.API.Models.Responses.Extensions
     {
         public static NamespaceInfoResponseModel ToResponseModel(this NamespaceInfo namespaceInfo) => NamespaceInfoResponseModel.FromQueryModel(namespaceInfo);
 
-        public static IList<NamespaceInfoResponseModel> ToResponseModel(this IEnumerable<NamespaceInfo> namespacesInfo) => [.. namespacesInfo.Select(ToResponseModel)];
+        public static IReadOnlyCollection<NamespaceInfoResponseModel> ToResponseModel(this IEnumerable<NamespaceInfo> namespacesInfo) => [.. namespacesInfo.Select(ToResponseModel)];
     } 
 }

@@ -1,6 +1,6 @@
 ﻿using ServerContainerManager.Domain.Entities.Namespaces;
 
-namespace ServerContainerManager.Application.Commands.Models
+namespace ServerContainerManager.Application.Models
 {
     public record NamespaceInfo
     {

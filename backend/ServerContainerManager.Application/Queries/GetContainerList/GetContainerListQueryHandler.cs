@@ -2,7 +2,6 @@ using ErrorOr;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using ServerContainerManager.Application.Commands.Models;
 using ServerContainerManager.Application.Consts;
 using ServerContainerManager.Application.Entities;
 using ServerContainerManager.Application.Models;

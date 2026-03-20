@@ -1,5 +1,5 @@
-﻿using ServerContainerManager.Application.Commands.Models;
-using ServerContainerManager.Application.Commands.SignIn;
+﻿using ServerContainerManager.Application.Commands.SignIn;
+using ServerContainerManager.Application.Models;
 
 namespace ServerContainerManager.Application.Commands.GetSessionInfo
 {

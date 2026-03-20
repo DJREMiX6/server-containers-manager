@@ -17,7 +17,7 @@ namespace ServerContainerManager.API.Models.Responses.ContainersController
 
     public record GetContainerListResponse
     {
-        public required IList<GetContainerListItemResponse> Projects { get; init; }
+        public required IReadOnlyCollection<GetContainerListItemResponse> Projects { get; init; }
         public required int TotalCount { get; init;  }
     }
 }

@@ -1,4 +1,4 @@
-﻿using ServerContainerManager.Application.Commands.Models;
+﻿using ServerContainerManager.Application.Models;
 
 namespace ServerContainerManager.Application.Commands.GetUserList
 {

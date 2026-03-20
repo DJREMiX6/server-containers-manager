@@ -3,8 +3,8 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using ServerContainerManager.Application.Commands.Abstraction;
-using ServerContainerManager.Application.Commands.Models;
 using ServerContainerManager.Application.Entities;
+using ServerContainerManager.Application.Models;
 using ServerContainerManager.Domain.Entities.Auth;
 
 namespace ServerContainerManager.Application.Commands.UpdateUserNamespaces

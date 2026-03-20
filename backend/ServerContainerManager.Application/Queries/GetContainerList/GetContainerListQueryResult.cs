@@ -1,4 +1,4 @@
-using ServerContainerManager.Application.Commands.Models;
+using ServerContainerManager.Application.Models;
 using ServerContainerManager.Domain.Entities.Containers;
 using ServerContainerManager.Domain.Entities.Containers.Enums;
 using ServerContainerManager.Domain.Entities.Containers.ValueObjects;

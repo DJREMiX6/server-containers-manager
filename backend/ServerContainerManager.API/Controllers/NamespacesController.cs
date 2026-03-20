@@ -2,34 +2,28 @@
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using ServerContainerManager.API.Extensions;
-using ServerContainerManager.API.Models.Requests.ContainersController;
-using ServerContainerManager.API.Models.Responses.ContainersController;
 using ServerContainerManager.API.Models.Responses.Extensions;
+using ServerContainerManager.API.Models.Responses.NamespacesController;
 using ServerContainerManager.Application.Queries.Abstraction;
-using ServerContainerManager.Application.Queries.GetContainerList;
+using ServerContainerManager.Application.Queries.GetNamespacesList;
 
 namespace ServerContainerManager.API.Controllers
 {
     [Authorize]
     [ApiController]
     [Route("api/[controller]")]
-    public class ContainersController(ILogger<ContainersController> logger) : ControllerBase
+    public class NamespacesController(ILogger<ContainersController> logger) : ControllerBase
     {
         private readonly ILogger<ContainersController> _logger = logger;
 
         [HttpGet]
-        public async Task<Results<Ok<GetContainerListResponse>, ProblemHttpResult>> GetContainers(
-            [FromQuery] GetContainersRequest request,
-            [FromServices] IQueryHandler<GetContainerListQuery, GetContainerListQueryResult> queryHandler,
+        public async Task<Results<Ok<GetNamespacesListResponse>, ProblemHttpResult>> GetNamespaces(
+            [FromServices] IQueryHandler<GetNamespacesListQuery, GetNamespacesListQueryResult> queryHandler,
             CancellationToken cancellationToken = default)
         {
-            var query = new GetContainerListQuery
+            var query = new GetNamespacesListQuery
             {
-                UserId = User.GetUserId(),
-                Skip = request.Skip,
-                Take = request.Take,
-                SortBy = request.SortBy,
-                Order = request.Order
+                UserId = User.GetUserId()
             };
 
             var result = await queryHandler.HandleAsync(query, cancellationToken);
