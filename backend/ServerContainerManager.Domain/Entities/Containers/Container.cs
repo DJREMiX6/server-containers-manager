@@ -116,28 +116,13 @@ namespace ServerContainerManager.Domain.Entities.Containers
             return Result.Success;
         }
 
-        public ErrorOr<Success> AssignNamespaces(List<Namespace> namespaces)
+        public ErrorOr<Success> UpdateNamespaces(IList<Namespace> namespaces)
         {
-            if (namespaces.Count == 0) return Error.Validation($"{nameof(Container)}.{nameof(AssignNamespaces)}", "Namespaces list cannot be empty");
+            if (namespaces.Count == 0) return Error.Validation($"{nameof(Container)}.{nameof(UpdateNamespaces)}", "Namespaces list cannot be empty");
 
-            namespaces.RemoveAll(n => _namespaces.Contains(n));
+            var namespacesSet = new HashSet<Namespace>(namespaces);
 
-            _namespaces.AddRange(namespaces);
-
-            return Result.Success;
-        }
-
-        public ErrorOr<Success> UnassignNamespaces(List<Namespace> namespaces)
-        {
-            if(namespaces.Count == 0) return Error.Validation($"{nameof(Container)}.{nameof(UnassignNamespaces)}", "Namespaces list cannot be empty");
-
-            var errors = namespaces
-                .Where(n => !_namespaces.Contains(n))
-                .Select(n => Error.Validation($"{nameof(Container)}.{nameof(UnassignNamespaces)}", $"Namespace {n.Name} is not assigned to current Container"))
-                .ToList();
-            if (errors.Count > 0) return errors;
-
-            _namespaces.RemoveAll(n => _namespaces.Any(x => x.Id == n.Id));
+            _namespaces = [.. namespacesSet];
 
             return Result.Success;
         }

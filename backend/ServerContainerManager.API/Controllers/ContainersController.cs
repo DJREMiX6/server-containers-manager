@@ -5,6 +5,9 @@ using ServerContainerManager.API.Extensions;
 using ServerContainerManager.API.Models.Requests.ContainersController;
 using ServerContainerManager.API.Models.Responses.ContainersController;
 using ServerContainerManager.API.Models.Responses.Extensions;
+using ServerContainerManager.Application.Commands.Abstraction;
+using ServerContainerManager.Application.Commands.UpdateContainerNamespaces;
+using ServerContainerManager.Application.Consts;
 using ServerContainerManager.Application.Queries.Abstraction;
 using ServerContainerManager.Application.Queries.GetContainerList;
 
@@ -38,6 +41,30 @@ namespace ServerContainerManager.API.Controllers
                 return result.Errors.ToProblemHttpResult();
 
             return TypedResults.Ok(result.Value.ToContract());
+        }
+
+        [Authorize(Roles = UserRoles.Admin)]
+        [HttpPatch("{containerId}/namespaces")]
+        public async Task<Results<NoContent, ProblemHttpResult>> UpdateContainerNamespaces(
+            [FromRoute] string containerId,
+            [FromBody] UpdateContainerNamespacesRequest request,
+            [FromServices] ICommandHandler<UpdateContainerNamespacesCommand, UpdateContainerNamespacesCommandResult> commandHandler,
+            CancellationToken cancellationToken = default)
+        {
+            var userId = User.GetUserId();
+            var command = new UpdateContainerNamespacesCommand()
+            {
+                UserId = userId,
+                ContainerId = containerId,
+                NamespacesIds = request.NamespacesIds,
+            };
+
+            var result = await commandHandler.HandleAsync(command, cancellationToken);
+
+            if (result.IsError)
+                return result.Errors.ToProblemHttpResult();
+
+            return TypedResults.NoContent();
         }
     }
 }
