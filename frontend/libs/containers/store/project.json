@@ -1,0 +1,20 @@
+{
+  "name": "containers-store",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/containers/store/src",
+  "prefix": "lib",
+  "projectType": "library",
+  "tags": ["scope:containers", "type:store"],
+  "targets": {
+    "test": {
+      "executor": "@nx/vitest:test",
+      "outputs": ["{options.reportsDirectory}"],
+      "options": {
+        "reportsDirectory": "../../../coverage/libs/containers/store"
+      }
+    },
+    "lint": {
+      "executor": "@nx/eslint:lint"
+    }
+  }
+}

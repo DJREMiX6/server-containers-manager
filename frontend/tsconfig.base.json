@@ -22,7 +22,8 @@
       "@scm/auth/utils": ["libs/auth/utils/src/index.ts"],
       "@scm/containers/features": ["libs/containers/features/src/index.ts"],
       "@scm/containers/ui": ["libs/containers/ui/src/index.ts"],
-      "@scm/containers/data": ["libs/containers/data/src/index.ts"]
+      "@scm/containers/data": ["libs/containers/data/src/index.ts"],
+      "@scm/containers/store": ["libs/containers/store/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]
