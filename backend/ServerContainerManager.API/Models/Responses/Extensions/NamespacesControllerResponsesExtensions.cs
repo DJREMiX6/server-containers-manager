@@ -1,4 +1,5 @@
 ﻿using ServerContainerManager.API.Models.Responses.NamespacesController;
+using ServerContainerManager.Application.Commands.CreateNamespace;
 using ServerContainerManager.Application.Queries.GetNamespacesList;
 
 namespace ServerContainerManager.API.Models.Responses.Extensions
@@ -9,6 +10,11 @@ namespace ServerContainerManager.API.Models.Responses.Extensions
         {
             Namespaces = result.Namespaces.ToResponseModel(),
             TotalCount = result.TotalCount
+        };
+
+        public static CreateNamespaceResponse ToContract(this CreateNamespaceCommandResult result) => new()
+        {
+            NamespaceId = result.NamespaceId
         };
     }
 }
