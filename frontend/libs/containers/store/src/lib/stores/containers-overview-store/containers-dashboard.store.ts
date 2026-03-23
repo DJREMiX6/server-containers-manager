@@ -1,4 +1,5 @@
 import { patchState, signalStore, withMethods } from '@ngrx/signals';
+import { setError, clearError } from '@scm/shared/store/error-store-feature';
 import { withContainersOverviewState } from './containers-dashboard.state';
 import { inject } from '@angular/core';
 import { ContainersService, GetContainersRequest } from '@scm/containers/data';
@@ -10,7 +11,7 @@ export const ContainersOverviewStore = signalStore(
   withMethods((store, containersService = inject(ContainersService)) => {
     const loadContainers = async () => {
       try {
-        patchState(store, { loadingStatus: 'loading', error: null });
+        patchState(store, { loadingStatus: 'loading' }, clearError());
 
         const request: GetContainersRequest = {
           skip: 0,
@@ -29,15 +30,13 @@ export const ContainersOverviewStore = signalStore(
           loadingStatus: 'loaded',
         });
       } catch (error) {
-        const parsedError =
-          error instanceof Error
-            ? error
-            : new Error('An unkwnown error has occurred');
-
-        patchState(store, {
-          loadingStatus: 'notLoaded',
-          error: parsedError,
-        });
+        patchState(
+          store,
+          {
+            loadingStatus: 'notLoaded',
+          },
+          setError(error),
+        );
         throw error;
       }
     };

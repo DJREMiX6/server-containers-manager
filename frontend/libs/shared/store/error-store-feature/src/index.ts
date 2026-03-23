@@ -7,3 +7,4 @@ export type {
   ValidationError,
   StoreErrorSeverity,
 } from './lib/models';
+export { clearError, setError } from './lib/updaters';

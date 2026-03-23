@@ -1,4 +1,5 @@
 import { signalStoreFeature, withState } from '@ngrx/signals';
+import { withErrorFeature } from '@scm/shared/store/error-store-feature';
 import { ContainerSummary } from '../../models';
 
 export type ContainersOverviewState = {
@@ -6,7 +7,6 @@ export type ContainersOverviewState = {
   _loadedAt: Date | null;
   loadingStatus: 'notLoaded' | 'loading' | 'loaded';
   containers: ContainerSummary[];
-  error: Error | null;
 };
 
 export const initialState: ContainersOverviewState = {
@@ -14,9 +14,11 @@ export const initialState: ContainersOverviewState = {
   _loadedAt: null,
   loadingStatus: 'notLoaded',
   containers: [],
-  error: null,
 };
 
 export function withContainersOverviewState() {
-  return signalStoreFeature(withState<ContainersOverviewState>(initialState));
+  return signalStoreFeature(
+    withState<ContainersOverviewState>(initialState),
+    withErrorFeature(),
+  );
 }

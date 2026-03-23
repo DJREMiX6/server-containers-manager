@@ -12,4 +12,5 @@
 @source "../../../libs/containers/features";
 @source "../../../libs/containers/store";
 @source "../../../libs/containers/ui";
+@source "../../../libs/shared/store/error-store-feature";
 /* nx-tailwind-sources:end */
