@@ -38,7 +38,7 @@ export const ContainersOverviewStore = signalStore(
           loadingStatus: 'notLoaded',
           error: parsedError,
         });
-        console.error(error);
+        throw error;
       }
     };
 
