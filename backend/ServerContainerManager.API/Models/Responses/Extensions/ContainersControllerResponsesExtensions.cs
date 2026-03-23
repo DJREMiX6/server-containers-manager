@@ -18,7 +18,7 @@ namespace ServerContainerManager.API.Models.Responses.Extensions
 
         public static GetContainerListResponse ToContract(this GetContainerListQueryResult result) => new()
         {
-            Projects = [.. result.Containers.Select(ToContract)],
+            Containers = [.. result.Containers.Select(ToContract)],
             TotalCount = result.TotalCount,
         };
     }
