@@ -1,8 +1,6 @@
-import {patchState, signalStoreFeature, withComputed, withMethods, withState} from "@ngrx/signals";
-import { computed } from "@angular/core";
-import { StoreError } from "../models";
-import { parseError } from "../utils";
-
+import { signalStoreFeature, withComputed, withState } from '@ngrx/signals';
+import { computed } from '@angular/core';
+import { StoreError } from '../models';
 
 export type ErrorState = {
   error: StoreError | null;
@@ -17,16 +15,6 @@ export function withErrorFeature() {
     withState<ErrorState>(initialErrorState),
     withComputed(({ error }) => ({
       hasError: computed(() => error() !== null),
-    })),
-    withMethods((store) => ({
-      setError(error: unknown): void {
-        const classified = parseError(error);
-        console.error(`[${classified.kind}] ${classified.title}: ${classified.summary}`, classified.raw);
-        patchState(store, { error: classified });
-      },
-      clearError(): void {
-        patchState(store, { error: null });
-      },
     })),
   );
 }

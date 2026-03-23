@@ -1,1 +1,1 @@
-export * from "./parse-error";
+export { parseError } from './parse-error';
