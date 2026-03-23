@@ -5,7 +5,7 @@ import { ButtonModule } from 'primeng/button';
 import { SkeletonModule } from 'primeng/skeleton';
 import { ChartModule } from 'primeng/chart';
 import { ContainerOverviewInfo, ContainerResourcesData } from '../models';
-import { ChartOptions, ChartData, ChartDataset, Point } from 'chart.js';
+import { ChartOptions, ChartData, Point } from 'chart.js';
 
 @Component({
   selector: 'lib-container-overview-card',

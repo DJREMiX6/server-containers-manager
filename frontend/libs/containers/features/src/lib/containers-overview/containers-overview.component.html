@@ -2,7 +2,7 @@
   <div
     class="grow flex flex-wrap flex-row align-middle items-center justify-center gap-4"
   >
-    @for (container of containers; track container.info.id) {
+    @for (container of containersOverview(); track container.info.id) {
       <lib-container-overview-card
         [containerInfo]="container.info"
         [containerResourcesData]="container.resourcesUsage"

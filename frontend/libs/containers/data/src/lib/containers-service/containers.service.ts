@@ -6,23 +6,24 @@ import { GetContainersRequest, GetContainersResponse } from '../models';
 import { GetContainersRequestSchema } from '../models/requests/get-containers.request.schema';
 import { GetContainersResponseSchema } from '../models/responses/get-containers.response.schema';
 
-export const ApiBaseUrl = `${Environment.serverOrigin}api/containers`;
+export const ApiBaseUrl = `${Environment.serverOrigin}/api/containers`;
 
-@Injectable({
-  providedIn: 'root',
-})
+@Injectable()
 export class ContainersService {
   private readonly httpClient = inject(HttpClient);
 
-  public getContainers(request: GetContainersRequest): Observable<GetContainersResponse> {
+  public getContainers(
+    request: GetContainersRequest,
+  ): Observable<GetContainersResponse> {
     const parsedRequest = GetContainersRequestSchema.parse(request);
 
-    return this.httpClient.get<unknown>(ApiBaseUrl, {
-      params: {
-        ...parsedRequest
-      }
-    }).pipe(
-      map((raw) => GetContainersResponseSchema.parse(raw))
-    );
+    return this.httpClient
+      .get<unknown>(ApiBaseUrl, {
+        params: {
+          ...parsedRequest,
+        },
+        withCredentials: true,
+      })
+      .pipe(map((raw) => GetContainersResponseSchema.parse(raw)));
   }
 }
