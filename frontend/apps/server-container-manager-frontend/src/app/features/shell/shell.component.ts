@@ -1,7 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { SideNavMenuComponent } from '../../ui/side-nav-menu/side-nav-menu.component';
-import { AuthStore } from '@scm/auth/state';
+import { AuthStore } from '@scm/auth/store';
 
 @Component({
   selector: 'app-shell',

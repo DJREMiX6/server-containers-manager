@@ -1,7 +1,7 @@
 {
-  "name": "auth-state",
+  "name": "auth-store",
   "$schema": "../../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "libs/auth/state/src",
+  "sourceRoot": "libs/auth/store/src",
   "prefix": "lib",
   "projectType": "library",
   "tags": ["scope:auth", "type:state"],
@@ -10,7 +10,7 @@
       "executor": "@nx/vitest:test",
       "outputs": ["{options.reportsDirectory}"],
       "options": {
-        "reportsDirectory": "../../../coverage/libs/auth/state"
+        "reportsDirectory": "../../../coverage/libs/auth/store"
       }
     },
     "lint": {

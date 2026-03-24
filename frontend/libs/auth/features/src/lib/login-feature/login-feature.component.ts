@@ -14,7 +14,7 @@ import { FloatLabelModule } from 'primeng/floatlabel';
 import { MessageService } from 'primeng/api';
 import { form, FormField, required, submit } from '@angular/forms/signals';
 import { LoginFormModel } from '../models/login-form-model';
-import { AuthStore, LoginRequestModel } from '@scm/auth/state';
+import { AuthStore, LoginRequestModel } from '@scm/auth/store';
 import { Router } from '@angular/router';
 
 @Component({

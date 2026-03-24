@@ -4,7 +4,7 @@ import {
   provideAppInitializer,
 } from '@angular/core';
 import { AuthService } from '@scm/auth/data';
-import { AuthStore } from '@scm/auth/state';
+import { AuthStore } from '@scm/auth/store';
 import { authInterceptor } from './auth-interceptor/auth-interceptor';
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
 
