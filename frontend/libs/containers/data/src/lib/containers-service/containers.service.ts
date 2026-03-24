@@ -1,10 +1,13 @@
 import { inject, Injectable } from '@angular/core';
-import { HttpClient } from "@angular/common/http";
-import { map, Observable } from "rxjs";
-import { Environment } from "@scm/environments";
-import { GetContainersRequest, GetContainersResponse } from '../models';
-import { GetContainersRequestSchema } from '../models/requests/get-containers.request.schema';
-import { GetContainersResponseSchema } from '../models/responses/get-containers.response.schema';
+import { HttpClient } from '@angular/common/http';
+import { map, Observable } from 'rxjs';
+import { Environment } from '@scm/environments';
+import {
+  GetContainersRequest,
+  GetContainersResponse,
+  GetContainersRequestSchema,
+  GetContainersResponseSchema,
+} from '../models';
 
 export const ApiBaseUrl = `${Environment.serverOrigin}/api/containers`;
 
