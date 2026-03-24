@@ -29,11 +29,11 @@ export class ContainerOverviewCardComponent {
 
   protected readonly showStartBtn = computed(() => {
     switch (this.containerInfo().state) {
-      case 'created':
+      case 'Created':
         return true;
-      case 'dead':
+      case 'Dead':
         return true;
-      case 'exited':
+      case 'Exited':
         return true;
       default:
         return false;
@@ -42,11 +42,11 @@ export class ContainerOverviewCardComponent {
 
   protected readonly showStopBtn = computed(() => {
     switch (this.containerInfo().state) {
-      case 'paused':
+      case 'Paused':
         return true;
-      case 'running':
+      case 'Running':
         return true;
-      case 'restarting':
+      case 'Restarting':
         return true;
       default:
         return false;
@@ -55,7 +55,7 @@ export class ContainerOverviewCardComponent {
 
   protected readonly showPauseBtn = computed(() => {
     switch (this.containerInfo().state) {
-      case 'running':
+      case 'Running':
         return true;
       default:
         return false;
@@ -64,7 +64,7 @@ export class ContainerOverviewCardComponent {
 
   protected readonly showResumePlayBtn = computed(() => {
     switch (this.containerInfo().state) {
-      case 'paused':
+      case 'Paused':
         return true;
       default:
         return false;
@@ -78,9 +78,9 @@ export class ContainerOverviewCardComponent {
 
   protected readonly showRestartBtn = computed(() => {
     switch (this.containerInfo().state) {
-      case 'paused':
+      case 'Paused':
         return true;
-      case 'running':
+      case 'Running':
         return true;
       default:
         return false;
@@ -89,11 +89,11 @@ export class ContainerOverviewCardComponent {
 
   protected readonly showKillBtn = computed(() => {
     switch (this.containerInfo().state) {
-      case 'paused':
+      case 'Paused':
         return true;
-      case 'restarting':
+      case 'Restarting':
         return true;
-      case 'running':
+      case 'Running':
         return true;
       default:
         return false;

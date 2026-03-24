@@ -2,4 +2,5 @@ export { ContainerOverviewCardComponent } from './lib/container-overview-card/co
 export type {
   ContainerOverviewInfo,
   ContainerResourcesData,
+  ContainerState,
 } from './lib/models';
