@@ -35,7 +35,7 @@ namespace ServerContainerManager.Application.Services
             var removedContainersCount = await RemoveStaleContainersAsync(dbContext, dockerContainers, dbContainersIds, cancellationToken);
             var updatedContainersCount = await UpdateContainersAsync(dbContext, dockerContainers, dbContainersIds, cancellationToken);
 
-            if (addedContainersCount == 0 && removedContainersCount == 0)
+            if (addedContainersCount == 0 && removedContainersCount == 0 && updatedContainersCount == 0)
             {
                 _logger.LogInformation("No containers changes detected.");
                 await transaction.RollbackAsync(cancellationToken);
