@@ -128,7 +128,7 @@ namespace ServerContainerManager.Application.Services
                 }
 
                 var containerState = Enum.Parse<ContainerState>(dockerContainer.State, ignoreCase: true);
-                if (container.State != containerState){
+                if (container.State != containerState) {
                     var updateStateResult = container.UpdateState(containerState);
                     if (updateStateResult.IsError)
                         throw new InvalidOperationException(string.Join('\n', updateStateResult.Errors.Select(e => $"Code: {e.Code} Description: {e.Description}")));
@@ -144,7 +144,8 @@ namespace ServerContainerManager.Application.Services
                         throw new InvalidOperationException(string.Join('\n', updateLabelsResult.Errors.Select(e => $"Code: {e.Code} Description: {e.Description}")));
                 }
 
-                var portsResults = dockerContainer.Ports.Select(p => Port.Create(p.PublicPort, p.PrivatePort));
+                var ports = dockerContainer.Ports ?? []; // Workaround for bug
+                var portsResults = ports.Select(p => Port.Create(p.PublicPort, p.PrivatePort));
                 if (portsResults.Any(p => p.IsError))
                     throw new InvalidOperationException(string.Join('\n', portsResults.Where(p => p.IsError).SelectMany(e => e.Errors).Select(e => $"Code: {e.Code}, Description: {e.Description}.")));
                 var containerPorts = portsResults.Select(p => p.Value).ToList();

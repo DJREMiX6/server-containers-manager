@@ -28,7 +28,7 @@ namespace ServerContainerManager.Application.Services
         {
             var progress = new Progress<Message>((message) =>
             {
-                _logger.LogInformation("Received docker event {DockerEventAction} for {DockerId}", message.Action, message.ID);
+                _logger.LogInformation("Received docker event {DockerEventAction} for {DockerId}", message.Action, message.Actor.ID);
                 var writeResult = _signalsQueue.TryWrite(true);
 
                 if (!writeResult)
