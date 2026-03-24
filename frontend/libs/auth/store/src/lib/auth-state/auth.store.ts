@@ -5,54 +5,31 @@ import { AuthService } from '@scm/auth/data';
 import { firstValueFrom } from 'rxjs';
 import { withAuthState } from './auth.state';
 import { LoginRequestModel } from '../models/requests/login-request-model';
-import { toUserRole } from '../models/user-role';
-import { Namespace } from '../models/namespace';
-import { SessionInfo } from '../models/responses/session-info';
 import { Router } from '@angular/router';
+import { userMapper } from '../mappers';
 
 export const AuthStore = signalStore(
   withAuthState(),
   withMethods(
     (store, authService = inject(AuthService), router = inject(Router)) => {
-      const getSessionInfo = async (): Promise<SessionInfo> => {
-        try {
-          patchState(store, clearError());
-
-          const sessionInfoResponse = await firstValueFrom(
-            authService.getSessionInfo(),
-          );
-          return {
-            userId: sessionInfoResponse.userId,
-            username: sessionInfoResponse.username,
-            roles: sessionInfoResponse.roles.map(toUserRole),
-            namespaces: sessionInfoResponse.namespaces.map(
-              (n): Namespace => ({
-                id: n.id,
-                name: n.name,
-              }),
-            ),
-          };
-        } catch (error) {
-          patchState(store, setError(error));
-          throw error;
-        }
-      };
-
       const login = async (loginRequest: LoginRequestModel): Promise<void> => {
         try {
           patchState(store, clearError());
 
           await firstValueFrom(authService.login(loginRequest));
-          const sessionInfo = await getSessionInfo();
-          patchState(store, {
-            isAuthenticated: true,
-            user: {
-              id: sessionInfo.userId,
-              username: sessionInfo.username,
-              roles: sessionInfo.roles,
-              namespaces: sessionInfo.namespaces,
+          const sessionInfo = await firstValueFrom(
+            authService.getSessionInfo(),
+          );
+          const user = userMapper(sessionInfo);
+
+          patchState(
+            store,
+            {
+              isAuthenticated: true,
+              user,
             },
-          });
+            clearError(),
+          );
         } catch (error) {
           patchState(
             store,
@@ -81,24 +58,24 @@ export const AuthStore = signalStore(
         try {
           patchState(store, clearError());
 
-          const sessionInfo = await getSessionInfo();
+          const sessionInfo = await firstValueFrom(
+            authService.getSessionInfo(),
+          );
+          const user = userMapper(sessionInfo);
 
-          patchState(store, {
-            isAuthenticated: true,
-            user: {
-              id: sessionInfo.userId,
-              username: sessionInfo.username,
-              roles: sessionInfo.roles,
-              namespaces: sessionInfo.namespaces,
+          patchState(
+            store,
+            {
+              isAuthenticated: true,
+              user,
             },
-            error: null,
-          });
+            clearError(),
+          );
         } catch (error) {
           patchState(
             store,
             {
               isAuthenticated: false,
-              error: null,
               user: null,
             },
             setError(error),
