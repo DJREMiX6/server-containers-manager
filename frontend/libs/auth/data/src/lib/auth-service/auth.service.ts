@@ -1,9 +1,13 @@
 import { Injectable, inject } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
-import { Observable } from "rxjs";
-import { Environment } from "@scm/environments"; 
-import { LoginRequest } from "../models/requests";
-import { GetSessionInfoResponse } from '../models/responses';
+import { map, Observable } from 'rxjs';
+import { Environment } from '@scm/environments';
+import {
+  GetSessionInfoResponse,
+  GetSessionInfoSchema,
+  LoginRequest,
+  LoginRequestSchema,
+} from '../models';
 
 export const ApiBaseEndpoint = `${Environment.serverOrigin}/api/auth`;
 
@@ -12,9 +16,14 @@ export class AuthService {
   private readonly httpClient = inject(HttpClient);
 
   public login(request: LoginRequest): Observable<void> {
-    return this.httpClient.post<void>(`${ApiBaseEndpoint}/signin`, request, {
-      withCredentials: true,
-    });
+    const parsedRequest = LoginRequestSchema.parse(request);
+    return this.httpClient.post<void>(
+      `${ApiBaseEndpoint}/signin`,
+      parsedRequest,
+      {
+        withCredentials: true,
+      },
+    );
   }
 
   public logout(): Observable<void> {
@@ -28,9 +37,8 @@ export class AuthService {
   }
 
   public getSessionInfo(): Observable<GetSessionInfoResponse> {
-    return this.httpClient.get<GetSessionInfoResponse>(
-      `${ApiBaseEndpoint}/session`,
-      { withCredentials: true },
-    );
+    return this.httpClient
+      .get<unknown>(`${ApiBaseEndpoint}/session`, { withCredentials: true })
+      .pipe(map((raw) => GetSessionInfoSchema.parse(raw)));
   }
 }
