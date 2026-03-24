@@ -1,4 +1,4 @@
-namespace ServerContainerManager.Application.Queries.GetContainerList
+namespace ServerContainerManager.Application.Models
 {
     public enum ContainerSortBy
     {

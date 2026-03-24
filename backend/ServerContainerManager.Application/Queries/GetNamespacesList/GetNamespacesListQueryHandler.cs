@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using ServerContainerManager.Application.Consts;
 using ServerContainerManager.Application.Entities;
+using ServerContainerManager.Application.Extensions;
 using ServerContainerManager.Application.Models;
 using ServerContainerManager.Application.Queries.Abstraction;
 using ServerContainerManager.Application.Queries.GetContainerList;
@@ -23,12 +24,12 @@ namespace ServerContainerManager.Application.Queries.GetNamespacesList
 
         public async Task<ErrorOr<GetNamespacesListQueryResult>> HandleAsync(GetNamespacesListQuery query, CancellationToken cancellationToken = default)
         {
-            var user = await GetUserAsync(query.UserId, cancellationToken);
-            if (user.IsError)
-                return user.Errors;
+            var user = await _userManager.Users.GetUserWithNamespacesAsync(query.UserId, cancellationToken);
+            if (user == null)
+                return Error.Unauthorized($"{nameof(GetContainerListQueryHandler)}.{nameof(HandleAsync)}", $"Cannot find user {query.UserId}");
 
-            var isUserAdmin = await _userManager.IsInRoleAsync(user.Value, UserRoles.Admin);
-            var userNamespacesIds = user.Value.Namespaces.Select(n => n.Id);
+            var isUserAdmin = await _userManager.IsInRoleAsync(user, UserRoles.Admin);
+            var userNamespacesIds = user.Namespaces.Select(n => n.Id);
 
             var namespacesQuery = _dbContext.Namespaces.AsQueryable();
 
@@ -44,15 +45,6 @@ namespace ServerContainerManager.Application.Queries.GetNamespacesList
                 Namespaces = namespaces,
                 TotalCount = namespaces.Count
             };
-        }
-
-        private async Task<ErrorOr<AppUser>> GetUserAsync(Guid userId, CancellationToken cancellationToken)
-        {
-            var user = await _userManager.Users.Where(u => u.Id == userId).Include(u => u.Namespaces).FirstOrDefaultAsync(cancellationToken);
-            if (user == null)
-                return Error.Unauthorized($"{nameof(GetContainerListQueryHandler)}.{nameof(GetUserAsync)}", $"Cannot find user {userId}");
-
-            return user;
         }
     }
 

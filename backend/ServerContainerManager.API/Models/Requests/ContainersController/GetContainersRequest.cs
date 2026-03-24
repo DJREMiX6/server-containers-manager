@@ -1,6 +1,5 @@
 using FluentValidation;
 using ServerContainerManager.Application.Models;
-using ServerContainerManager.Application.Queries.GetContainerList;
 
 namespace ServerContainerManager.API.Models.Requests.ContainersController
 {

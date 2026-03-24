@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using ServerContainerManager.Application.Consts;
 using ServerContainerManager.Application.Entities;
+using ServerContainerManager.Application.Extensions;
 using ServerContainerManager.Application.Models;
 using ServerContainerManager.Application.Queries.Abstraction;
 using ServerContainerManager.Domain.Entities.Auth;
@@ -23,26 +24,26 @@ namespace ServerContainerManager.Application.Queries.GetContainerList
 
         public async Task<ErrorOr<GetContainerListQueryResult>> HandleAsync(GetContainerListQuery query, CancellationToken cancellationToken = default)
         {
-            var user = await GetUserAsync(query.UserId, cancellationToken);
-            if (user.IsError)
-                return user.Errors;
+            var user = await _userManager.Users.GetUserWithNamespacesAsync(query.UserId, cancellationToken);
+            if (user == null)
+                return Error.Unauthorized($"{nameof(GetContainerListQueryHandler)}.{nameof(HandleAsync)}", $"Cannot find user {query.UserId}");
 
-            var isUserAdmin = await _userManager.IsInRoleAsync(user.Value, UserRoles.Admin);
+            var isUserAdmin = await _userManager.IsInRoleAsync(user, UserRoles.Admin);
 
             var namespacesIds = (isUserAdmin 
                 ? await dbContext.Namespaces.Select(n => n.Id).ToListAsync(cancellationToken) 
-                : user.Value.Namespaces.Select(n => n.Id))
+                : user.Namespaces.Select(n => n.Id))
                 .ToList();
             IQueryable<Container> containersQuery = _dbContext.Containers
                 .AsNoTracking();
                 
             if(!isUserAdmin)
-                containersQuery = containersQuery.ApplyFiltering(namespacesIds);
+                containersQuery = containersQuery.FilterByNamespaces(namespacesIds);
 
             var totalCount = await containersQuery.CountAsync(cancellationToken);
             var containers = await containersQuery
-                .ApplySorting(query.SortBy, query.Order)
-                .ApplyPaging(query.Skip, query.Take)
+                .Sort(query.SortBy, query.Order)
+                .Paginate(query.Skip, query.Take)
                 .Parse(namespacesIds)
                 .ToListAsync(cancellationToken);
 
@@ -52,39 +53,10 @@ namespace ServerContainerManager.Application.Queries.GetContainerList
                 TotalCount = totalCount
             };
         }
-
-        private async Task<ErrorOr<AppUser>> GetUserAsync(Guid userId, CancellationToken cancellationToken)
-        {
-            var user = await _userManager.Users.Where(u => u.Id == userId).Include(u => u.Namespaces).FirstOrDefaultAsync(cancellationToken);
-            if (user == null)
-                return Error.Unauthorized($"{nameof(GetContainerListQueryHandler)}.{nameof(GetUserAsync)}", $"Cannot find user {userId}");
-
-            return user;
-        }
     }
 
     file static class GetContainerListQueryExtensions
     {
-        public static IQueryable<Container> ApplySorting(
-            this IQueryable<Container> query,
-            ContainerSortBy sortBy,
-            SortOrder order) => (sortBy, order) switch
-            {
-                (ContainerSortBy.Name, SortOrder.Asc) => query.OrderBy(c => c.Name),
-                (ContainerSortBy.Name, SortOrder.Desc) => query.OrderByDescending(c => c.Name),
-                (ContainerSortBy.Status, SortOrder.Asc) => query.OrderBy(c => c.State),
-                (ContainerSortBy.Status, SortOrder.Desc) => query.OrderByDescending(c => c.State),
-                (ContainerSortBy.Created, SortOrder.Asc) => query.OrderBy(c => c.CreatedAt),
-                (ContainerSortBy.Created, SortOrder.Desc) => query.OrderByDescending(c => c.CreatedAt),
-                _ => query.OrderBy(c => c.Name)
-            };
-
-        public static IQueryable<Container> ApplyFiltering(this IQueryable<Container> query, IList<Guid> namespacesIds) =>
-            query.Where(c => c.Namespaces.Any(n => namespacesIds.Contains(n.Id)));
-
-        public static IQueryable<Container> ApplyPaging(this IQueryable<Container> query, int skip, int take) =>
-            query.Skip(skip).Take(take);
-
         public static IQueryable<GetContainerListQueryResultContainerInfo> Parse(this IQueryable<Container> query, IEnumerable<Guid> namespacesIds) =>
             query.Select(container => GetContainerListQueryResultContainerInfo.FromDomain(
                 container, 
