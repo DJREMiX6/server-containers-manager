@@ -1,5 +1,5 @@
 import { signalStoreFeature, withState } from '@ngrx/signals';
-import { User } from '../models/user';
+import { User } from '../models';
 import { withErrorFeature } from '@scm/shared/store/error-store-feature';
 
 export type AuthState = {

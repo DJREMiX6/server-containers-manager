@@ -6,7 +6,7 @@
 @source "../../../environments";
 @source "../../../libs/auth/data";
 @source "../../../libs/auth/features";
-@source "../../../libs/auth/state";
+@source "../../../libs/auth/store";
 @source "../../../libs/auth/utils";
 @source "../../../libs/containers/data";
 @source "../../../libs/containers/features";

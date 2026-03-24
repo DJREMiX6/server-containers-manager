@@ -221,7 +221,7 @@ export class ContainersOverviewComponent implements OnInit {
 
     this.toastService.add({
       summary: 'Error',
-      detail: error.message,
+      detail: error.summary,
       severity: 'error',
     });
   });
