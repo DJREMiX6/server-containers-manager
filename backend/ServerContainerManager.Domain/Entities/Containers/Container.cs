@@ -87,12 +87,20 @@ namespace ServerContainerManager.Domain.Entities.Containers
             return Result.Success;
         }
 
+        public ErrorOr<Success> Start(Actor actor, DateTime now)
+        {
+            return UpdateState(ContainerState.Running, actor, now);
+        }
+
         public ErrorOr<Success> Rename(string name, Actor actor, DateTime now)
         {
             name = name.Trim()[1..];
 
             if (string.IsNullOrEmpty(name) || name.Length < 3)
                 return Error.Validation($"{nameof(Container)}.{nameof(Rename)}", "Name must be at least 3 characters long.");
+
+            if(name == Name)
+                return Result.Success;
 
             Name = name;
 
@@ -104,6 +112,9 @@ namespace ServerContainerManager.Domain.Entities.Containers
         {
             if (!Enum.IsDefined(state))
                 return Error.Validation($"{nameof(Container)}.{nameof(UpdateState)}", "State must be a valid container state.");
+
+            if(state == State)
+                return Result.Success;
 
             State = state;
 

@@ -10,6 +10,9 @@ using ServerContainerManager.Application.Entities;
 using ServerContainerManager.Application.Extensions;
 using ServerContainerManager.Application.Queries.GetContainerList;
 using ServerContainerManager.Domain.Entities.Auth;
+using ServerContainerManager.Shared.Utils;
+using ServerContainerManager.Shared.Utils.Extensions;
+using Actor = ServerContainerManager.Shared.Utils.Actor;
 
 namespace ServerContainerManager.Application.Commands.StartContainer
 {
@@ -17,12 +20,14 @@ namespace ServerContainerManager.Application.Commands.StartContainer
         ILogger<StartContainerCommandHandler> logger,
         AppDbContext dbContext,
         UserManager<AppUser> userManager,
-        DockerClient dockerClient) : ICommandHandler<StartContainerCommand, StartContainerCommandResult>
+        DockerClient dockerClient,
+        TimeProvider timeProvider) : ICommandHandler<StartContainerCommand, StartContainerCommandResult>
     {
         private readonly ILogger<StartContainerCommandHandler> _logger = logger;
         private readonly AppDbContext _dbContext = dbContext;
         private readonly UserManager<AppUser> _userManager = userManager;
         private readonly DockerClient _dockerClient = dockerClient;
+        private readonly TimeProvider _timeProvider = timeProvider; 
 
         public async Task<ErrorOr<StartContainerCommandResult>> HandleAsync(StartContainerCommand command, CancellationToken cancellationToken = default)
         {
@@ -42,7 +47,18 @@ namespace ServerContainerManager.Application.Commands.StartContainer
             if (container == null)
                 return Error.NotFound($"{nameof(StartContainerCommandHandler)}.{nameof(HandleAsync)}", $"Cannot find container with id {command.ContainerId}");
 
-            await _dockerClient.Containers.StartContainerAsync(command.ContainerId, new ContainerStartParameters(), cancellationToken);
+            var now = _timeProvider.GetUtcDateTimeNow();
+            var actor = Actor.FromUser(command.UserId);
+
+            var containerStartResult = container.Start(actor, now);
+            if (containerStartResult.IsError)
+                return containerStartResult.Errors;
+            
+            var dockerContainerStarted = await _dockerClient.Containers.StartContainerAsync(command.ContainerId, new ContainerStartParameters(), cancellationToken);
+            if (!dockerContainerStarted)
+                return Error.Unexpected($"{nameof(StartContainerCommandHandler)}.{nameof(HandleAsync)}", $"Could not start the container {command.ContainerId}");
+
+            await _dbContext.SaveChangesAsync(cancellationToken);
 
             return new StartContainerCommandResult();
         }
