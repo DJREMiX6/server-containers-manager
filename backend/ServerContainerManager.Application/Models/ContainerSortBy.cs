@@ -4,6 +4,7 @@ namespace ServerContainerManager.Application.Models
     {
         Name,
         Status,
-        Created
+        Created,
+        Updated
     }
 }

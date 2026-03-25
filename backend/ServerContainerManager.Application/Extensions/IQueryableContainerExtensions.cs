@@ -17,8 +17,10 @@ namespace ServerContainerManager.Application.Extensions
                 (ContainerSortBy.Name, SortOrder.Desc) => query.OrderByDescending(c => c.Name),
                 (ContainerSortBy.Status, SortOrder.Asc) => query.OrderBy(c => c.State),
                 (ContainerSortBy.Status, SortOrder.Desc) => query.OrderByDescending(c => c.State),
-                (ContainerSortBy.Created, SortOrder.Asc) => query.OrderBy(c => c.CreatedAt),
-                (ContainerSortBy.Created, SortOrder.Desc) => query.OrderByDescending(c => c.CreatedAt),
+                (ContainerSortBy.Created, SortOrder.Asc) => query.OrderBy(c => c.Created.At),
+                (ContainerSortBy.Created, SortOrder.Desc) => query.OrderByDescending(c => c.Created.At),
+                (ContainerSortBy.Updated, SortOrder.Asc) => query.OrderBy(c => c.Updated.At),
+                (ContainerSortBy.Updated, SortOrder.Desc) => query.OrderByDescending(c => c.Updated.At),
                 _ => query.OrderBy(c => c.Name)
             };
     }

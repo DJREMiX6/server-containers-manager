@@ -2,11 +2,12 @@
 using ServerContainerManager.Domain.Entities.Containers.Enums;
 using ServerContainerManager.Domain.Entities.Containers.ValueObjects;
 using ServerContainerManager.Domain.Entities.Namespaces;
+using ServerContainerManager.Shared.Utils;
 using System.Text.RegularExpressions;
 
 namespace ServerContainerManager.Domain.Entities.Containers
 {
-    public sealed class Container
+    public sealed class Container : AuditableEntity<string>
     {
         private static readonly Regex DockerContainerIdCharactersRegex = new ("[a-f0-9]", RegexOptions.Compiled);
 
@@ -17,26 +18,26 @@ namespace ServerContainerManager.Domain.Entities.Containers
         public string Id { get; private set; }
         public string Name { get; private set; }
         public ContainerState State { get; private set; }
-        public DateTime CreatedAt { get; private set; }
         public IReadOnlyCollection<Label> Labels => _labels;
         public IReadOnlyCollection<Port> Ports => _ports;
         public IReadOnlyCollection<Namespace> Namespaces => _namespaces;
 
-        private Container() { } //EF
+        private Container() : base(Actor.System(), DateTime.Now) { } //EF
 
         private Container(
             string id,
             string name,
             ContainerState state,
-            DateTime createdAt,
             List<Label> labels,
             List<Port> ports,
-            List<Namespace> namespaces)
+            List<Namespace> namespaces,
+            Actor actor,
+            DateTime now,
+            DateTime? createdAt) : base(actor, createdAt ?? now)
         {
             Id = id;
             Name = name;
             State = state;
-            CreatedAt = createdAt;
             _labels = [.. labels];
             _ports = [.. ports];
             _namespaces = [.. namespaces];
@@ -46,10 +47,12 @@ namespace ServerContainerManager.Domain.Entities.Containers
             string dockerId,
             string name,
             ContainerState state,
-            DateTime createdAt,
             List<Label> labels,
             List<Port> ports,
-            List<Namespace> namespaces)
+            List<Namespace> namespaces,
+            Actor actor,
+            DateTime now,
+            DateTime? createdAt = null)
         {
             var trimmedDockerId = dockerId.Trim();
             var trimmedName = name.Trim().TrimStart('/'); // Container's names starts with '/', the TrimStart('/') removes it
@@ -69,7 +72,7 @@ namespace ServerContainerManager.Domain.Entities.Containers
             if (errors.Count > 0)
                 return errors;
 
-            return new Container(trimmedDockerId, trimmedName, state, createdAt, labels, ports, namespaces);
+            return new Container(trimmedDockerId, trimmedName, state, labels, ports, namespaces, actor, now, createdAt);
         }
 
         private static ErrorOr<Success> ValidateDockerId(string dockerId)
@@ -84,7 +87,7 @@ namespace ServerContainerManager.Domain.Entities.Containers
             return Result.Success;
         }
 
-        public ErrorOr<Success> Rename(string name)
+        public ErrorOr<Success> Rename(string name, Actor actor, DateTime now)
         {
             name = name.Trim()[1..];
 
@@ -92,31 +95,39 @@ namespace ServerContainerManager.Domain.Entities.Containers
                 return Error.Validation($"{nameof(Container)}.{nameof(Rename)}", "Name must be at least 3 characters long.");
 
             Name = name;
+
+            Touch(actor, now);
             return Result.Success;
         }
 
-        public ErrorOr<Success> UpdateState(ContainerState state)
+        public ErrorOr<Success> UpdateState(ContainerState state, Actor actor, DateTime now)
         {
             if (!Enum.IsDefined(state))
                 return Error.Validation($"{nameof(Container)}.{nameof(UpdateState)}", "State must be a valid container state.");
 
             State = state;
+
+            Touch(actor, now);
             return Result.Success;
         }
 
-        public ErrorOr<Success> UpdateLabels(IList<Label> labels)
+        public ErrorOr<Success> UpdateLabels(IList<Label> labels, Actor actor, DateTime now)
         {
             _labels = [.. labels];
+
+            Touch(actor, now);
             return Result.Success;
         }
 
-        public ErrorOr<Success> UpdatePorts(IList<Port> ports)
+        public ErrorOr<Success> UpdatePorts(IList<Port> ports, Actor actor, DateTime now)
         {
             _ports = [.. ports];
+
+            Touch(actor, now);
             return Result.Success;
         }
 
-        public ErrorOr<Success> UpdateNamespaces(IList<Namespace> namespaces)
+        public ErrorOr<Success> UpdateNamespaces(IList<Namespace> namespaces, Actor actor, DateTime now)
         {
             if (namespaces.Count == 0) return Error.Validation($"{nameof(Container)}.{nameof(UpdateNamespaces)}", "Namespaces list cannot be empty");
 
@@ -124,6 +135,7 @@ namespace ServerContainerManager.Domain.Entities.Containers
 
             _namespaces = [.. namespacesSet];
 
+            Touch(actor, now);
             return Result.Success;
         }
     }

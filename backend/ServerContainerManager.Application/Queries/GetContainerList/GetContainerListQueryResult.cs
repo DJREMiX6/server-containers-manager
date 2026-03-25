@@ -11,6 +11,7 @@ namespace ServerContainerManager.Application.Queries.GetContainerList
         public required string Name { get; init; }
         public required ContainerState State { get; init; }
         public required DateTime CreatedAt { get; init; }
+        public required DateTime UpdatedAt { get; init; }
         public required IReadOnlyCollection<Label> Labels { get; init; }
         public required IReadOnlyCollection<Port> Ports { get; init; }
         public required IReadOnlyCollection<NamespaceInfo> Namespaces { get; init; }
@@ -20,7 +21,8 @@ namespace ServerContainerManager.Application.Queries.GetContainerList
             Id = container.Id,
             Name = container.Name,
             State = container.State,
-            CreatedAt = container.CreatedAt,
+            CreatedAt = container.Created.At,
+            UpdatedAt = container.Updated.At,
             Labels = container.Labels,
             Ports = container.Ports,
             Namespaces = namespaces

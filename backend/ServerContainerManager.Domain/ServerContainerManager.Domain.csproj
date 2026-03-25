@@ -17,4 +17,8 @@
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="10.0.3" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\ServerContainerManager.Shared.Utils\ServerContainerManager.Shared.Utils.csproj" />
+  </ItemGroup>
+
 </Project>

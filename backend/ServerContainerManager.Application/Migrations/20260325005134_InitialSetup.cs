@@ -57,7 +57,12 @@ namespace ServerContainerManager.Application.Migrations
                     Id = table.Column<string>(type: "TEXT", nullable: false),
                     Name = table.Column<string>(type: "TEXT", maxLength: 200, nullable: false),
                     State = table.Column<string>(type: "TEXT", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "TEXT", nullable: false)
+                    Created_At = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    Created_By_ActorType = table.Column<string>(type: "TEXT", nullable: false),
+                    Created_By_Id = table.Column<Guid>(type: "TEXT", nullable: true),
+                    Updated_At = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    Updated_By_ActorType = table.Column<string>(type: "TEXT", nullable: false),
+                    Updated_By_Id = table.Column<Guid>(type: "TEXT", nullable: true)
                 },
                 constraints: table =>
                 {

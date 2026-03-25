@@ -8,20 +8,26 @@ using ServerContainerManager.Application.Entities;
 using ServerContainerManager.Application.Queries.GetContainerList;
 using ServerContainerManager.Domain.Entities.Auth;
 using ServerContainerManager.Domain.Entities.Containers;
+using ServerContainerManager.Shared.Utils;
+using ServerContainerManager.Shared.Utils.Extensions;
 
 namespace ServerContainerManager.Application.Commands.UpdateContainerNamespaces
 {
     internal sealed class UpdateContainerNamespacesCommandHandler(
         ILogger<UpdateContainerNamespacesCommandHandler> logger,
         AppDbContext dbContext,
-        UserManager<AppUser> userManager) : ICommandHandler<UpdateContainerNamespacesCommand, UpdateContainerNamespacesCommandResult>
+        UserManager<AppUser> userManager,
+        TimeProvider timeProvider) : ICommandHandler<UpdateContainerNamespacesCommand, UpdateContainerNamespacesCommandResult>
     {
         private readonly ILogger<UpdateContainerNamespacesCommandHandler> _logger = logger;
         private readonly AppDbContext _appDbContext = dbContext;
         private readonly UserManager<AppUser> _userManager = userManager;
+        private readonly TimeProvider _timeProvider = timeProvider;
 
         public async Task<ErrorOr<UpdateContainerNamespacesCommandResult>> HandleAsync(UpdateContainerNamespacesCommand command, CancellationToken cancellationToken = default)
         {
+            var actor = Actor.FromUser(command.UserId);
+            var now = _timeProvider.GetUtcDateTimeNow();
             var namespaces = await _appDbContext.Namespaces.Where(n => command.NamespacesIds.Contains(n.Id)).ToListAsync(cancellationToken);
             if (namespaces.Count != command.NamespacesIds.Count)
                 return Error.Validation($"{nameof(UpdateContainerNamespacesCommandHandler)}.{nameof(HandleAsync)}", "Some namespaces do not exist");
@@ -33,7 +39,7 @@ namespace ServerContainerManager.Application.Commands.UpdateContainerNamespaces
             if (container == null)
                 return Error.NotFound($"{nameof(UpdateContainerNamespacesCommandHandler)}.{nameof(HandleAsync)}", $"Cannot find container with id ${command.ContainerId}");
 
-            container.UpdateNamespaces(namespaces);
+            container.UpdateNamespaces(namespaces, actor, now);
             await _appDbContext.SaveChangesAsync(cancellationToken);
 
             return new UpdateContainerNamespacesCommandResult();

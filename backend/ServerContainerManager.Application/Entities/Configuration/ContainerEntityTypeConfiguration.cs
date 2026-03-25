@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using ServerContainerManager.Domain.Entities.Containers;
 using ServerContainerManager.Domain.Entities.Namespaces;
+using ServerContainerManager.Application.Entities.Extensions;
 
 namespace ServerContainerManager.Application.Entities.Configuration
 {
@@ -18,9 +19,6 @@ namespace ServerContainerManager.Application.Entities.Configuration
             builder.Property(e => e.State)
                 .IsRequired()
                 .HasConversion<string>();
-
-            builder.Property(e => e.CreatedAt)
-                .IsRequired();
 
             builder.OwnsMany(e => e.Labels, l =>
             {
@@ -56,6 +54,8 @@ namespace ServerContainerManager.Application.Entities.Configuration
                 p.Property(e => e.Private)
                     .IsRequired();
             });
+
+            builder.ConfigureAuditableEntity();
 
             builder.HasMany(e => e.Namespaces)
                 .WithMany()

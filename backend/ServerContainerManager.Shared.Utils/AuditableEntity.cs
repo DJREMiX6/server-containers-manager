@@ -1,6 +1,8 @@
-﻿namespace ServerContainerManager.Shared.Utils
+﻿using ServerContainerManager.Shared.Utils.Abstraction;
+
+namespace ServerContainerManager.Shared.Utils
 {
-    public abstract class AuditableEntity<TId> : Entity<TId>
+    public abstract class AuditableEntity<TId> : Entity<TId>, IAuditableEntity
     {
         public AuditInfo Created { get; private set; }
         public AuditInfo Updated { get; private set; }
