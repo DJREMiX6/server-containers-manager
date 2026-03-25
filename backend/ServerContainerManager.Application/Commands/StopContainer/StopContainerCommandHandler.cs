@@ -10,6 +10,9 @@ using ServerContainerManager.Application.Entities;
 using ServerContainerManager.Application.Extensions;
 using ServerContainerManager.Application.Queries.GetContainerList;
 using ServerContainerManager.Domain.Entities.Auth;
+using ServerContainerManager.Shared.Utils;
+using ServerContainerManager.Shared.Utils.Extensions;
+using Actor = ServerContainerManager.Shared.Utils.Actor;
 
 namespace ServerContainerManager.Application.Commands.StopContainer
 {
@@ -17,12 +20,14 @@ namespace ServerContainerManager.Application.Commands.StopContainer
         ILogger<StopContainerCommandHandler> logger,
         AppDbContext dbContext,
         UserManager<AppUser> userManager,
-        DockerClient dockerClient) : ICommandHandler<StopContainerCommand, StopContainerCommandResult>
+        DockerClient dockerClient,
+        TimeProvider timeProvider) : ICommandHandler<StopContainerCommand, StopContainerCommandResult>
     {
         private readonly ILogger<StopContainerCommandHandler> _logger = logger;
         private readonly AppDbContext _dbContext = dbContext;
         private readonly UserManager<AppUser> _userManager = userManager;
         private readonly DockerClient _dockerClient = dockerClient;
+        private readonly TimeProvider _timeProvider = timeProvider;
 
         public async Task<ErrorOr<StopContainerCommandResult>> HandleAsync(StopContainerCommand command, CancellationToken cancellationToken = default)
         {
@@ -38,10 +43,22 @@ namespace ServerContainerManager.Application.Commands.StopContainer
                 containerQuery = containerQuery.FilterByNamespaces(namespacesIds);
             }
 
-            if (!await containerQuery.AnyAsync(cancellationToken))
+            var container = await containerQuery.FirstOrDefaultAsync(cancellationToken);
+            if (container == null)
                 return Error.NotFound($"{nameof(StopContainerCommandHandler)}.{nameof(HandleAsync)}", $"Cannot find container with id {command.ContainerId}");
 
-            await _dockerClient.Containers.StopContainerAsync(command.ContainerId, new ContainerStopParameters(), cancellationToken);
+            var actor = Actor.FromUser(command.UserId);
+            var now = _timeProvider.GetUtcDateTimeNow();
+            var stopResult = container.Stop(actor, now);
+
+            if (stopResult.IsError)
+                return stopResult.Errors;
+
+            var containerStopped = await _dockerClient.Containers.StopContainerAsync(command.ContainerId, new ContainerStopParameters(), cancellationToken);
+            if (!containerStopped)
+                return Error.Unexpected($"{nameof(StopContainerCommandHandler)}.{nameof(HandleAsync)}", $"Could not start container {container.Id}");
+
+            await _dbContext.SaveChangesAsync(cancellationToken);
 
             return new StopContainerCommandResult();
         }
