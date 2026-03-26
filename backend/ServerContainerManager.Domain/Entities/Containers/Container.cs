@@ -4,6 +4,7 @@ using ServerContainerManager.Domain.Entities.Containers.ValueObjects;
 using ServerContainerManager.Domain.Entities.Namespaces;
 using ServerContainerManager.Shared.Utils;
 using ServerContainerManager.Shared.Utils.Enums;
+using ServerContainerManager.Shared.Utils.Errors;
 using System.Text.RegularExpressions;
 
 namespace ServerContainerManager.Domain.Entities.Containers
@@ -102,6 +103,14 @@ namespace ServerContainerManager.Domain.Entities.Containers
 
         public ErrorOr<Success> Resume(Actor actor, DateTime now) =>
             UpdateState(ContainerState.Running, actor, now);
+
+        public ErrorOr<Success> Kill(Actor actor, DateTime now)
+        {
+            if (State != ContainerState.Running && State != ContainerState.Paused)
+                return ContainerErrors.ContainerNotRunning(Id);
+
+            return UpdateState(ContainerState.Exited, actor, now);
+        }
 
         public ErrorOr<Success> Rename(string name, Actor actor, DateTime now)
         {

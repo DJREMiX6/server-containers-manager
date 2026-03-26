@@ -6,6 +6,7 @@ using ServerContainerManager.API.Models.Requests.ContainersController;
 using ServerContainerManager.API.Models.Responses.ContainersController;
 using ServerContainerManager.API.Models.Responses.Extensions;
 using ServerContainerManager.Application.Commands.Abstraction;
+using ServerContainerManager.Application.Commands.KillContainer;
 using ServerContainerManager.Application.Commands.PauseContainer;
 using ServerContainerManager.Application.Commands.RestartContainer;
 using ServerContainerManager.Application.Commands.ResumeContainer;
@@ -182,6 +183,26 @@ namespace ServerContainerManager.API.Controllers
             return TypedResults.NoContent();
         }
 
+        [Authorize(Roles = UserRoles.Member)]
+        [HttpPost("{containerId}/kill")]
+        public async Task<Results<NoContent, ProblemHttpResult>> KillContainer(
+            [FromRoute] string containerId,
+            [FromServices] ICommandHandler<KillContainerCommand, KillContainerCommandResult> commandHandler,
+            CancellationToken cancellationToken = default)
+        {
+            var userId = User.GetUserId();
+            var command = new KillContainerCommand()
+            {
+                UserId = userId,
+                ContainerId = containerId
+            };
 
+            var result = await commandHandler.HandleAsync(command, cancellationToken);
+
+            if (result.IsError)
+                return result.Errors.ToProblemHttpResult();
+
+            return TypedResults.NoContent();
+        }
     }
 }
