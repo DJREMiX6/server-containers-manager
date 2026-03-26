@@ -1,5 +1,6 @@
 ﻿using ErrorOr;
 using ServerContainerManager.Domain.Entities.Containers.Enums;
+using ServerContainerManager.Domain.Entities.Containers.Errors;
 using ServerContainerManager.Domain.Entities.Containers.ValueObjects;
 using ServerContainerManager.Domain.Entities.Namespaces;
 using ServerContainerManager.Shared.Utils;
@@ -17,7 +18,6 @@ namespace ServerContainerManager.Domain.Entities.Containers
         private List<Port> _ports = [];
         private List<Namespace> _namespaces = [];
 
-        public string Id { get; private set; }
         public string Name { get; private set; }
         public ContainerState State { get; private set; }
         public IReadOnlyCollection<Label> Labels => _labels;
@@ -34,8 +34,7 @@ namespace ServerContainerManager.Domain.Entities.Containers
             List<Port> ports,
             List<Namespace> namespaces,
             Actor actor,
-            DateTime now,
-            DateTime? createdAt) : base(actor, createdAt ?? now)
+            DateTime createdAt) : base(actor, createdAt)
         {
             Id = id;
             Name = name;
@@ -56,58 +55,86 @@ namespace ServerContainerManager.Domain.Entities.Containers
             DateTime now,
             DateTime? createdAt = null)
         {
-            var trimmedDockerId = dockerId.Trim();
-            var trimmedName = name.Trim().TrimStart('/'); // Container's names starts with '/', the TrimStart('/') removes it
+            dockerId = dockerId.Trim();
+            name = name.Trim().TrimStart('/'); // Container's names starts with '/', the TrimStart('/') removes it
 
             var errors = new List<Error>();
 
-            var dockerIdValidationResult = ValidateDockerId(trimmedDockerId);
+            var dockerIdValidationResult = ValidateDockerId(dockerId);
             if(dockerIdValidationResult.IsError)
                 errors.AddRange(dockerIdValidationResult.Errors);
 
-            if (string.IsNullOrEmpty(trimmedName) || trimmedName.Length < 3)
-                errors.Add(Error.Validation($"{nameof(Container)}.{nameof(Create)}", "Name must be at least 3 characters long."));
+            if (string.IsNullOrEmpty((string)name) || name.Length < 3)
+                errors.Add(ContainerValidationErrors.NameTooShort());
 
             if(!Enum.IsDefined(state))
-                errors.Add(Error.Validation($"{nameof(Container)}.{nameof(Create)}", "State must be a valid container state."));
+                errors.Add(ContainerValidationErrors.InvalidState());
 
             if (errors.Count > 0)
                 return errors;
 
-            return new Container(trimmedDockerId, trimmedName, state, labels, ports, namespaces, actor, now, createdAt);
+            return new Container(dockerId, name, state, labels, ports, namespaces, actor, createdAt ?? now);
         }
 
         private static ErrorOr<Success> ValidateDockerId(string dockerId)
         {
             if (string.IsNullOrWhiteSpace(dockerId))
-                return Error.Validation($"{nameof(Container)}.{nameof(ValidateDockerId)}", "Docker container ID cannot be null or empty.");
+                return ContainerValidationErrors.NullOrEmptyId();
             if (dockerId.Length != 64)
-                return Error.Validation($"{nameof(Container)}.{nameof(ValidateDockerId)}", "Docker container ID must be 64 characters long.");
-            if(!DockerContainerIdCharactersRegex.IsMatch(dockerId))
-                return Error.Validation($"{nameof(Container)}.{nameof(ValidateDockerId)}", "Invalid Docker container ID format.");
+                return ContainerValidationErrors.InvalidIdLength();
+            if (!DockerContainerIdCharactersRegex.IsMatch(dockerId))
+                return ContainerValidationErrors.InvalidIdFormat();
 
             return Result.Success;
         }
 
-        public ErrorOr<Success> Start(Actor actor, DateTime now) => 
-            UpdateState(ContainerState.Running, actor, now);
+        public ErrorOr<Success> Start(Actor actor, DateTime now)
+        {
+            if (State == ContainerState.Running || State == ContainerState.Paused || State == ContainerState.Restarting)
+                return ContainerErrors.AlreadyRunning(Id);
 
-        public ErrorOr<Success> Stop(Actor actor, DateTime now) => 
-            UpdateState(ContainerState.Exited, actor, now);
+            if (State == ContainerState.Removing)
+                return ContainerErrors.Removing(Id);
 
-        public ErrorOr<Success> Restart(Actor actor, DateTime now) => 
-            UpdateState(ContainerState.Restarting, actor, now);
+            return UpdateState(ContainerState.Running, actor, now);
+        }
 
-        public ErrorOr<Success> Pause(Actor actor, DateTime now) => 
-            UpdateState(ContainerState.Paused, actor, now);
+        public ErrorOr<Success> Stop(Actor actor, DateTime now)
+        {
+            if (State != ContainerState.Running || State != ContainerState.Paused)
+                return ContainerErrors.NotRunning(Id);
 
-        public ErrorOr<Success> Resume(Actor actor, DateTime now) =>
-            UpdateState(ContainerState.Running, actor, now);
+            return UpdateState(ContainerState.Exited, actor, now);
+        }
+
+        public ErrorOr<Success> Restart(Actor actor, DateTime now)
+        {
+            if (State != ContainerState.Running)
+                return ContainerErrors.NotRunning(Id);
+
+            return UpdateState(ContainerState.Restarting, actor, now);
+        }
+
+        public ErrorOr<Success> Pause(Actor actor, DateTime now)
+        {
+            if (State != ContainerState.Running)
+                return ContainerErrors.NotRunning(Id);
+
+            return UpdateState(ContainerState.Paused, actor, now);
+        }
+
+        public ErrorOr<Success> Resume(Actor actor, DateTime now)
+        {
+            if (State != ContainerState.Paused)
+                ContainerErrors.NotPaused(Id);
+
+            return UpdateState(ContainerState.Running, actor, now);
+        }
 
         public ErrorOr<Success> Kill(Actor actor, DateTime now)
         {
             if (State != ContainerState.Running && State != ContainerState.Paused)
-                return ContainerErrors.ContainerNotRunning(Id);
+                return ContainerErrors.NotRunning(Id);
 
             return UpdateState(ContainerState.Exited, actor, now);
         }
@@ -117,7 +144,7 @@ namespace ServerContainerManager.Domain.Entities.Containers
             name = name.Trim()[1..];
 
             if (string.IsNullOrEmpty(name) || name.Length < 3)
-                return Error.Validation($"{nameof(Container)}.{nameof(Rename)}", "Name must be at least 3 characters long.");
+                return ContainerValidationErrors.NameTooShort();
 
             if(name == Name)
                 return Result.Success;
@@ -131,7 +158,7 @@ namespace ServerContainerManager.Domain.Entities.Containers
         public ErrorOr<Success> UpdateState(ContainerState state, Actor actor, DateTime now)
         {
             if (!Enum.IsDefined(state))
-                return Error.Validation($"{nameof(Container)}.{nameof(UpdateState)}", "State must be a valid container state.");
+                return ContainerValidationErrors.InvalidState();
 
             if(state == State)
                 return Result.Success;
@@ -168,7 +195,7 @@ namespace ServerContainerManager.Domain.Entities.Containers
 
         public ErrorOr<Success> UpdateNamespaces(IList<Namespace> namespaces, Actor actor, DateTime now)
         {
-            if (namespaces.Count == 0) return Error.Validation($"{nameof(Container)}.{nameof(UpdateNamespaces)}", "Namespaces list cannot be empty");
+            if (namespaces.Count == 0) return ContainerValidationErrors.EmptyNamespaces();
 
             var namespacesSet = new HashSet<Namespace>(namespaces);
 

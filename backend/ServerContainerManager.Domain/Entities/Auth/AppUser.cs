@@ -1,5 +1,6 @@
 ﻿using ErrorOr;
 using Microsoft.AspNetCore.Identity;
+using ServerContainerManager.Domain.Entities.Auth.Errors;
 using ServerContainerManager.Domain.Entities.Namespaces;
 
 namespace ServerContainerManager.Domain.Entities.Auth
@@ -32,6 +33,9 @@ namespace ServerContainerManager.Domain.Entities.Auth
 
         public ErrorOr<Success> UpsertNamespaces(IList<Namespace> namespaces)
         {
+            if (namespaces.Count == 0)
+                return UserValidationErrors.EmptyNamespaces();
+
             _namespaces = [.. namespaces];
 
             return Result.Success;

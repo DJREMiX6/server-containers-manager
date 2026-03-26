@@ -79,10 +79,10 @@ namespace ServerContainerManager.Application.Entities.Extensions
             var roleManager = services.GetRequiredService<RoleManager<AppRole>>();
 
             if (!await roleManager.RoleExistsAsync(UserRoles.Admin))
-                await roleManager.CreateAsync(new AppRole(UserRoles.Admin));
+                await roleManager.CreateAsync(AppRole.Create(UserRoles.Admin).Value);
 
             if (!await roleManager.RoleExistsAsync(UserRoles.Member))
-                await roleManager.CreateAsync(new AppRole(UserRoles.Member));
+                await roleManager.CreateAsync(AppRole.Create(UserRoles.Member).Value);
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using ErrorOr;
+using ServerContainerManager.Domain.Entities.Namespaces.Errors;
 
 namespace ServerContainerManager.Domain.Entities.Namespaces
 {
@@ -17,8 +18,10 @@ namespace ServerContainerManager.Domain.Entities.Namespaces
 
         public static ErrorOr<Namespace> Create(string name)
         {
+            name = name.Trim();
+
             if (string.IsNullOrEmpty(name) || name.Length < 3)
-                return Error.Validation($"{nameof(Namespace)}.{nameof(Create)}", "Namespace name must be at least 3 characters long");
+                return NamespaceValidationErrors.NameTooShort();
 
             return new Namespace(Guid.NewGuid(), name);
         }
