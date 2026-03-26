@@ -8,6 +8,7 @@ using ServerContainerManager.API.Models.Responses.Extensions;
 using ServerContainerManager.Application.Commands.Abstraction;
 using ServerContainerManager.Application.Commands.PauseContainer;
 using ServerContainerManager.Application.Commands.RestartContainer;
+using ServerContainerManager.Application.Commands.ResumeContainer;
 using ServerContainerManager.Application.Commands.StartContainer;
 using ServerContainerManager.Application.Commands.StopContainer;
 using ServerContainerManager.Application.Commands.UpdateContainerNamespaces;
@@ -146,6 +147,28 @@ namespace ServerContainerManager.API.Controllers
         {
             var userId = User.GetUserId();
             var command = new PauseContainerCommand()
+            {
+                UserId = userId,
+                ContainerId = containerId
+            };
+
+            var result = await commandHandler.HandleAsync(command, cancellationToken);
+
+            if (result.IsError)
+                return result.Errors.ToProblemHttpResult();
+
+            return TypedResults.NoContent();
+        }
+
+        [Authorize(Roles = UserRoles.Member)]
+        [HttpPost("{containerId}/resume")]
+        public async Task<Results<NoContent, ProblemHttpResult>> ResumeContainer(
+            [FromRoute] string containerId,
+            [FromServices] ICommandHandler<ResumeContainerCommand, ResumeContainerCommandResult> commandHandler,
+            CancellationToken cancellationToken = default)
+        {
+            var userId = User.GetUserId();
+            var command = new ResumeContainerCommand()
             {
                 UserId = userId,
                 ContainerId = containerId

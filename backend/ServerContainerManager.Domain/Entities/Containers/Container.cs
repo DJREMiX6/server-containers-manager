@@ -100,6 +100,9 @@ namespace ServerContainerManager.Domain.Entities.Containers
         public ErrorOr<Success> Pause(Actor actor, DateTime now) => 
             UpdateState(ContainerState.Paused, actor, now);
 
+        public ErrorOr<Success> Resume(Actor actor, DateTime now) =>
+            UpdateState(ContainerState.Running, actor, now);
+
         public ErrorOr<Success> Rename(string name, Actor actor, DateTime now)
         {
             name = name.Trim()[1..];
