@@ -4,31 +4,14 @@ namespace ServerContainerManager.Application.Commands.GetUserList
 {
     public sealed record GetUserListCommandResultUserInfo
     {
-        public Guid Id { get; }
-        public string Username { get; }
-        public IList<string> Roles { get; }
-        public IList<NamespaceInfo> Namespaces { get; }
-
-        public GetUserListCommandResultUserInfo(
-            Guid id,
-            string username,
-            IList<string> roles,
-            IList<NamespaceInfo> namespaces)
-        {
-            Id = id;
-            Username = username;
-            Roles = [.. roles];
-            Namespaces = [.. namespaces];
-        }
+        public required Guid Id { get; init; }
+        public required string Username { get; init; }
+        public required IList<string> Roles { get; init; }
+        public required IList<NamespaceInfo> Namespaces { get; init; }
     }
 
     public sealed record GetUserListCommandResult
     {
-        public IList<GetUserListCommandResultUserInfo> Users { get; }
-
-        public GetUserListCommandResult(IList<GetUserListCommandResultUserInfo> users)
-        {
-            Users = [.. users];
-        }
+        public required IList<GetUserListCommandResultUserInfo> Users { get; init; }
     }
 }

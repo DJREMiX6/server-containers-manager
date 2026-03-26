@@ -2,11 +2,6 @@
 {
     public sealed record DeleteUserCommand
     {
-        public Guid UserId { get; }
-
-        public DeleteUserCommand(Guid userId)
-        {
-            UserId = userId;
-        }
+        public required Guid UserId { get; init; }
     }
 }

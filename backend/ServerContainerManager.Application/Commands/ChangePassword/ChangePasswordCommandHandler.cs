@@ -17,8 +17,6 @@ namespace ServerContainerManager.Application.Commands.ChangePassword
 
         public async Task<ErrorOr<ChangePasswordCommandResult>> HandleAsync(ChangePasswordCommand command, CancellationToken cancellationToken = default)
         {
-            using var transaction = await _dbContext.Database.BeginTransactionAsync(cancellationToken);
-
             var user = await _userManager.GetUserByIdAsync(command.UserId, cancellationToken);
             if (user is null)
                 return UserErrors.UnauthorizedNotFound(command.UserId);
@@ -28,8 +26,6 @@ namespace ServerContainerManager.Application.Commands.ChangePassword
                 return changePasswordResult.Errors
                     .Select(e => Error.Validation($"{nameof(ChangePasswordCommandHandler)}.{nameof(HandleAsync)}", e.Description))
                     .ToList();
-
-            await transaction.CommitAsync(cancellationToken);
 
             return new ChangePasswordCommandResult();
         }

@@ -4,6 +4,7 @@ using Microsoft.Extensions.Logging;
 using ServerContainerManager.Application.Commands.Abstraction;
 using ServerContainerManager.Application.Entities;
 using ServerContainerManager.Domain.Entities.Namespaces;
+using ServerContainerManager.Shared.Utils.Errors;
 
 namespace ServerContainerManager.Application.Commands.CreateNamespace
 {
@@ -20,7 +21,7 @@ namespace ServerContainerManager.Application.Commands.CreateNamespace
 
             var namespaceExists = await _dbContext.Namespaces.AnyAsync(n => n.Name == normalizedNamespaceName, cancellationToken);
             if (namespaceExists)
-                return Error.Conflict($"{nameof(CreateNamespaceCommandHandler)}.{nameof(HandleAsync)}", $"Namespace with name {command.Name} already exists.");
+                return NamespaceErrors.AlreadyExists(normalizedNamespaceName);
 
             var createNamespaceResult = Namespace.Create(normalizedNamespaceName);
             if (createNamespaceResult.IsError)

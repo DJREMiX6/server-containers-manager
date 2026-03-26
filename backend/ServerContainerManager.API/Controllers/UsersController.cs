@@ -40,7 +40,11 @@ namespace ServerContainerManager.API.Controllers
             ICommandHandler<CreateUserCommand, CreateUserCommandResult> handler,
             CancellationToken cancellationToken = default)
         {
-            var command = new CreateUserCommand(request.Username, request.Password);
+            var command = new CreateUserCommand()
+            {
+                Username = request.Username,
+                Password = request.Password
+            };
 
             var createUserResult = await handler.HandleAsync(command, cancellationToken);
 
@@ -57,10 +61,12 @@ namespace ServerContainerManager.API.Controllers
             ICommandHandler<ChangePasswordCommand, ChangePasswordCommandResult> handler,
             CancellationToken cancellationToken = default)
         {
-            var command = new ChangePasswordCommand(
-                userId,
-                request.CurrentPassword,
-                request.NewPassword);
+            var command = new ChangePasswordCommand()
+            {
+                UserId = userId,
+                CurrentPassword = request.CurrentPassword,
+                NewPassword = request.NewPassword
+            };
 
             var changePasswordResult = await handler.HandleAsync(command, cancellationToken);
 
@@ -76,7 +82,10 @@ namespace ServerContainerManager.API.Controllers
             ICommandHandler<DeleteUserCommand, DeleteUserCommandResult> handler,
             CancellationToken cancellationToken = default)
         {
-            var command = new DeleteUserCommand(userId);
+            var command = new DeleteUserCommand()
+            {
+                UserId = userId
+            };
             var result = await handler.HandleAsync(command, cancellationToken);
 
             if (result.IsError)
@@ -92,7 +101,11 @@ namespace ServerContainerManager.API.Controllers
             ICommandHandler<UpdateUserNamespacesCommand, UpdateUserNamespacesCommandResult> handler,
             CancellationToken cancellationToken = default)
         {
-            var command = new UpdateUserNamespacesCommand(userId, request.NamespacesIds);
+            var command = new UpdateUserNamespacesCommand
+            {
+                UserId = userId,
+                NamespacesIds = request.NamespacesIds
+            };
             var result = await handler.HandleAsync(command, cancellationToken);
 
             if (result.IsError)

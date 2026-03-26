@@ -2,13 +2,7 @@
 {
     public sealed record UpdateUserNamespacesCommand
     {
-        public Guid UserId { get; }
-        public IList<Guid> NamespacesIds { get; }
-
-        public UpdateUserNamespacesCommand(Guid userId, IList<Guid> namespacesIds)
-        {
-            UserId = userId;
-            NamespacesIds = namespacesIds;
-        }
+        public required Guid UserId { get; init; }
+        public required IList<Guid> NamespacesIds { get; init; }
     }
 }

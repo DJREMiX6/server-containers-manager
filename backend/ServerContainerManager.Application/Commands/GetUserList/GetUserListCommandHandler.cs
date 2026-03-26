@@ -27,16 +27,21 @@ namespace ServerContainerManager.Application.Commands.GetUserList
             users.ForEach(async u =>
             {
                 var roles = await _userManager.GetRolesAsync(u);
-                userInfoList.Add(new(
-                    id: u.Id,
-                    username: u.UserName!,
-                    roles: roles,
-                    namespaces: [.. u.Namespaces.Select(NamespaceInfo.FromDomain)]));
+                userInfoList.Add(new()
+                {
+                    Id = u.Id,
+                    Username = u.UserName!,
+                    Roles = roles,
+                    Namespaces = [.. u.Namespaces.Select(NamespaceInfo.FromDomain)]
+                });
             });
 
             await transaction.CommitAsync(cancellationToken);
 
-            return new GetUserListCommandResult(userInfoList);
+            return new GetUserListCommandResult()
+            {
+                Users = userInfoList
+            };
         }
     }
 }

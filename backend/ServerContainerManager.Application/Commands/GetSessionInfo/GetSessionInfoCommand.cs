@@ -2,11 +2,6 @@
 {
     public sealed record GetSessionInfoCommand
     {
-        public Guid UserId { get; private set; }
-
-        public GetSessionInfoCommand(Guid userId)
-        {
-            UserId = userId;
-        }
+        public required Guid UserId { get; init; }
     }
 }

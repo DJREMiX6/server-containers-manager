@@ -2,15 +2,8 @@
 {
     public sealed record ChangePasswordCommand
     {
-        public Guid UserId { get; }
-        public string CurrentPassword { get; }
-        public string NewPassword { get; }
-
-        public ChangePasswordCommand(Guid userId, string currentPassword, string newPassword)
-        {
-            UserId = userId;
-            CurrentPassword = currentPassword;
-            NewPassword = newPassword;
-        }
+        public required Guid UserId { get; init; }
+        public required string CurrentPassword { get; init; }
+        public required string NewPassword { get; init; }
     }
 }

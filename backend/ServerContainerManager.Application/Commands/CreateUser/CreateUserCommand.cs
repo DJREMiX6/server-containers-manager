@@ -2,13 +2,7 @@
 {
     public sealed record CreateUserCommand
     {
-        public string Username { get; }
-        public string Password { get; }
-
-        public CreateUserCommand(string username, string password)
-        {
-            Username = username;
-            Password = password;
-        }
+        public required string Username { get; init; }
+        public required string Password { get; init; }
     }
 }

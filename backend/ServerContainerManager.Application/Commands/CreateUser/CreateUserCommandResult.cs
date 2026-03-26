@@ -2,11 +2,6 @@
 {
     public sealed record CreateUserCommandResult
     {
-        public Guid UserId { get; }
-
-        public CreateUserCommandResult(Guid userId)
-        {
-            UserId = userId;
-        }
+        public required Guid UserId { get; init; }
     }
 }

@@ -3,16 +3,14 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
 using ServerContainerManager.Application.Commands.Abstraction;
 using ServerContainerManager.Application.Consts;
-using ServerContainerManager.Application.Entities;
 using ServerContainerManager.Domain.Entities.Auth;
 
 namespace ServerContainerManager.Application.Commands.CreateUser
 {
-    internal class CreateUserCommandHandler(ILogger<CreateUserCommandHandler> logger, AppDbContext dbContext, UserManager<AppUser> userManager) : ICommandHandler<CreateUserCommand, CreateUserCommandResult>
+    internal class CreateUserCommandHandler(ILogger<CreateUserCommandHandler> logger, UserManager<AppUser> userManager) : ICommandHandler<CreateUserCommand, CreateUserCommandResult>
     {
         private readonly ILogger<CreateUserCommandHandler> logger = logger;
         private readonly UserManager<AppUser> _userManager = userManager;
-        private readonly AppDbContext _dbContext = dbContext;
 
         public async Task<ErrorOr<CreateUserCommandResult>> HandleAsync(CreateUserCommand command, CancellationToken cancellationToken = default)
         {
@@ -34,7 +32,7 @@ namespace ServerContainerManager.Application.Commands.CreateUser
 
             var userId = (await _userManager.FindByNameAsync(command.Username))!.Id;
 
-            return new CreateUserCommandResult(userId);
+            return new CreateUserCommandResult() { UserId = userId };
         }
     }
 }

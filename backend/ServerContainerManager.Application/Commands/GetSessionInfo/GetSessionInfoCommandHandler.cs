@@ -28,12 +28,13 @@ namespace ServerContainerManager.Application.Commands.GetSessionInfo
 
             await transaction.CommitAsync(cancellationToken);
 
-            return new GetSessionInfoCommandResult(
-                userId: user.Id, 
-                username: user.UserName!, 
-                roles: roles, 
-                namespaces: [.. user.Namespaces
-                    .Select(NamespaceInfo.FromDomain)]);
+            return new GetSessionInfoCommandResult() 
+            {
+                UserId = user.Id,
+                Username = user.UserName!,
+                Roles = roles,
+                Namespaces = [.. user.Namespaces.Select(NamespaceInfo.FromDomain)] 
+            };
         }
     }
 }

@@ -17,8 +17,6 @@ namespace ServerContainerManager.Application.Commands.ChangeUsername
 
         public async Task<ErrorOr<ChangeUsernameCommandResult>> HandleAsync(ChangeUsernameCommand command, CancellationToken cancellationToken = default)
         {
-            using var transaction = await _dbContext.Database.BeginTransactionAsync(cancellationToken);
-
             var user = await _userManager.GetUserByIdAsync(command.UserId, cancellationToken);
             if (user is null)
                 return UserErrors.UnauthorizedNotFound(command.UserId);
@@ -27,8 +25,6 @@ namespace ServerContainerManager.Application.Commands.ChangeUsername
             var updateResult = await _userManager.UpdateAsync(user);
             if (!updateResult.Succeeded)
                 return updateResult.Errors.Select(e => Error.Validation(e.Code, e.Description)).ToList();
-
-            await transaction.CommitAsync(cancellationToken);
 
             return new ChangeUsernameCommandResult();
         }
