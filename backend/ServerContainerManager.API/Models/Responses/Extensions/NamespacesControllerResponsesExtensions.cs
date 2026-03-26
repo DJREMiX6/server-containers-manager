@@ -1,5 +1,5 @@
 ﻿using ServerContainerManager.API.Models.Responses.NamespacesController;
-using ServerContainerManager.Application.Commands.CreateNamespace;
+using ServerContainerManager.Application.Commands.Namespace.CreateNamespace;
 using ServerContainerManager.Application.Queries.GetNamespacesList;
 
 namespace ServerContainerManager.API.Models.Responses.Extensions

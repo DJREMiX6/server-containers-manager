@@ -6,7 +6,7 @@ using ServerContainerManager.API.Models.Requests.NamespacesController;
 using ServerContainerManager.API.Models.Responses.Extensions;
 using ServerContainerManager.API.Models.Responses.NamespacesController;
 using ServerContainerManager.Application.Commands.Abstraction;
-using ServerContainerManager.Application.Commands.CreateNamespace;
+using ServerContainerManager.Application.Commands.Namespace.CreateNamespace;
 using ServerContainerManager.Application.Consts;
 using ServerContainerManager.Application.Queries.Abstraction;
 using ServerContainerManager.Application.Queries.GetNamespacesList;

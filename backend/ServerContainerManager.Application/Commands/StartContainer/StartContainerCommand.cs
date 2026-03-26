@@ -1,8 +1,0 @@
-﻿namespace ServerContainerManager.Application.Commands.StartContainer
-{
-    public sealed record StartContainerCommand
-    {
-        public required Guid UserId { get; init; }
-        public required string ContainerId { get; init; }
-    }
-}

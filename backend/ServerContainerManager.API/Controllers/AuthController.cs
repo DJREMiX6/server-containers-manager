@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.HttpResults;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using ServerContainerManager.API.Extensions;
 using ServerContainerManager.API.Models.Requests.Auth;
@@ -8,15 +7,11 @@ using ServerContainerManager.API.Models.Requests.AuthController;
 using ServerContainerManager.API.Models.Responses.AuthController;
 using ServerContainerManager.API.Models.Responses.Extensions;
 using ServerContainerManager.Application.Commands.Abstraction;
-using ServerContainerManager.Application.Commands.ChangePassword;
-using ServerContainerManager.Application.Commands.ChangeUsername;
-using ServerContainerManager.Application.Commands.CreateUser;
-using ServerContainerManager.Application.Commands.GetSessionInfo;
-using ServerContainerManager.Application.Commands.GetUserList;
-using ServerContainerManager.Application.Commands.SignIn;
-using ServerContainerManager.Application.Commands.SignOut;
-using ServerContainerManager.Application.Consts;
-using ServerContainerManager.Domain.Entities.Auth;
+using ServerContainerManager.Application.Commands.Auth.GetSessionInfo;
+using ServerContainerManager.Application.Commands.Auth.SignIn;
+using ServerContainerManager.Application.Commands.Auth.SignOut;
+using ServerContainerManager.Application.Commands.User.ChangePassword;
+using ServerContainerManager.Application.Commands.User.ChangeUsername;
 
 namespace ServerContainerManager.API.Controllers
 {

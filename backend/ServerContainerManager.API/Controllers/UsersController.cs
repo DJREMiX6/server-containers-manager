@@ -7,11 +7,11 @@ using ServerContainerManager.API.Models.Requests.UsersController;
 using ServerContainerManager.API.Models.Responses.Extensions;
 using ServerContainerManager.API.Models.Responses.UsersController;
 using ServerContainerManager.Application.Commands.Abstraction;
-using ServerContainerManager.Application.Commands.ChangePassword;
-using ServerContainerManager.Application.Commands.CreateUser;
-using ServerContainerManager.Application.Commands.DeleteUser;
-using ServerContainerManager.Application.Commands.GetUserList;
-using ServerContainerManager.Application.Commands.UpdateUserNamespaces;
+using ServerContainerManager.Application.Commands.User.ChangePassword;
+using ServerContainerManager.Application.Commands.User.CreateUser;
+using ServerContainerManager.Application.Commands.User.DeleteUser;
+using ServerContainerManager.Application.Commands.User.GetUserList;
+using ServerContainerManager.Application.Commands.User.UpdateUserNamespaces;
 using ServerContainerManager.Application.Consts;
 
 namespace ServerContainerManager.API.Controllers

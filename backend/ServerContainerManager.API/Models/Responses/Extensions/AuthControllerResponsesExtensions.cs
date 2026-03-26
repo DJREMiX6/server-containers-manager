@@ -1,5 +1,5 @@
 ﻿using ServerContainerManager.API.Models.Responses.AuthController;
-using ServerContainerManager.Application.Commands.GetSessionInfo;
+using ServerContainerManager.Application.Commands.Auth.GetSessionInfo;
 
 namespace ServerContainerManager.API.Models.Responses.Extensions
 {

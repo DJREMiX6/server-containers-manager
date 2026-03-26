@@ -1,5 +1,5 @@
 ﻿using ServerContainerManager.API.Models.Responses.UsersController;
-using ServerContainerManager.Application.Commands.GetUserList;
+using ServerContainerManager.Application.Commands.User.GetUserList;
 
 namespace ServerContainerManager.API.Models.Responses.Extensions
 {
