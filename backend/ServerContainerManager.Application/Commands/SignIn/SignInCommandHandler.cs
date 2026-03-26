@@ -3,6 +3,7 @@ using ServerContainerManager.Application.Commands.Abstraction;
 using ServerContainerManager.Domain.Entities.Auth;
 using ErrorOr;
 using Microsoft.Extensions.Logging;
+using ServerContainerManager.Shared.Utils.Errors;
 
 namespace ServerContainerManager.Application.Commands.SignIn
 {
@@ -20,13 +21,13 @@ namespace ServerContainerManager.Application.Commands.SignIn
                 command.LockOutOnFailure);
 
             if (signInResult.IsNotAllowed)
-                return Error.Forbidden($"{nameof(SignInCommandHandler)}.{nameof(HandleAsync)}", $"User {command.Username} is not allowed to sign in.");
+                return UserErrors.SignInNotAllowed(command.Username);
 
             if(signInResult.IsLockedOut)
-                return Error.Forbidden($"{nameof(SignInCommandHandler)}.{nameof(HandleAsync)}", $"User {command.Username} is locked out.");
+                return UserErrors.LockedOut(command.Username);
 
             if (!signInResult.Succeeded)
-                return Error.Unauthorized($"{nameof(SignInCommandHandler)}.{nameof(HandleAsync)}", $"Wrong credentials for user {command.Username}.");
+                return UserErrors.InvalidCredentials(command.Username);
 
             return new SignInCommandResult();
         }

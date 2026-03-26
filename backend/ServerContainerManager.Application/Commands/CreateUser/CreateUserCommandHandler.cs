@@ -16,8 +16,6 @@ namespace ServerContainerManager.Application.Commands.CreateUser
 
         public async Task<ErrorOr<CreateUserCommandResult>> HandleAsync(CreateUserCommand command, CancellationToken cancellationToken = default)
         {
-            using var transaction = await _dbContext.Database.BeginTransactionAsync(cancellationToken);
-
             var createUserResult = AppUser.Create(command.Username, []);
             if (createUserResult.IsError)
                 return createUserResult.Errors;
@@ -35,8 +33,6 @@ namespace ServerContainerManager.Application.Commands.CreateUser
                     .ToList();
 
             var userId = (await _userManager.FindByNameAsync(command.Username))!.Id;
-
-            await transaction.CommitAsync(cancellationToken);
 
             return new CreateUserCommandResult(userId);
         }

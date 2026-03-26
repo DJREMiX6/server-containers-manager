@@ -5,9 +5,7 @@ namespace ServerContainerManager.Application.Extensions
 {
     internal static class IQueryableAppUserExtensions
     {
-        public static async Task<AppUser?> GetUserWithNamespacesAsync(this IQueryable<AppUser> query, Guid userId, CancellationToken cancellationToken)
-        {
-            return await query.Where(u => u.Id == userId).Include(u => u.Namespaces).FirstOrDefaultAsync(cancellationToken);
-        }
+        public static async Task<AppUser?> GetUserWithNamespacesAsync(this IQueryable<AppUser> query, Guid userId, CancellationToken cancellationToken) => 
+            await query.Where(u => u.Id == userId).Include(u => u.Namespaces).FirstOrDefaultAsync(cancellationToken);
     }
 }

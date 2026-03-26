@@ -1,10 +1,11 @@
 ﻿using ErrorOr;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using ServerContainerManager.Application.Commands.Abstraction;
 using ServerContainerManager.Application.Entities;
+using ServerContainerManager.Application.Extensions;
 using ServerContainerManager.Domain.Entities.Auth;
+using ServerContainerManager.Shared.Utils.Errors;
 
 namespace ServerContainerManager.Application.Commands.ChangePassword
 {
@@ -18,9 +19,9 @@ namespace ServerContainerManager.Application.Commands.ChangePassword
         {
             using var transaction = await _dbContext.Database.BeginTransactionAsync(cancellationToken);
 
-            var user = await _userManager.Users.FirstOrDefaultAsync(u => u.Id == command.UserId, cancellationToken);
+            var user = await _userManager.GetUserByIdAsync(command.UserId, cancellationToken);
             if (user is null)
-                return Error.Unauthorized($"{nameof(ChangePasswordCommandHandler)}.{nameof(HandleAsync)}", $"The user {command.UserId} does not exist");
+                return UserErrors.UnauthorizedNotFound(command.UserId);
 
             var changePasswordResult = await _userManager.ChangePasswordAsync(user, command.CurrentPassword, command.NewPassword);
             if (!changePasswordResult.Succeeded)

@@ -1,11 +1,12 @@
 ﻿using ErrorOr;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using ServerContainerManager.Application.Commands.Abstraction;
 using ServerContainerManager.Application.Entities;
+using ServerContainerManager.Application.Extensions;
 using ServerContainerManager.Application.Models;
 using ServerContainerManager.Domain.Entities.Auth;
+using ServerContainerManager.Shared.Utils.Errors;
 
 namespace ServerContainerManager.Application.Commands.GetSessionInfo
 {
@@ -19,12 +20,9 @@ namespace ServerContainerManager.Application.Commands.GetSessionInfo
         {
             using var transaction = await _appDbContext.Database.BeginTransactionAsync(cancellationToken);
 
-            var user = await _userManager.Users
-                .Where(u => u.Id == command.UserId)
-                .Include(u => u.Namespaces)
-                .FirstOrDefaultAsync(cancellationToken);
+            var user = await _userManager.GetUserWithNamespacesAsync(command.UserId, cancellationToken);
             if (user == null)
-                return Error.NotFound($"{nameof(GetSessionInfoCommandHandler)}.{nameof(HandleAsync)}", $"User {command.UserId} not found");
+                return UserErrors.UnauthorizedNotFound(command.UserId);
 
             var roles = await _userManager.GetRolesAsync(user);
 

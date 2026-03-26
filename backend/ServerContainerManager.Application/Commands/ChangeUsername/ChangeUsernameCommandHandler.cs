@@ -1,10 +1,11 @@
 ﻿using ErrorOr;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using ServerContainerManager.Application.Commands.Abstraction;
 using ServerContainerManager.Application.Entities;
+using ServerContainerManager.Application.Extensions;
 using ServerContainerManager.Domain.Entities.Auth;
+using ServerContainerManager.Shared.Utils.Errors;
 
 namespace ServerContainerManager.Application.Commands.ChangeUsername
 {
@@ -17,12 +18,10 @@ namespace ServerContainerManager.Application.Commands.ChangeUsername
         public async Task<ErrorOr<ChangeUsernameCommandResult>> HandleAsync(ChangeUsernameCommand command, CancellationToken cancellationToken = default)
         {
             using var transaction = await _dbContext.Database.BeginTransactionAsync(cancellationToken);
-            
-            var user = await _userManager.Users
-                .Where(u => u.Id == command.UserId)
-                .FirstOrDefaultAsync(cancellationToken);
+
+            var user = await _userManager.GetUserByIdAsync(command.UserId, cancellationToken);
             if (user is null)
-                return Error.NotFound($"{nameof(ChangeUsernameCommandHandler)}.{nameof(HandleAsync)}", $"Cannot find user {command.UserId}");
+                return UserErrors.UnauthorizedNotFound(command.UserId);
 
             user.UserName = command.NewUsername;
             var updateResult = await _userManager.UpdateAsync(user);

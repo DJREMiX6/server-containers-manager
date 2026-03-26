@@ -6,6 +6,7 @@ using ServerContainerManager.API.Models.Requests.ContainersController;
 using ServerContainerManager.API.Models.Responses.ContainersController;
 using ServerContainerManager.API.Models.Responses.Extensions;
 using ServerContainerManager.Application.Commands.Abstraction;
+using ServerContainerManager.Application.Commands.RestartContainer;
 using ServerContainerManager.Application.Commands.StartContainer;
 using ServerContainerManager.Application.Commands.StopContainer;
 using ServerContainerManager.Application.Commands.UpdateContainerNamespaces;
@@ -112,5 +113,29 @@ namespace ServerContainerManager.API.Controllers
 
             return TypedResults.NoContent();
         }
+
+        [Authorize(Roles = UserRoles.Member)]
+        [HttpPost("{containerId}/restart")]
+        public async Task<Results<NoContent, ProblemHttpResult>> RestartContainer(
+            [FromRoute] string containerId,
+            [FromServices] ICommandHandler<RestartContainerCommand, RestartContainerCommandResult> commandHandler,
+            CancellationToken cancellationToken = default)
+        {
+            var userId = User.GetUserId();
+            var command = new RestartContainerCommand()
+            {
+                UserId = userId,
+                ContainerId = containerId
+            };
+
+            var result = await commandHandler.HandleAsync(command, cancellationToken);
+
+            if (result.IsError)
+                return result.Errors.ToProblemHttpResult();
+
+            return TypedResults.NoContent();
+        }
+
+
     }
 }

@@ -8,9 +8,8 @@ using ServerContainerManager.Application.Commands.Abstraction;
 using ServerContainerManager.Application.Consts;
 using ServerContainerManager.Application.Entities;
 using ServerContainerManager.Application.Extensions;
-using ServerContainerManager.Application.Queries.GetContainerList;
 using ServerContainerManager.Domain.Entities.Auth;
-using ServerContainerManager.Shared.Utils;
+using ServerContainerManager.Shared.Utils.Errors;
 using ServerContainerManager.Shared.Utils.Extensions;
 using Actor = ServerContainerManager.Shared.Utils.Actor;
 
@@ -31,9 +30,10 @@ namespace ServerContainerManager.Application.Commands.StopContainer
 
         public async Task<ErrorOr<StopContainerCommandResult>> HandleAsync(StopContainerCommand command, CancellationToken cancellationToken = default)
         {
-            var user = await _userManager.Users.GetUserWithNamespacesAsync(command.UserId, cancellationToken);
-            if(user == null)
-                return Error.Unauthorized($"{nameof(GetContainerListQueryHandler)}.{nameof(HandleAsync)}", $"Cannot find user {command.UserId}");
+            var user = await _userManager.GetUserWithNamespacesAsync(command.UserId, cancellationToken);
+            if (user == null)
+                return UserErrors.UnauthorizedNotFound(command.UserId);
+
             var isUserAdmin = await _userManager.IsInRoleAsync(user, UserRoles.Admin);
             var containerQuery = _dbContext.Containers.Where(c => c.Id == command.ContainerId);
             

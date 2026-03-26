@@ -3,6 +3,7 @@ using ServerContainerManager.Domain.Entities.Containers.Enums;
 using ServerContainerManager.Domain.Entities.Containers.ValueObjects;
 using ServerContainerManager.Domain.Entities.Namespaces;
 using ServerContainerManager.Shared.Utils;
+using ServerContainerManager.Shared.Utils.Enums;
 using System.Text.RegularExpressions;
 
 namespace ServerContainerManager.Domain.Entities.Containers
@@ -97,6 +98,11 @@ namespace ServerContainerManager.Domain.Entities.Containers
             return UpdateState(ContainerState.Exited, actor, now);
         }
 
+        public ErrorOr<Success> Restart(Actor actor, DateTime now)
+        {
+            return UpdateState(ContainerState.Restarting, actor, now);
+        }
+
         public ErrorOr<Success> Rename(string name, Actor actor, DateTime now)
         {
             name = name.Trim()[1..];
@@ -112,7 +118,7 @@ namespace ServerContainerManager.Domain.Entities.Containers
             Touch(actor, now);
             return Result.Success;
         }
-
+        
         public ErrorOr<Success> UpdateState(ContainerState state, Actor actor, DateTime now)
         {
             if (!Enum.IsDefined(state))
@@ -120,6 +126,14 @@ namespace ServerContainerManager.Domain.Entities.Containers
 
             if(state == State)
                 return Result.Success;
+            
+            /* This enables Auditing for restarting since when restaring a container it passes through two different states:
+             * - Restarting
+             * - Running/Exited (based on the result)
+             * Without this check the second state would override the UpdatedBy with a System actor since it will come from the Reconciliator.
+             */
+            if (State == ContainerState.Restarting && Updated.By.ActorType == ActorType.User)  
+                actor = Updated.By;
 
             State = state;
 

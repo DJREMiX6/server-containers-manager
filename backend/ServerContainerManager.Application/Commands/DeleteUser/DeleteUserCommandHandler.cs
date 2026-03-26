@@ -1,11 +1,12 @@
 ﻿using ErrorOr;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using ServerContainerManager.Application.Commands.Abstraction;
 using ServerContainerManager.Application.Consts;
 using ServerContainerManager.Application.Entities;
+using ServerContainerManager.Application.Extensions;
 using ServerContainerManager.Domain.Entities.Auth;
+using ServerContainerManager.Shared.Utils.Errors;
 
 namespace ServerContainerManager.Application.Commands.DeleteUser
 {
@@ -19,14 +20,12 @@ namespace ServerContainerManager.Application.Commands.DeleteUser
         {
             using var transaction = await _appDbContext.Database.BeginTransactionAsync(cancellationToken);
 
-            var user = await _userManager.Users
-                .Where(u => u.Id == command.UserId)
-                .FirstOrDefaultAsync(cancellationToken);
+            var user = await _userManager.GetUserByIdAsync(command.UserId, cancellationToken);
             if (user is null)
-                return Error.NotFound($"{nameof(DeleteUserCommandHandler)}.{nameof(HandleAsync)}", $"Cannot find user {command.UserId}");
+                return UserErrors.UnauthorizedNotFound(command.UserId);
 
             if (await _userManager.IsInRoleAsync(user, UserRoles.Admin))
-                return Error.Forbidden($"{nameof(DeleteUserCommandHandler)}.{nameof(HandleAsync)}", "Cannot delete an Admin user");
+                return UserErrors.CannotDeleteAdminUser();
 
             var securityStampUpdateResult = await _userManager.UpdateSecurityStampAsync(user); // Forces user logout
             if (!securityStampUpdateResult.Succeeded)

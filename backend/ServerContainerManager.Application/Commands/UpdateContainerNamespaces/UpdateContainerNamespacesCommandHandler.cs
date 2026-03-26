@@ -3,12 +3,12 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using ServerContainerManager.Application.Commands.Abstraction;
-using ServerContainerManager.Application.Consts;
 using ServerContainerManager.Application.Entities;
+using ServerContainerManager.Application.Extensions;
 using ServerContainerManager.Application.Queries.GetContainerList;
 using ServerContainerManager.Domain.Entities.Auth;
-using ServerContainerManager.Domain.Entities.Containers;
 using ServerContainerManager.Shared.Utils;
+using ServerContainerManager.Shared.Utils.Errors;
 using ServerContainerManager.Shared.Utils.Extensions;
 
 namespace ServerContainerManager.Application.Commands.UpdateContainerNamespaces
@@ -26,8 +26,12 @@ namespace ServerContainerManager.Application.Commands.UpdateContainerNamespaces
 
         public async Task<ErrorOr<UpdateContainerNamespacesCommandResult>> HandleAsync(UpdateContainerNamespacesCommand command, CancellationToken cancellationToken = default)
         {
+            if (!await _userManager.UserExistsByIdAsync(command.UserId, cancellationToken))
+                return UserErrors.UnauthorizedNotFound(command.UserId);
+
             var actor = Actor.FromUser(command.UserId);
             var now = _timeProvider.GetUtcDateTimeNow();
+
             var namespaces = await _appDbContext.Namespaces.Where(n => command.NamespacesIds.Contains(n.Id)).ToListAsync(cancellationToken);
             if (namespaces.Count != command.NamespacesIds.Count)
                 return Error.Validation($"{nameof(UpdateContainerNamespacesCommandHandler)}.{nameof(HandleAsync)}", "Some namespaces do not exist");
