@@ -1,6 +1,6 @@
-﻿namespace ServerContainerManager.Application.Commands.StartContainer
+﻿namespace ServerContainerManager.Application.Commands.PauseContainer
 {
-    public sealed record StartContainerCommand
+    public sealed record PauseContainerCommand
     {
         public required Guid UserId { get; init; }
         public required string ContainerId { get; init; }

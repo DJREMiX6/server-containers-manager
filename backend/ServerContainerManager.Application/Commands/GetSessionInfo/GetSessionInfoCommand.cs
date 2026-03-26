@@ -1,8 +1,6 @@
-﻿using System.Security.Claims;
-
-namespace ServerContainerManager.Application.Commands.GetSessionInfo
+﻿namespace ServerContainerManager.Application.Commands.GetSessionInfo
 {
-    public record GetSessionInfoCommand
+    public sealed record GetSessionInfoCommand
     {
         public Guid UserId { get; private set; }
 

@@ -1,6 +1,6 @@
 ﻿namespace ServerContainerManager.Application.Commands.UpdateUserNamespaces
 {
-    public record UpdateUserNamespacesCommand
+    public sealed record UpdateUserNamespacesCommand
     {
         public Guid UserId { get; }
         public IList<Guid> NamespacesIds { get; }

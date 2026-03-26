@@ -1,6 +1,6 @@
 ﻿namespace ServerContainerManager.Application.Commands.CreateUser
 {
-    public record CreateUserCommandResult
+    public sealed record CreateUserCommandResult
     {
         public Guid UserId { get; }
 

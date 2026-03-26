@@ -88,20 +88,17 @@ namespace ServerContainerManager.Domain.Entities.Containers
             return Result.Success;
         }
 
-        public ErrorOr<Success> Start(Actor actor, DateTime now)
-        {
-            return UpdateState(ContainerState.Running, actor, now);
-        }
+        public ErrorOr<Success> Start(Actor actor, DateTime now) => 
+            UpdateState(ContainerState.Running, actor, now);
 
-        public ErrorOr<Success> Stop(Actor actor, DateTime now)
-        {
-            return UpdateState(ContainerState.Exited, actor, now);
-        }
+        public ErrorOr<Success> Stop(Actor actor, DateTime now) => 
+            UpdateState(ContainerState.Exited, actor, now);
 
-        public ErrorOr<Success> Restart(Actor actor, DateTime now)
-        {
-            return UpdateState(ContainerState.Restarting, actor, now);
-        }
+        public ErrorOr<Success> Restart(Actor actor, DateTime now) => 
+            UpdateState(ContainerState.Restarting, actor, now);
+
+        public ErrorOr<Success> Pause(Actor actor, DateTime now) => 
+            UpdateState(ContainerState.Paused, actor, now);
 
         public ErrorOr<Success> Rename(string name, Actor actor, DateTime now)
         {

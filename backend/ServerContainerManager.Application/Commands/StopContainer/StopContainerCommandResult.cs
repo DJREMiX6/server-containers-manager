@@ -1,4 +1,4 @@
 ﻿namespace ServerContainerManager.Application.Commands.StopContainer
 {
-    public record StopContainerCommandResult;
+    public sealed record StopContainerCommandResult;
 }

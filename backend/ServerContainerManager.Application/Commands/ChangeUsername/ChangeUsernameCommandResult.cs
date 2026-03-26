@@ -1,4 +1,4 @@
 ﻿namespace ServerContainerManager.Application.Commands.ChangeUsername
 {
-    public record ChangeUsernameCommandResult();
+    public sealed record ChangeUsernameCommandResult();
 }

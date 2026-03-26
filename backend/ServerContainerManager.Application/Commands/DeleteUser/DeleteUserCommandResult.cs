@@ -1,4 +1,4 @@
 ﻿namespace ServerContainerManager.Application.Commands.DeleteUser
 {
-    public record DeleteUserCommandResult();
+    public sealed record DeleteUserCommandResult();
 }

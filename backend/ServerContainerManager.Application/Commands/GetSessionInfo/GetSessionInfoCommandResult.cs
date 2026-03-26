@@ -1,9 +1,8 @@
-﻿using ServerContainerManager.Application.Commands.SignIn;
-using ServerContainerManager.Application.Models;
+﻿using ServerContainerManager.Application.Models;
 
 namespace ServerContainerManager.Application.Commands.GetSessionInfo
 {
-    public record GetSessionInfoCommandResult
+    public sealed record GetSessionInfoCommandResult
     {
         public Guid UserId { get; init; }
         public string Username { get; init; }

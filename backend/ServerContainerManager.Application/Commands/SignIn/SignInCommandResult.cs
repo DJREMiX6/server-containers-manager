@@ -1,6 +1,4 @@
-﻿using ErrorOr;
-
-namespace ServerContainerManager.Application.Commands.SignIn
+﻿namespace ServerContainerManager.Application.Commands.SignIn
 {
-    public record SignInCommandResult();
+    public sealed record SignInCommandResult();
 }

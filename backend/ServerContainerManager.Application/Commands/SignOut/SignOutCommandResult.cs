@@ -1,6 +1,4 @@
-﻿using ErrorOr;
-
-namespace ServerContainerManager.Application.Commands.SignOut
+﻿namespace ServerContainerManager.Application.Commands.SignOut
 {
-    public record SignOutCommandResult();
+    public sealed record SignOutCommandResult();
 }

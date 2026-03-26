@@ -1,4 +1,4 @@
 ﻿namespace ServerContainerManager.Application.Commands.RestartContainer
 {
-    public record RestartContainerCommandResult;
+    public sealed record RestartContainerCommandResult;
 }

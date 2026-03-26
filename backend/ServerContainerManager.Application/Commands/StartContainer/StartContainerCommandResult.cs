@@ -1,4 +1,4 @@
 ﻿namespace ServerContainerManager.Application.Commands.StartContainer
 {
-    public record StartContainerCommandResult;
+    public sealed record StartContainerCommandResult;
 }

@@ -1,6 +1,6 @@
 ﻿namespace ServerContainerManager.Application.Commands.CreateUser
 {
-    public record CreateUserCommand
+    public sealed record CreateUserCommand
     {
         public string Username { get; }
         public string Password { get; }
