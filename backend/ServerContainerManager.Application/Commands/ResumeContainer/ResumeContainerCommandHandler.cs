@@ -45,7 +45,7 @@ namespace ServerContainerManager.Application.Commands.ResumeContainer
 
             var container = await containerQuery.FirstOrDefaultAsync(cancellationToken);
             if (container == null)
-                return Error.NotFound($"{nameof(StartContainerCommandHandler)}.{nameof(HandleAsync)}", $"Cannot find container with id {command.ContainerId}");
+                return ContainerErrors.NotFound(command.ContainerId);
 
             var now = _timeProvider.GetUtcDateTimeNow();
             var actor = Actor.FromUser(command.UserId);

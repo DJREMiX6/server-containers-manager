@@ -41,7 +41,7 @@ namespace ServerContainerManager.Application.Commands.UpdateContainerNamespaces
                 .FirstOrDefaultAsync(cancellationToken);
 
             if (container == null)
-                return Error.NotFound($"{nameof(UpdateContainerNamespacesCommandHandler)}.{nameof(HandleAsync)}", $"Cannot find container with id ${command.ContainerId}");
+                return ContainerErrors.NotFound(command.ContainerId);
 
             container.UpdateNamespaces(namespaces, actor, now);
             await _appDbContext.SaveChangesAsync(cancellationToken);
