@@ -1,5 +1,6 @@
 ﻿using Docker.DotNet;
 using Docker.DotNet.Models;
+using ErrorOr;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -30,20 +31,21 @@ namespace ServerContainerManager.Application.Services
         {
             var actor = Actor.System();
             var now = _timeProvider.GetUtcDateTimeNow();
-            var scope = _serviceScopeFactory.CreateAsyncScope();
+            await using var scope = _serviceScopeFactory.CreateAsyncScope();
             using var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
             using var transaction = await dbContext.Database.BeginTransactionAsync(cancellationToken);
 
             var dockerContainers = await _dockerClient.Containers.ListContainersAsync(
                 new ContainersListParameters { All = true }, cancellationToken);
+            var dockerContainersById = dockerContainers.ToDictionary(c => c.ID);
             var dbContainersIds = (await dbContext.Containers
                 .Select(c => c.Id)
                 .ToListAsync(cancellationToken))
                 .ToHashSet();
 
-            var addedContainersCount = await AddMissingContainersAsync(dbContext, dockerContainers, dbContainersIds, actor, now, cancellationToken);
-            var removedContainersCount = await RemoveStaleContainersAsync(dbContext, dockerContainers, dbContainersIds, cancellationToken);
-            var updatedContainersCount = await UpdateContainersAsync(dbContext, dockerContainers, dbContainersIds, actor, now, cancellationToken);
+            var addedContainersCount = AddMissingContainers(dbContext, dockerContainers, dbContainersIds, actor, now);
+            var removedContainersCount = await RemoveStaleContainersAsync(dbContext, dockerContainersById, dbContainersIds, cancellationToken);
+            var updatedContainersCount = await UpdateContainersAsync(dbContext, dockerContainersById, dbContainersIds, actor, now, cancellationToken);
 
             if (addedContainersCount == 0 && removedContainersCount == 0 && updatedContainersCount == 0)
             {
@@ -72,13 +74,12 @@ namespace ServerContainerManager.Application.Services
         /// Inserts containers that are missing, into the DB.
         /// </summary>
         /// <returns>The number of added containers</returns>
-        private static async Task<int> AddMissingContainersAsync(
+        private static int AddMissingContainers(
             AppDbContext dbContext,
             IList<ContainerListResponse> dockerContainers,
             HashSet<string> dbContainersIds,
             Actor actor,
-            DateTime now,
-            CancellationToken cancellationToken)
+            DateTime now)
         {
             var added = 0;
 
@@ -87,33 +88,24 @@ namespace ServerContainerManager.Application.Services
                 if (dbContainersIds.Contains(dockerContainer.ID))
                     continue;
 
-                var ports = dockerContainer.Ports ?? [];
-                var portsResults = ports.Select(p => Port.Create(p.PublicPort, p.PrivatePort)).ToList();
-                if (portsResults.Any(p => p.IsError))
-                    throw new InvalidOperationException(string.Join('\n', portsResults.Where(p => p.IsError).SelectMany(e => e.Errors).Select(e => $"Code: {e.Code}, Description: {e.Description}.")));
-
-                var labelsResults = dockerContainer.Labels.Select((kv) => Label.Create(kv.Key, kv.Value));
-                if (labelsResults.Any(l => l.IsError))
-                    throw new InvalidOperationException(string.Join('\n', labelsResults.Where(l => l.IsError).SelectMany(e => e.Errors).Select(e => $"Code: {e.Code}, Description: {e.Description}.")));
+                var ports = ParsePorts(dockerContainer);
+                var labels = ParseLabels(dockerContainer);
 
                 var result = Container.Create(
                     dockerContainer.ID,
                     dockerContainer.Names[0],
                     Enum.Parse<ContainerState>(dockerContainer.State, ignoreCase: true),
-                    [.. labelsResults.Select(l => l.Value)],
-                    [.. portsResults.Select(p => p.Value)],
+                    labels,
+                    ports,
                     [], 
                     actor, 
                     now, 
                     dockerContainer.Created);
-                if (result.IsError)
-                    throw new InvalidOperationException(string.Join("\n", result.Errors.Select(e => $"Code: {e.Code}, Description: {e.Description}")));
+                ThrowIfError(result);
 
                 dbContext.Containers.Add(result.Value);
                 added++;
             }
-
-            await dbContext.SaveChangesAsync(cancellationToken);
 
             return added;
         }
@@ -121,80 +113,61 @@ namespace ServerContainerManager.Application.Services
         /// <summary>
         /// Updates containers that mismatch, with the DB.
         /// </summary>
-        /// <param name="dbContext"></param>
-        /// <param name="dockerContainers"></param>
-        /// <param name="dbContainersIds"></param>
-        /// <param name="cancellationToken"></param>
         /// <returns>The number of containers updated.</returns>
-        /// <exception cref="InvalidOperationException"></exception>
         private static async Task<int> UpdateContainersAsync(
             AppDbContext dbContext,
-            IList<ContainerListResponse> dockerContainers,
+            Dictionary<string, ContainerListResponse> dockerContainersById,
             HashSet<string> dbContainersIds,
             Actor actor,
             DateTime now,
             CancellationToken cancellationToken)
         {
+            var idsToUpdate = dbContainersIds.Where(dockerContainersById.ContainsKey).ToList();
+            if (idsToUpdate.Count == 0)
+                return 0;
+
+            var dbContainers = await dbContext.Containers
+                .Where(c => idsToUpdate.Contains(c.Id))
+                .ToDictionaryAsync(c => c.Id, cancellationToken);
+
             var updated = 0;
 
-            foreach(var dockerContainer in dockerContainers)
+            foreach (var id in idsToUpdate)
             {
+                var dockerContainer = dockerContainersById[id];
+                var container = dbContainers[id];
                 var changesHappened = false;
 
-                if (!dbContainersIds.Contains(dockerContainer.ID))
-                    continue;
-
-                var container = 
-                    await dbContext.Containers.FindAsync([dockerContainer.ID], cancellationToken) 
-                    ?? throw new InvalidOperationException($"Cannot find container {dockerContainer.ID} to update.");
-                
                 if (container.Name != dockerContainer.Names[0].Trim().TrimStart('/'))
                 {
-                    var renameResult = container.Rename(dockerContainer.Names[0], actor, now);
-                    if (renameResult.IsError)
-                        throw new InvalidOperationException(string.Join('\n', renameResult.Errors.Select(e => $"Code: {e.Code} Description: {e.Description}")));
+                    ThrowIfError(container.Rename(dockerContainer.Names[0], actor, now));
                     changesHappened = true;
                 }
 
                 var containerState = Enum.Parse<ContainerState>(dockerContainer.State, ignoreCase: true);
-                if (container.State != containerState) {
-                    var updateStateResult = container.UpdateState(containerState, actor, now);
-                    if (updateStateResult.IsError)
-                        throw new InvalidOperationException(string.Join('\n', updateStateResult.Errors.Select(e => $"Code: {e.Code} Description: {e.Description}")));
-
+                if (container.State != containerState)
+                {
+                    ThrowIfError(container.UpdateState(containerState, actor, now));
                     changesHappened = true;
                 }
 
-                var labelsResults = dockerContainer.Labels.Select((kv) => Label.Create(kv.Key, kv.Value));
-                if (labelsResults.Any(l => l.IsError))
-                    throw new InvalidOperationException(string.Join('\n', labelsResults.Where(l => l.IsError).SelectMany(e => e.Errors).Select(e => $"Code: {e.Code}, Description: {e.Description}.")));
-                var labels = labelsResults.Select(l => l.Value).ToList();
-                if (!container.Labels.ContentEquals(labels)){
-                    var updateLabelsResult = container.UpdateLabels(labels, actor, now);
-                    if (updateLabelsResult.IsError)
-                        throw new InvalidOperationException(string.Join('\n', updateLabelsResult.Errors.Select(e => $"Code: {e.Code} Description: {e.Description}")));
-
+                var labels = ParseLabels(dockerContainer);
+                if (!container.Labels.ContentEquals(labels))
+                {
+                    ThrowIfError(container.UpdateLabels(labels, actor, now));
                     changesHappened = true;
                 }
 
-                var ports = dockerContainer.Ports ?? []; // Workaround for bug
-                var portsResults = ports.Select(p => Port.Create(p.PublicPort, p.PrivatePort));
-                if (portsResults.Any(p => p.IsError))
-                    throw new InvalidOperationException(string.Join('\n', portsResults.Where(p => p.IsError).SelectMany(e => e.Errors).Select(e => $"Code: {e.Code}, Description: {e.Description}.")));
-                var containerPorts = portsResults.Select(p => p.Value).ToList();
-                if (!container.Ports.ContentEquals(containerPorts)){
-                    var updatePublicPortsResult = container.UpdatePorts(containerPorts, actor, now);
-                    if (updatePublicPortsResult.IsError)
-                        throw new InvalidOperationException(string.Join('\n', updatePublicPortsResult.Errors.Select(e => $"Code: {e.Code} Description: {e.Description}")));
-
+                var ports = ParsePorts(dockerContainer);
+                if (!container.Ports.ContentEquals(ports))
+                {
+                    ThrowIfError(container.UpdatePorts(ports, actor, now));
                     changesHappened = true;
                 }
 
-                if(changesHappened)
+                if (changesHappened)
                     updated++;
             }
-
-            await dbContext.SaveChangesAsync(cancellationToken);
 
             return updated;
         }
@@ -203,23 +176,51 @@ namespace ServerContainerManager.Application.Services
         /// Removes stale containers that are deleted, from the DB.
         /// </summary>
         /// <returns>The number of deleted stale containers</returns>
-        private static async Task<int> RemoveStaleContainersAsync(AppDbContext dbContext, IList<ContainerListResponse> dockerContainers, HashSet<string> dbContainersIds, CancellationToken cancellationToken)
+        private static async Task<int> RemoveStaleContainersAsync(
+            AppDbContext dbContext,
+            Dictionary<string, ContainerListResponse> dockerContainersById,
+            HashSet<string> dbContainersIds,
+            CancellationToken cancellationToken)
         {
-            var dockerContainersIds = dockerContainers.Select(c => c.ID).ToHashSet();
-            var staleIds = dbContainersIds.Except(dockerContainersIds).ToList();
+            var staleIds = dbContainersIds.Where(id => !dockerContainersById.ContainsKey(id)).ToList();
 
             if (staleIds.Count > 0)
             {
-                var stale = await dbContext.Containers
+                await dbContext.Containers
                     .Where(c => staleIds.Contains(c.Id))
-                    .ToListAsync(cancellationToken);
-
-                dbContext.Containers.RemoveRange(stale);
+                    .ExecuteDeleteAsync(cancellationToken);
             }
 
-            await dbContext.SaveChangesAsync(cancellationToken);
-
             return staleIds.Count;
+        }
+
+        private static List<Port> ParsePorts(ContainerListResponse dockerContainer)
+        {
+            var ports = dockerContainer.Ports ?? [];
+            var results = ports.Select(p => Port.Create(p.PublicPort, p.PrivatePort)).ToList();
+            ThrowIfAnyError(results);
+            return results.Select(r => r.Value).ToList();
+        }
+
+        private static List<Label> ParseLabels(ContainerListResponse dockerContainer)
+        {
+            var results = dockerContainer.Labels.Select(kv => Label.Create(kv.Key, kv.Value)).ToList();
+            ThrowIfAnyError(results);
+            return results.Select(r => r.Value).ToList();
+        }
+
+        private static void ThrowIfError<T>(ErrorOr<T> result)
+        {
+            if (result.IsError)
+                throw new InvalidOperationException(
+                    string.Join('\n', result.Errors.Select(e => $"Code: {e.Code}, Description: {e.Description}.")));
+        }
+
+        private static void ThrowIfAnyError<T>(List<ErrorOr<T>> results)
+        {
+            if (results.Any(r => r.IsError))
+                throw new InvalidOperationException(
+                    string.Join('\n', results.Where(r => r.IsError).SelectMany(e => e.Errors).Select(e => $"Code: {e.Code}, Description: {e.Description}.")));
         }
     }
 }
