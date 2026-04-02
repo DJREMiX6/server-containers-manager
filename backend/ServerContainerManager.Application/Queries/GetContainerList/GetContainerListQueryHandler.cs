@@ -5,11 +5,9 @@ using Microsoft.Extensions.Logging;
 using ServerContainerManager.Application.Consts;
 using ServerContainerManager.Application.Entities;
 using ServerContainerManager.Application.Extensions;
-using ServerContainerManager.Application.Models;
 using ServerContainerManager.Application.Queries.Abstraction;
 using ServerContainerManager.Domain.Entities.Auth;
 using ServerContainerManager.Domain.Entities.Containers;
-using ServerContainerManager.Domain.Entities.Namespaces;
 
 namespace ServerContainerManager.Application.Queries.GetContainerList
 {
@@ -53,15 +51,5 @@ namespace ServerContainerManager.Application.Queries.GetContainerList
                 TotalCount = totalCount
             };
         }
-    }
-
-    file static class GetContainerListQueryExtensions
-    {
-        public static IQueryable<GetContainerListQueryResultContainerInfo> Parse(this IQueryable<Container> query, IEnumerable<Guid> namespacesIds) =>
-            query.Select(container => GetContainerListQueryResultContainerInfo.FromDomain(
-                container, 
-                container.Namespaces
-                .Select(n => NamespaceInfo.FromDomain(n))
-                .ToList()));
     }
 }

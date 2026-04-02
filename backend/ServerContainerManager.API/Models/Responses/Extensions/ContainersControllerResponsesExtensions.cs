@@ -1,4 +1,5 @@
-﻿using ServerContainerManager.API.Models.Responses.ContainersController;
+﻿using ServerContainerManager.API.Models.Enums;
+using ServerContainerManager.API.Models.Responses.ContainersController;
 using ServerContainerManager.Application.Queries.GetContainerList;
 
 namespace ServerContainerManager.API.Models.Responses.Extensions
@@ -8,11 +9,12 @@ namespace ServerContainerManager.API.Models.Responses.Extensions
         public static GetContainerListItemResponse ToContract(this GetContainerListQueryResultContainerInfo result) => new()
         {
             Id = result.Id,
-            State = result.State,
-            CreatedAt = result.CreatedAt,
-            Labels = result.Labels,
             Name = result.Name,
-            Ports = result.Ports,
+            CreatedAt = result.CreatedAt,
+            UpdatedAt = result.UpdatedAt,
+            State = ContainerStateHelper.FromApplication(result.State),
+            Labels = result.Labels.ToResponseModel(),
+            Ports = result.Ports.ToResponseModel(),
             Namespaces = result.Namespaces.ToResponseModel()
         };
 

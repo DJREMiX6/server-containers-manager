@@ -1,7 +1,6 @@
 using ServerContainerManager.Application.Models;
+using ServerContainerManager.Application.Models.Enums;
 using ServerContainerManager.Domain.Entities.Containers;
-using ServerContainerManager.Domain.Entities.Containers.Enums;
-using ServerContainerManager.Domain.Entities.Containers.ValueObjects;
 
 namespace ServerContainerManager.Application.Queries.GetContainerList
 {
@@ -12,19 +11,19 @@ namespace ServerContainerManager.Application.Queries.GetContainerList
         public required ContainerState State { get; init; }
         public required DateTime CreatedAt { get; init; }
         public required DateTime UpdatedAt { get; init; }
-        public required IReadOnlyCollection<Label> Labels { get; init; }
-        public required IReadOnlyCollection<Port> Ports { get; init; }
+        public required IReadOnlyCollection<ContainerLabel> Labels { get; init; }
+        public required IReadOnlyCollection<ContainerPort> Ports { get; init; }
         public required IReadOnlyCollection<NamespaceInfo> Namespaces { get; init; }
 
         public static GetContainerListQueryResultContainerInfo FromDomain(Container container, IReadOnlyCollection<NamespaceInfo> namespaces) => new ()
         {
             Id = container.Id,
             Name = container.Name,
-            State = container.State,
+            State = ContainerStateHelper.FromDomain(container.State),
             CreatedAt = container.Created.At,
             UpdatedAt = container.Updated.At,
-            Labels = container.Labels,
-            Ports = container.Ports,
+            Labels = [.. container.Labels.Select(ContainerLabel.FromDomain)],
+            Ports = [.. container.Ports.Select(ContainerPort.FromDomain)],
             Namespaces = namespaces
         };
     }

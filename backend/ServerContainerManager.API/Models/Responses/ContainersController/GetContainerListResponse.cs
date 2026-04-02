@@ -1,6 +1,5 @@
-﻿using ServerContainerManager.API.Models.Responses.Models;
-using ServerContainerManager.Domain.Entities.Containers.Enums;
-using ServerContainerManager.Domain.Entities.Containers.ValueObjects;
+﻿using ServerContainerManager.API.Models.Enums;
+using ServerContainerManager.API.Models.Responses.Models;
 
 namespace ServerContainerManager.API.Models.Responses.ContainersController
 {
@@ -10,8 +9,9 @@ namespace ServerContainerManager.API.Models.Responses.ContainersController
         public required string Name { get; init; }
         public required ContainerState State { get; init; }
         public required DateTime CreatedAt { get; init; }
-        public required IReadOnlyCollection<Label> Labels { get; init; }
-        public required IReadOnlyCollection<Port> Ports { get; init; }
+        public required DateTime UpdatedAt { get; init; }
+        public required IReadOnlyCollection<ContainerLabelResponseModel> Labels { get; init; }
+        public required IReadOnlyCollection<ContainerPortResponseModel> Ports { get; init; }
         public required IReadOnlyCollection<NamespaceInfoResponseModel> Namespaces { get; init; }
     }
 

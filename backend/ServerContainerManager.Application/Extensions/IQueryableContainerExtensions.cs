@@ -1,4 +1,5 @@
 ﻿using ServerContainerManager.Application.Models;
+using ServerContainerManager.Application.Queries.GetContainerList;
 using ServerContainerManager.Domain.Entities.Containers;
 
 namespace ServerContainerManager.Application.Extensions
@@ -23,5 +24,12 @@ namespace ServerContainerManager.Application.Extensions
                 (ContainerSortBy.Updated, SortOrder.Desc) => query.OrderByDescending(c => c.Updated.At),
                 _ => query.OrderBy(c => c.Name)
             };
+
+        public static IQueryable<GetContainerListQueryResultContainerInfo> Parse(this IQueryable<Container> query, IEnumerable<Guid> namespacesIds) =>
+            query.Select(container => GetContainerListQueryResultContainerInfo.FromDomain(
+                container,
+                container.Namespaces
+                .Select(n => NamespaceInfo.FromDomain(n))
+                .ToList()));
     }
 }

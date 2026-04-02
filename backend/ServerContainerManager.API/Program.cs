@@ -46,7 +46,8 @@ try
 
     builder.Services.RegisterApplicationLayerServices(
         appDbOptionsBuilder: options =>
-            options.UseSqlite(builder.Configuration.GetConnectionString("AppDb")));
+            options.UseSqlite(builder.Configuration.GetConnectionString("AppDb"), 
+            o => o.UseQuerySplittingBehavior(QuerySplittingBehavior.SplitQuery)));
 
     builder.Services.Configure<IdentityOptions>(options =>
     {

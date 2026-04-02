@@ -55,7 +55,7 @@ namespace ServerContainerManager.Application.Services
             await dbContext.SaveChangesAsync(cancellationToken);
 
             _logger.LogInformation("Reconciling {TotalAffectedContainers} containers. adding {Added}, updating {Updated}, removing {Removed}.", 
-                addedContainersCount + removedContainersCount, 
+                addedContainersCount + removedContainersCount + updatedContainersCount, 
                 addedContainersCount,
                 updatedContainersCount,
                 removedContainersCount);
@@ -139,17 +139,21 @@ namespace ServerContainerManager.Application.Services
 
             foreach(var dockerContainer in dockerContainers)
             {
+                var changesHappened = false;
+
                 if (!dbContainersIds.Contains(dockerContainer.ID))
                     continue;
 
-                var container = await dbContext.Containers.FindAsync([dockerContainer.ID], cancellationToken);
-                if (container == null)
-                    throw new InvalidOperationException($"Cannot find container {dockerContainer.ID} to update.");
-
-                if (container.Name != dockerContainer.Names[0].Trim()[..1]){
+                var container = 
+                    await dbContext.Containers.FindAsync([dockerContainer.ID], cancellationToken) 
+                    ?? throw new InvalidOperationException($"Cannot find container {dockerContainer.ID} to update.");
+                
+                if (container.Name != dockerContainer.Names[0].Trim().TrimStart('/'))
+                {
                     var renameResult = container.Rename(dockerContainer.Names[0], actor, now);
                     if (renameResult.IsError)
                         throw new InvalidOperationException(string.Join('\n', renameResult.Errors.Select(e => $"Code: {e.Code} Description: {e.Description}")));
+                    changesHappened = true;
                 }
 
                 var containerState = Enum.Parse<ContainerState>(dockerContainer.State, ignoreCase: true);
@@ -157,6 +161,8 @@ namespace ServerContainerManager.Application.Services
                     var updateStateResult = container.UpdateState(containerState, actor, now);
                     if (updateStateResult.IsError)
                         throw new InvalidOperationException(string.Join('\n', updateStateResult.Errors.Select(e => $"Code: {e.Code} Description: {e.Description}")));
+
+                    changesHappened = true;
                 }
 
                 var labelsResults = dockerContainer.Labels.Select((kv) => Label.Create(kv.Key, kv.Value));
@@ -167,6 +173,8 @@ namespace ServerContainerManager.Application.Services
                     var updateLabelsResult = container.UpdateLabels(labels, actor, now);
                     if (updateLabelsResult.IsError)
                         throw new InvalidOperationException(string.Join('\n', updateLabelsResult.Errors.Select(e => $"Code: {e.Code} Description: {e.Description}")));
+
+                    changesHappened = true;
                 }
 
                 var ports = dockerContainer.Ports ?? []; // Workaround for bug
@@ -178,9 +186,12 @@ namespace ServerContainerManager.Application.Services
                     var updatePublicPortsResult = container.UpdatePorts(containerPorts, actor, now);
                     if (updatePublicPortsResult.IsError)
                         throw new InvalidOperationException(string.Join('\n', updatePublicPortsResult.Errors.Select(e => $"Code: {e.Code} Description: {e.Description}")));
+
+                    changesHappened = true;
                 }
 
-                updated++;
+                if(changesHappened)
+                    updated++;
             }
 
             await dbContext.SaveChangesAsync(cancellationToken);
