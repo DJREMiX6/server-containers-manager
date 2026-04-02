@@ -59,6 +59,22 @@ export const ContainersOverviewStore = signalStore(
       await loadContainers();
     };
 
+    const startContainer = async (containerId: string) => {
+      try {
+        if (store.loadingStatus() !== 'loaded') return;
+
+        const container = store._containers().find((c) => c.id === containerId);
+        if (!container)
+          throw new Error(`Missing container with id ${containerId}.`);
+
+        patchState();
+        await firstValueFrom(containersService.startContainer({ containerId }));
+      } catch (error) {
+        patchState(store, setError(error));
+        throw error;
+      }
+    };
+
     return { ensureLoaded };
   }),
 );

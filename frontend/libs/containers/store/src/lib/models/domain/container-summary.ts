@@ -12,4 +12,5 @@ export type ContainerSummary = {
   labels: ContainerLabels;
   ports: ContainerPort[];
   namespaces: Namespace[];
+  updating: boolean;
 };

@@ -19,6 +19,6 @@ export const initialState: ContainersOverviewState = {
 export function withContainersOverviewState() {
   return signalStoreFeature(
     withState<ContainersOverviewState>(initialState),
-    withErrorFeature(),
+    withErrorFeature(), //Use entities store
   );
 }

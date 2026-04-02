@@ -7,6 +7,7 @@ import {
   GetContainersResponse,
   GetContainersRequestSchema,
   GetContainersResponseSchema,
+  StartContainerRequest,
 } from '../models';
 
 export const ApiBaseUrl = `${Environment.serverOrigin}/api/containers`;
@@ -28,5 +29,12 @@ export class ContainersService {
         withCredentials: true,
       })
       .pipe(map((raw) => GetContainersResponseSchema.parse(raw)));
+  }
+
+  public startContainer(request: StartContainerRequest): Observable<void> {
+    return this.httpClient.post<void>(
+      `${ApiBaseUrl}/${request.containerId}/start`,
+      null,
+    );
   }
 }

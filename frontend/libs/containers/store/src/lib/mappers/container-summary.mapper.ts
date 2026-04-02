@@ -14,6 +14,7 @@ export function containerSummaryMapper(dto: ContainerDto): ContainerSummary {
       labels: containerLabelsMapper(dto.labels),
       ports: containerPortsMapper(dto.ports),
       namespaces: namespacesMapper(dto.namespaces),
+      updating: false,
     };
 }
 
