@@ -4,11 +4,12 @@ import { ContainerPortDto } from "./container-port.dto";
 import { NamespaceDto } from "./namespace.dto"
 
 export type ContainerDto = {
-    id: string;
-    name: string;
-    state: ContainerStateDto;
-    createdAt: string;
-    labels: ContainerLabelDto[];
-    ports: ContainerPortDto[];
-    namespaces: NamespaceDto[];
-}
+  id: string;
+  name: string;
+  state: ContainerStateDto;
+  createdAt: string;
+  updatedAt: string;
+  labels: ContainerLabelDto[];
+  ports: ContainerPortDto[];
+  namespaces: NamespaceDto[];
+};

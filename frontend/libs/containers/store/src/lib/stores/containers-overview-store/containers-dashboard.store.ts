@@ -1,13 +1,25 @@
-import { patchState, signalStore, withMethods } from '@ngrx/signals';
+import {
+  patchState,
+  signalStore,
+  withComputed,
+  withMethods,
+} from '@ngrx/signals';
 import { setError, clearError } from '@scm/shared/store/error-store-feature';
 import { withContainersOverviewState } from './containers-dashboard.state';
-import { inject } from '@angular/core';
+import { computed, inject } from '@angular/core';
 import { ContainersService, GetContainersRequest } from '@scm/containers/data';
 import { firstValueFrom } from 'rxjs';
 import { containersSummaryMapper } from '../../mappers';
 
 export const ContainersOverviewStore = signalStore(
   withContainersOverviewState(),
+  withComputed((store) => ({
+    containers: computed(() =>
+      store
+        ._containers()
+        .sort((a, b) => b.updatedAt.getTime() - a.updatedAt.getTime()),
+    ),
+  })),
   withMethods((store, containersService = inject(ContainersService)) => {
     const loadContainers = async () => {
       try {
@@ -17,7 +29,7 @@ export const ContainersOverviewStore = signalStore(
           skip: 0,
           take: store._containersToLoad(),
           order: 'desc',
-          sortBy: 'created',
+          sortBy: 'updated',
         };
 
         const response = await firstValueFrom(
@@ -25,7 +37,7 @@ export const ContainersOverviewStore = signalStore(
         );
 
         patchState(store, {
-          containers: containersSummaryMapper(response.containers),
+          _containers: containersSummaryMapper(response.containers),
           _loadedAt: new Date(),
           loadingStatus: 'loaded',
         });

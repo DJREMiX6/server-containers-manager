@@ -5,4 +5,5 @@ export const ContainersSortByDtoSchema: z.ZodType<ContainersSortByDto> = z.liter
   'name',
   'status',
   'created',
+  'updated',
 ]);

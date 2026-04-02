@@ -1,1 +1,1 @@
-export type ContainersSortByDto = "name" | "status" | "created";
+export type ContainersSortByDto = 'name' | 'status' | 'created' | 'updated';
