@@ -7,6 +7,15 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Commands\GetContainerList\**" />
+    <Compile Remove="Commands\GetNamespacesList\**" />
+    <EmbeddedResource Remove="Commands\GetContainerList\**" />
+    <EmbeddedResource Remove="Commands\GetNamespacesList\**" />
+    <None Remove="Commands\GetContainerList\**" />
+    <None Remove="Commands\GetNamespacesList\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Docker.DotNet" Version="3.125.15" />
     <PackageReference Include="ErrorOr" Version="2.0.1" />
     <PackageReference Include="FluentValidation" Version="12.1.1" />
@@ -33,6 +42,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\ServerContainerManager.Domain\ServerContainerManager.Domain.csproj" />
+    <ProjectReference Include="..\ServerContainerManager.Shared.Utils\ServerContainerManager.Shared.Utils.csproj" />
   </ItemGroup>
 
 </Project>

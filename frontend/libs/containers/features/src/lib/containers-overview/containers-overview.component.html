@@ -1,0 +1,18 @@
+<div class="flex flex-col h-full gap-4">
+  <div
+    class="grow flex flex-wrap flex-row align-middle items-center justify-center gap-4"
+  >
+    @for (container of containersOverview(); track container.info.id) {
+      <lib-container-overview-card
+        [containerInfo]="container.info"
+        [containerResourcesData]="container.resourcesUsage"
+        (startBtnClick)="startBtnClick_evt($event)"
+        (stopBtnClick)="stopBtnClick_evt($event)"
+        (resumeBtnClick)="resumeBtnClick_evt($event)"
+        (pauseBtnClick)="pauseBtnClick_evt($event)"
+        (restartBtnClick)="restartBtnClick_evt($event)"
+        (killBtnClick)="killBtnClick_evt($event)"
+      ></lib-container-overview-card>
+    }
+  </div>
+</div>

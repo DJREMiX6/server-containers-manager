@@ -7,8 +7,18 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Entities\NewFolder\**" />
+    <EmbeddedResource Remove="Entities\NewFolder\**" />
+    <None Remove="Entities\NewFolder\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="ErrorOr" Version="2.0.1" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="10.0.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\ServerContainerManager.Shared.Utils\ServerContainerManager.Shared.Utils.csproj" />
   </ItemGroup>
 
 </Project>

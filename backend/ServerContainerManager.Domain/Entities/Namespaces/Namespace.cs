@@ -1,4 +1,7 @@
-﻿namespace ServerContainerManager.Domain.Entities.Namespaces
+﻿using ErrorOr;
+using ServerContainerManager.Domain.Entities.Namespaces.Errors;
+
+namespace ServerContainerManager.Domain.Entities.Namespaces
 {
     public sealed class Namespace
     {
@@ -13,8 +16,13 @@
             Name = name;
         }
 
-        public static Namespace Create(string name)
+        public static ErrorOr<Namespace> Create(string name)
         {
+            name = name.Trim();
+
+            if (string.IsNullOrEmpty(name) || name.Length < 3)
+                return NamespaceValidationErrors.NameTooShort();
+
             return new Namespace(Guid.NewGuid(), name);
         }
     }

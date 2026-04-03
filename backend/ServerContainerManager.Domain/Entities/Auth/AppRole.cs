@@ -1,11 +1,23 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using ErrorOr;
+using Microsoft.AspNetCore.Identity;
+using ServerContainerManager.Domain.Entities.Auth.Errors;
 
 namespace ServerContainerManager.Domain.Entities.Auth
 {
     public sealed class AppRole : IdentityRole<Guid>
     {
-        public AppRole() : base() { } // EF
+        private AppRole() : base() { } // EF
 
-        public AppRole(string roleName) : base(roleName) { }
+        private AppRole(string name) : base(name) { }
+
+        public static ErrorOr<AppRole> Create(string name)
+        {
+            name = name.Trim();
+
+            if (string.IsNullOrEmpty(name) || name.Length < 3)
+                return RoleValidationErrors.NameTooShort();
+
+            return new AppRole(name);
+        }
     }
 }

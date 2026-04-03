@@ -10,19 +10,20 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
 
   return next(req).pipe(
     catchError((error) => {
-      if(!(error instanceof HttpErrorResponse)) return throwError(() => error); // Forward if not HttpErrorResponse
-      if(error.status !== HttpStatusCode.Unauthorized) return throwError(() => error); // Forward if error has not Unauthorized status code
+      if (!(error instanceof HttpErrorResponse)) return throwError(() => error); // Forward if not HttpErrorResponse
+      if (error.status !== HttpStatusCode.Unauthorized)
+        return throwError(() => error); // Forward if error has not Unauthorized status code
       if (req.url.includes('/api/auth/session')) return throwError(() => error); // Forward if error comes from the session endpoint
 
       return authService.getSessionInfo().pipe(
         // If the API fails to return session info (user is not authenticated) redirect the user to login page
         catchError(() => {
-          router.navigate(["auth", "login"]);
-          return throwError(() => error)
+          router.navigate(['auth', 'login']);
+          return throwError(() => error);
         }),
         // If the API does not fail to return session info (user is authenticated) forward the error
-        switchMap(() => throwError(() => error))
+        switchMap(() => throwError(() => error)),
       );
-    })
+    }),
   );
 };

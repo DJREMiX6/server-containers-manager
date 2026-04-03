@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using ServerContainerManager.Application.Commands;
 using ServerContainerManager.Application.Entities;
+using ServerContainerManager.Application.Queries;
 using ServerContainerManager.Application.Services;
 using ServerContainerManager.Domain.Entities.Auth;
 
@@ -18,6 +19,7 @@ namespace ServerContainerManager.Application
             services.AddValidatorsFromAssembly(typeof(Ex).Assembly);
             services.RegisterServices();
             services.RegisterCommandsFromAssembly(typeof(Ex).Assembly);
+            services.RegisterQueriesFromAssembly(typeof(Ex).Assembly);
             services.RegisterDbs(appDbOptionsBuilder);
             services.RegisterIdentity();            
 

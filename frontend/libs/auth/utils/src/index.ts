@@ -1,1 +1,4 @@
-export { provideAuthentication } from "./lib/auth-provider";
+export {
+  provideAuthentication,
+  withAuthInterceptors,
+} from './lib/auth-provider';

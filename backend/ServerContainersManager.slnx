@@ -6,6 +6,7 @@
   <Project Path="ServerContainerManager.API/ServerContainerManager.API.csproj" />
   <Project Path="ServerContainerManager.Application/ServerContainerManager.Application.csproj" Id="368dc2d7-8043-45ea-b14e-a010caecd82c" />
   <Project Path="ServerContainerManager.Domain/ServerContainerManager.Domain.csproj" Id="4fe06c49-c0a7-4efb-bcdd-77be6fe7b1b8" />
+  <Project Path="ServerContainerManager.Shared.Utils/ServerContainerManager.Shared.Utils.csproj" Id="a5d544ec-d9c7-4a29-845c-51a7bde434ab" />
   <Project Path="ServerContainersManager.AppHost/ServerContainersManager.AppHost.csproj" />
   <Project Path="ServerContainersManager.ServiceDefaults/ServerContainersManager.ServiceDefaults.csproj" />
 </Solution>

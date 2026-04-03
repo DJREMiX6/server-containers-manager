@@ -14,7 +14,7 @@ import { FloatLabelModule } from 'primeng/floatlabel';
 import { MessageService } from 'primeng/api';
 import { form, FormField, required, submit } from '@angular/forms/signals';
 import { LoginFormModel } from '../models/login-form-model';
-import { AuthStore, LoginRequestModel } from '@scm/auth/state';
+import { AuthStore, LoginRequestModel } from '@scm/auth/store';
 import { Router } from '@angular/router';
 
 @Component({
@@ -49,12 +49,14 @@ export class LoginFeatureComponent implements OnInit {
     required(schema.password, { message: 'Password is required' });
   });
 
-  protected loginBtnClicked_evt() {
+  protected async onFormSubmit(event: Event) {
+    event.preventDefault();
+
     if (this.isLoginBuisy()) return;
 
     this.isLoginBuisy.set(true);
 
-    submit(this.loginForm, async (form) => {
+    await submit(this.loginForm, async (form) => {
       try {
         const loginRequest: LoginRequestModel = {
           username: form().value().username,

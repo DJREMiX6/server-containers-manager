@@ -1,0 +1,71 @@
+<p-card class="w-200 h-fit rounded-2xl overflow-hidden">
+  <ng-template #header>
+    <div class="w-full aspect-video flex flex-col gap-2 p-2">
+      <div class="w-full h-1/2 flex flex-row gap-2">
+        <div class="w-1/2 bg-surface-50 rounded-lg overflow-hidden p-2 flex flex-col border border-surface-400">
+          <div class="text-md text-center font-semibold">CPU</div>
+          <p-chart type="line" class="w-full grow" [data]="cpuChart()" [options]="chartOptions" />
+        </div>
+        <div class="w-1/2 bg-surface-50 rounded-lg overflow-hidden p-2 flex flex-col border border-surface-400">
+          <div class="text-md text-center font-semibold">Memory</div>
+          <p-chart type="line" class="w-full grow" [data]="memoryChart()" [options]="chartOptions" />
+        </div>
+      </div>
+      <div class="w-full h-1/2 flex flex-row gap-2">
+        <div class="w-1/2 bg-surface-50 rounded-lg overflow-hidden p-2 flex flex-col border border-surface-400">
+          <div class="text-md text-center font-semibold">Disk</div>
+          <p-chart type="line" class="w-full grow" [data]="diskChart()" [options]="chartOptions" />
+        </div>
+        <div class="w-1/2 bg-surface-50 rounded-lg overflow-hidden p-2 flex flex-col border border-surface-400">
+          <div class="text-md text-center font-semibold">Network</div>
+          <p-chart type="line" class="w-full grow" [data]="networkChart()" [options]="chartOptions" />
+        </div>
+      </div>
+    </div>
+  </ng-template>
+  <ng-template #title>
+    <div class="w-full flex flex-row items-center gap-2">
+      <div class="min-w-0 shrink truncate" [pTooltip]="containerInfo().name" tooltipPosition="top" showDelay="200" hideDelay="200">
+        {{ containerInfo().name }}
+      </div>
+      <p-tag class="shrink-0 ml-auto" [value]="containerInfo().state" [severity]="containerStateSeverity()"></p-tag>
+    </div>
+  </ng-template>
+  <ng-template #subtitle>
+    <div
+      class="w-full overflow-x-auto flex flex-row align-middle items-start gap-2"
+    >
+      @for (namespace of containerInfo().namespaces; track namespace) {
+        <p-tag [value]="namespace" severity="contrast" />
+      }
+    </div>
+  </ng-template>
+  <ng-template #footer>
+    <div class="flex justify-center align-middle items-center gap-4 mt-1">
+      <p-button
+        icon="pi pi-power-off"
+        [disabled]="!showStartBtn() && !showStopBtn()"
+        [severity]="showStopBtn() ? 'danger' : 'success'"
+        (onClick)="onStartStopBtnClick()"
+      ></p-button>
+      <p-button
+        [icon]="playPauseBtnIcon()"
+        [disabled]="!showPauseBtn() && !showResumePlayBtn()"
+        [severity]="showResumePlayBtn() ? 'success' : 'warn'"
+        (onClick)="onPauseResumeBtnClick()"
+      ></p-button>
+      <p-button
+        icon="pi pi-replay"
+        [disabled]="!showRestartBtn()"
+        severity="info"
+        (onClick)="onRestartBtnClick()"
+      ></p-button>
+      <p-button
+        icon="pi pi-stop"
+        [disabled]="!showKillBtn()"
+        severity="danger"
+        (onClick)="onKillBtnClick()"
+      ></p-button>
+    </div>
+  </ng-template>
+</p-card>

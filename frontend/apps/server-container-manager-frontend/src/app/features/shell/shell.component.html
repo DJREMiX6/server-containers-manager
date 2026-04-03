@@ -1,0 +1,10 @@
+<div class="w-screen h-screen flex flex-row p-4 gap-4">
+    <div class="h-full w-20 p-4 bg-surface-100 rounded-2xl">
+        <app-side-nav-menu [username]="authStore.user()!.username"></app-side-nav-menu>
+    </div>
+    <div class="grow h-full overflow-y-auto overflow-x-hidden">
+        <div class="p-1 h-fit w-fit">
+            <router-outlet></router-outlet>
+        </div>
+    </div>
+</div>

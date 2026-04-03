@@ -6,5 +6,11 @@
 @source "../../../environments";
 @source "../../../libs/auth/data";
 @source "../../../libs/auth/features";
-@source "../../../libs/auth/state";
+@source "../../../libs/auth/store";
+@source "../../../libs/auth/utils";
+@source "../../../libs/containers/data";
+@source "../../../libs/containers/features";
+@source "../../../libs/containers/store";
+@source "../../../libs/containers/ui";
+@source "../../../libs/shared/store/error-store-feature";
 /* nx-tailwind-sources:end */

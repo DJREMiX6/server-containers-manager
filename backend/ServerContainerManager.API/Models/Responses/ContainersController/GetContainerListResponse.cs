@@ -1,40 +1,23 @@
 ﻿using ServerContainerManager.API.Models.Enums;
+using ServerContainerManager.API.Models.Responses.Models;
 
 namespace ServerContainerManager.API.Models.Responses.ContainersController
 {
     public record GetContainerListItemResponse
     {
-        public string Id { get; }
-        public string Name { get; }
-        public ContainerState State { get; }
-        public DateTime Created { get; }
-        public IDictionary<string, string> Labels { get; }
-        public IList<ushort> PublicPorts { get; }
-
-        public GetContainerListItemResponse(
-            string id,
-            string name,
-            ContainerState state,
-            DateTime created,
-            IDictionary<string, string> labels,
-            IList<ushort> publicPorts)
-        {
-            Id = id;
-            Name = name;
-            State = state;
-            Created = created;
-            Labels = labels;
-            PublicPorts = [.. publicPorts];
-        }
+        public required string Id { get; init;  }
+        public required string Name { get; init; }
+        public required ContainerState State { get; init; }
+        public required DateTime CreatedAt { get; init; }
+        public required DateTime UpdatedAt { get; init; }
+        public required IReadOnlyCollection<ContainerLabelResponseModel> Labels { get; init; }
+        public required IReadOnlyCollection<ContainerPortResponseModel> Ports { get; init; }
+        public required IReadOnlyCollection<NamespaceInfoResponseModel> Namespaces { get; init; }
     }
 
     public record GetContainerListResponse
     {
-        public IList<GetContainerListItemResponse> Items { get; }
-
-        public GetContainerListResponse(IList<GetContainerListItemResponse> items)
-        {
-            Items = [.. items];
-        }
+        public required IReadOnlyCollection<GetContainerListItemResponse> Containers { get; init; }
+        public required int TotalCount { get; init;  }
     }
 }

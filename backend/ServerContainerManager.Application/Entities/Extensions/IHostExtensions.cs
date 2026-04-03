@@ -41,14 +41,17 @@ namespace ServerContainerManager.Application.Entities.Extensions
             if (adminUsers.Count > 0)
                 return host;
 
-            var adminUser = AppUser.Create("Admin", []);
+            var adminUserCreateResult = AppUser.Create("Admin", []);
+            if (adminUserCreateResult.IsError)
+                throw new InvalidOperationException(string.Join('\n', adminUserCreateResult.Errors.Select(e => $"Code: {e.Code} Description: {e.Description}")));
+
             var adminPassword = "Admin123!";
 
-            var createResult = await userManager.CreateAsync(adminUser, adminPassword);
+            var createResult = await userManager.CreateAsync(adminUserCreateResult.Value, adminPassword);
             if (!createResult.Succeeded)
                 throw new InvalidOperationException(string.Join('\n', createResult.Errors.Select(e => $"{e.Code}: {e.Description}")));
 
-            var roleAssignResult = await userManager.AddToRolesAsync(adminUser, [UserRoles.Admin, UserRoles.Member]);
+            var roleAssignResult = await userManager.AddToRolesAsync(adminUserCreateResult.Value, [UserRoles.Admin, UserRoles.Member]);
             if (!roleAssignResult.Succeeded)
                 throw new InvalidOperationException(string.Join('\n', roleAssignResult.Errors.Select(e => $"{e.Code}: {e.Description}")));
 
@@ -76,10 +79,10 @@ namespace ServerContainerManager.Application.Entities.Extensions
             var roleManager = services.GetRequiredService<RoleManager<AppRole>>();
 
             if (!await roleManager.RoleExistsAsync(UserRoles.Admin))
-                await roleManager.CreateAsync(new AppRole(UserRoles.Admin));
+                await roleManager.CreateAsync(AppRole.Create(UserRoles.Admin).Value);
 
             if (!await roleManager.RoleExistsAsync(UserRoles.Member))
-                await roleManager.CreateAsync(new AppRole(UserRoles.Member));
+                await roleManager.CreateAsync(AppRole.Create(UserRoles.Member).Value);
         }
     }
 }

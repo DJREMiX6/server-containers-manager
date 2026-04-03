@@ -1,13 +1,14 @@
-using Serilog;
+using FluentValidation;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Scalar.AspNetCore;
-using System.Text.Json.Serialization;
+using Serilog;
+using ServerContainerManager.API.ErrorHandling;
+using ServerContainerManager.API.Json;
 using ServerContainerManager.Application;
 using ServerContainerManager.Application.Entities.Extensions;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Identity;
-using ServerContainerManager.API.ErrorHandling;
-using FluentValidation;
 using SharpGrip.FluentValidation.AutoValidation.Mvc.Extensions;
+using System.Text.Json.Serialization;
 
 Log.Logger = new LoggerConfiguration()
     .ReadFrom
@@ -40,11 +41,13 @@ try
     builder.Services.ConfigureHttpJsonOptions(options =>
     {
         options.SerializerOptions.Converters.Add(new JsonStringEnumConverter());
+        options.SerializerOptions.Converters.Add(new JsonUtcDateTimeConverter());
     });
 
     builder.Services.RegisterApplicationLayerServices(
         appDbOptionsBuilder: options =>
-            options.UseSqlite(builder.Configuration.GetConnectionString("AppDb")));
+            options.UseSqlite(builder.Configuration.GetConnectionString("AppDb"), 
+            o => o.UseQuerySplittingBehavior(QuerySplittingBehavior.SplitQuery)));
 
     builder.Services.Configure<IdentityOptions>(options =>
     {

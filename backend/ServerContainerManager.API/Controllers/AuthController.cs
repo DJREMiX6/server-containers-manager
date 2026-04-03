@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.HttpResults;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using ServerContainerManager.API.Extensions;
 using ServerContainerManager.API.Models.Requests.Auth;
@@ -8,15 +7,11 @@ using ServerContainerManager.API.Models.Requests.AuthController;
 using ServerContainerManager.API.Models.Responses.AuthController;
 using ServerContainerManager.API.Models.Responses.Extensions;
 using ServerContainerManager.Application.Commands.Abstraction;
-using ServerContainerManager.Application.Commands.ChangePassword;
-using ServerContainerManager.Application.Commands.ChangeUsername;
-using ServerContainerManager.Application.Commands.CreateUser;
-using ServerContainerManager.Application.Commands.GetSessionInfo;
-using ServerContainerManager.Application.Commands.GetUserList;
-using ServerContainerManager.Application.Commands.SignIn;
-using ServerContainerManager.Application.Commands.SignOut;
-using ServerContainerManager.Application.Consts;
-using ServerContainerManager.Domain.Entities.Auth;
+using ServerContainerManager.Application.Commands.Auth.GetSessionInfo;
+using ServerContainerManager.Application.Commands.Auth.SignIn;
+using ServerContainerManager.Application.Commands.Auth.SignOut;
+using ServerContainerManager.Application.Commands.User.ChangePassword;
+using ServerContainerManager.Application.Commands.User.ChangeUsername;
 
 namespace ServerContainerManager.API.Controllers
 {
@@ -34,7 +29,13 @@ namespace ServerContainerManager.API.Controllers
             ICommandHandler<SignInCommand, SignInCommandResult> handler,
             CancellationToken cancellationToken = default)
         {
-            var command = new SignInCommand(request.Username, request.Password, isPersistent: true, lockOutOnFailure: true);
+            var command = new SignInCommand()
+            {
+                Username = request.Username, 
+                Password = request.Password, 
+                IsPersistent = true, 
+                LockOutOnFailure = true
+            };
 
             var signInResult = await handler.HandleAsync(command, cancellationToken);
 
@@ -64,7 +65,10 @@ namespace ServerContainerManager.API.Controllers
             ICommandHandler<GetSessionInfoCommand, GetSessionInfoCommandResult> handler,
             CancellationToken cancellationToken = default)
         {
-            var command = new GetSessionInfoCommand(User.GetUserId());
+            var command = new GetSessionInfoCommand()
+            {
+                UserId = User.GetUserId()
+            };
             var getSessionInfoResult = await handler.HandleAsync(command, cancellationToken);
 
             if(getSessionInfoResult.IsError)
@@ -79,7 +83,12 @@ namespace ServerContainerManager.API.Controllers
             ICommandHandler<ChangePasswordCommand, ChangePasswordCommandResult> handler,
             CancellationToken cancellationToken = default)
         {
-            var command = new ChangePasswordCommand(User.GetUserId(), request.CurrentPassword, request.NewPassword);
+            var command = new ChangePasswordCommand()
+            {
+                UserId = User.GetUserId(), 
+                CurrentPassword = request.CurrentPassword, 
+                NewPassword = request.NewPassword
+            };
             var result = await handler.HandleAsync(command, cancellationToken);
 
             if (result.IsError)
@@ -94,7 +103,11 @@ namespace ServerContainerManager.API.Controllers
             ICommandHandler<ChangeUsernameCommand, ChangeUsernameCommandResult> handler,
             CancellationToken cancellationToken = default)
         {
-            var command = new ChangeUsernameCommand(User.GetUserId(), request.NewUsername);
+            var command = new ChangeUsernameCommand()
+            {
+                UserId = User.GetUserId(),
+                NewUsername = request.NewUsername
+            };
             var result = await handler.HandleAsync(command, cancellationToken);
 
             if (result.IsError)
