@@ -9,9 +9,17 @@ import {
   GetContainersResponseSchema,
   StartContainerRequest,
   StartContainerRequestSchema,
+  StopContainerRequest,
   StopContainerRequestSchema,
+  PauseContainerRequest,
+  PauseContainerRequestSchema,
+  ResumeContainerRequest,
+  ResumeContainerRequestSchema,
+  RestartContainerRequest,
+  RestartContainerRequestSchema,
+  KillContainerRequest,
+  KillContainerRequestSchema,
 } from '../models';
-import { StopContainerRequest } from '../models/requests/stop-container.request';
 
 export const ApiBaseUrl = `${Environment.serverOrigin}/api/containers`;
 
@@ -47,6 +55,42 @@ export class ContainersService {
 
     return this.httpClient.post<void>(
       `${ApiBaseUrl}/${parsedRequest.containerId}/stop`,
+      null,
+    );
+  }
+
+  public pauseContainer(request: PauseContainerRequest): Observable<void> {
+    const parsedRequest = PauseContainerRequestSchema.parse(request);
+
+    return this.httpClient.post<void>(
+      `${ApiBaseUrl}/${parsedRequest.containerId}/pause`,
+      null,
+    );
+  }
+
+  public resumeContainer(request: ResumeContainerRequest): Observable<void> {
+    const parsedRequest = ResumeContainerRequestSchema.parse(request);
+
+    return this.httpClient.post<void>(
+      `${ApiBaseUrl}/${parsedRequest.containerId}/resume`,
+      null,
+    );
+  }
+
+  public restartContainer(request: RestartContainerRequest): Observable<void> {
+    const parsedRequest = RestartContainerRequestSchema.parse(request);
+
+    return this.httpClient.post<void>(
+      `${ApiBaseUrl}/${parsedRequest.containerId}/restart`,
+      null,
+    );
+  }
+
+  public killContainer(request: KillContainerRequest): Observable<void> {
+    const parsedRequest = KillContainerRequestSchema.parse(request);
+
+    return this.httpClient.post<void>(
+      `${ApiBaseUrl}/${parsedRequest.containerId}/kill`,
       null,
     );
   }
