@@ -6,15 +6,19 @@ import {
 import { AuthService } from '@scm/auth/data';
 import { AuthStore } from '@scm/auth/store';
 import { authInterceptor } from './auth-interceptor/auth-interceptor';
-import { HTTP_INTERCEPTORS } from '@angular/common/http';
+import { HttpInterceptorFn } from '@angular/common/http';
+import { credentialsInterceptor } from './credentials-interceptor/credentials-interceptor';
 
 export function provideAuthentication() {
   return makeEnvironmentProviders([
     AuthService,
     AuthStore,
     provideAuthInitializer(),
-    provideAuthInterceptor(),
   ]);
+}
+
+export function withAuthInterceptors(): HttpInterceptorFn[] {
+  return [credentialsInterceptor, authInterceptor];
 }
 
 function provideAuthInitializer() {
@@ -22,14 +26,4 @@ function provideAuthInitializer() {
     const authStore = inject(AuthStore);
     return authStore.checkAuth();
   });
-}
-
-function provideAuthInterceptor() {
-  return makeEnvironmentProviders([
-    {
-      provide: HTTP_INTERCEPTORS,
-      useExisting: authInterceptor,
-      multi: true,
-    },
-  ]);
 }

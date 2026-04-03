@@ -43,25 +43,25 @@
         icon="pi pi-power-off"
         [disabled]="!showStartBtn() && !showStopBtn()"
         [severity]="showStopBtn() ? 'danger' : 'success'"
-        (onClick)="startStopBtnClick.emit(this.containerInfo())"
+        (onClick)="onStartStopBtnClick()"
       ></p-button>
       <p-button
         [icon]="playPauseBtnIcon()"
         [disabled]="!showPauseBtn() && !showResumePlayBtn()"
         [severity]="showResumePlayBtn() ? 'success' : 'warn'"
-        (onClick)="playPauseBtnClick.emit(this.containerInfo())"
+        (onClick)="onPauseResumeBtnClick()"
       ></p-button>
       <p-button
         icon="pi pi-replay"
         [disabled]="!showRestartBtn()"
         severity="info"
-        (onClick)="restartBtnClick.emit(this.containerInfo())"
+        (onClick)="onRestartBtnClick()"
       ></p-button>
       <p-button
         icon="pi pi-stop"
         [disabled]="!showKillBtn()"
         severity="danger"
-        (onClick)="killBtnClick.emit(this.containerInfo())"
+        (onClick)="onKillBtnClick()"
       ></p-button>
     </div>
   </ng-template>

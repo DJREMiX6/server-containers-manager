@@ -230,19 +230,27 @@ export class ContainersOverviewComponent implements OnInit {
     this.containersOverviewStore.ensureLoaded();
   }
 
-  protected startStopBtnClick_evt(containerId: string) {
-    console.log('StartStopBtn', containerId);
+  protected async startBtnClick_evt(containerInfo: ContainerOverviewInfo) {
+    await this.containersOverviewStore.startContainer(containerInfo.id);
   }
 
-  protected playPauseBtnClick_evt(containerId: string) {
-    console.log('PlayPauseBtn', containerId);
+  protected stopBtnClick_evt(containerInfo: ContainerOverviewInfo) {
+    console.log('StopStopBtn', containerInfo.id);
   }
 
-  protected restartBtnClick_evt(containerId: string) {
-    console.log('RestartBtn', containerId);
+  protected resumeBtnClick_evt(containerInfo: ContainerOverviewInfo) {
+    console.log('ResumePauseBtn', containerInfo.id);
   }
 
-  protected killBtnClick_evt(containerId: string) {
-    console.log('KillBtn', containerId);
+  protected pauseBtnClick_evt(containerInfo: ContainerOverviewInfo) {
+    console.log('PausePauseBtn', containerInfo.id);
+  }
+
+  protected restartBtnClick_evt(containerInfo: ContainerOverviewInfo) {
+    console.log('RestartBtn', containerInfo.id);
+  }
+
+  protected killBtnClick_evt(containerInfo: ContainerOverviewInfo) {
+    console.log('KillBtn', containerInfo.id);
   }
 }

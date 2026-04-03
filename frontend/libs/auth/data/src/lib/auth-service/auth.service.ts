@@ -20,25 +20,19 @@ export class AuthService {
     return this.httpClient.post<void>(
       `${ApiBaseEndpoint}/signin`,
       parsedRequest,
-      {
-        withCredentials: true,
-      },
     );
   }
 
   public logout(): Observable<void> {
     return this.httpClient.post<void>(
       `${ApiBaseEndpoint}/signout`,
-      {},
-      {
-        withCredentials: true,
-      },
+      null,
     );
   }
 
   public getSessionInfo(): Observable<GetSessionInfoResponse> {
     return this.httpClient
-      .get<unknown>(`${ApiBaseEndpoint}/session`, { withCredentials: true })
+      .get<unknown>(`${ApiBaseEndpoint}/session`)
       .pipe(map((raw) => GetSessionInfoSchema.parse(raw)));
   }
 }

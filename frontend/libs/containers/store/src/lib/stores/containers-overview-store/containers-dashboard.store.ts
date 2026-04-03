@@ -10,13 +10,14 @@ import { computed, inject } from '@angular/core';
 import { ContainersService, GetContainersRequest } from '@scm/containers/data';
 import { firstValueFrom } from 'rxjs';
 import { containersSummaryMapper } from '../../mappers';
+import { setAllEntities, updateEntity } from '@ngrx/signals/entities';
 
 export const ContainersOverviewStore = signalStore(
   withContainersOverviewState(),
   withComputed((store) => ({
     containers: computed(() =>
       store
-        ._containers()
+        .entities()
         .sort((a, b) => b.updatedAt.getTime() - a.updatedAt.getTime()),
     ),
   })),
@@ -36,11 +37,14 @@ export const ContainersOverviewStore = signalStore(
           containersService.getContainers(request),
         );
 
-        patchState(store, {
-          _containers: containersSummaryMapper(response.containers),
-          _loadedAt: new Date(),
-          loadingStatus: 'loaded',
-        });
+        patchState(
+          store,
+          setAllEntities(containersSummaryMapper(response.containers)),
+          {
+            _loadedAt: new Date(),
+            loadingStatus: 'loaded',
+          },
+        );
       } catch (error) {
         patchState(
           store,
@@ -61,20 +65,39 @@ export const ContainersOverviewStore = signalStore(
 
     const startContainer = async (containerId: string) => {
       try {
-        if (store.loadingStatus() !== 'loaded') return;
+        if (store.loadingStatus() !== 'loaded')
+          throw new Error('Containers not loaded.');
 
-        const container = store._containers().find((c) => c.id === containerId);
-        if (!container)
+        if (!store.entityMap()[containerId])
           throw new Error(`Missing container with id ${containerId}.`);
 
-        patchState();
+        patchState(
+          store,
+          updateEntity({
+            id: containerId,
+            changes: {
+              updating: true,
+            },
+          }),
+        );
         await firstValueFrom(containersService.startContainer({ containerId }));
+        await loadContainers();
       } catch (error) {
         patchState(store, setError(error));
         throw error;
+      } finally {
+        patchState(
+          store,
+          updateEntity({
+            id: containerId,
+            changes: {
+              updating: false,
+            },
+          }),
+        );
       }
     };
 
-    return { ensureLoaded };
+    return { ensureLoaded, startContainer };
   }),
 );

@@ -26,7 +26,6 @@ export class ContainersService {
         params: {
           ...parsedRequest,
         },
-        withCredentials: true,
       })
       .pipe(map((raw) => GetContainersResponseSchema.parse(raw)));
   }

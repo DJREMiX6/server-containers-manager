@@ -6,10 +6,12 @@
       <lib-container-overview-card
         [containerInfo]="container.info"
         [containerResourcesData]="container.resourcesUsage"
-        (startStopBtnClick)="startStopBtnClick_evt(container.info.id)"
-        (playPauseBtnClick)="playPauseBtnClick_evt(container.info.id)"
-        (restartBtnClick)="restartBtnClick_evt(container.info.id)"
-        (killBtnClick)="killBtnClick_evt(container.info.id)"
+        (startBtnClick)="startBtnClick_evt($event)"
+        (stopBtnClick)="stopBtnClick_evt($event)"
+        (resumeBtnClick)="resumeBtnClick_evt($event)"
+        (pauseBtnClick)="pauseBtnClick_evt($event)"
+        (restartBtnClick)="restartBtnClick_evt($event)"
+        (killBtnClick)="killBtnClick_evt($event)"
       ></lib-container-overview-card>
     }
   </div>

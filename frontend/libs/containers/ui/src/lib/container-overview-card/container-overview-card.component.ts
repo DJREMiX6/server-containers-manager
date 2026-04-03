@@ -18,8 +18,10 @@ export class ContainerOverviewCardComponent {
   public readonly containerResourcesData =
     input.required<ContainerResourcesData>();
 
-  public readonly startStopBtnClick = output<ContainerOverviewInfo>();
-  public readonly playPauseBtnClick = output<ContainerOverviewInfo>();
+  public readonly startBtnClick = output<ContainerOverviewInfo>();
+  public readonly stopBtnClick = output<ContainerOverviewInfo>();
+  public readonly resumeBtnClick = output<ContainerOverviewInfo>();
+  public readonly pauseBtnClick = output<ContainerOverviewInfo>();
   public readonly restartBtnClick = output<ContainerOverviewInfo>();
   public readonly killBtnClick = output<ContainerOverviewInfo>();
 
@@ -234,4 +236,23 @@ export class ContainerOverviewCardComponent {
       },
     },
   };
+
+  protected onStartStopBtnClick(): void {
+    if (this.showStartBtn()) this.startBtnClick.emit(this.containerInfo());
+    else this.stopBtnClick.emit(this.containerInfo());
+  }
+
+  protected onPauseResumeBtnClick(): void {
+    if (this.showResumePlayBtn())
+      this.resumeBtnClick.emit(this.containerInfo());
+    else this.pauseBtnClick.emit(this.containerInfo());
+  }
+
+  protected onRestartBtnClick(): void {
+    this.restartBtnClick.emit(this.containerInfo());
+  }
+
+  protected onKillBtnClick(): void {
+    this.killBtnClick.emit(this.containerInfo());
+  }
 }
