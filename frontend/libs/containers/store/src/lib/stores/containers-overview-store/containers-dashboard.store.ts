@@ -98,6 +98,41 @@ export const ContainersOverviewStore = signalStore(
       }
     };
 
-    return { ensureLoaded, startContainer };
+    const stopContainer = async (containerId: string) => {
+      try {
+        if (store.loadingStatus() !== 'loaded')
+          throw new Error('Containers not loaded.');
+
+        if (!store.entityMap()[containerId])
+          throw new Error(`Missing container with id ${containerId}.`);
+
+        patchState(
+          store,
+          updateEntity({
+            id: containerId,
+            changes: {
+              updating: true,
+            },
+          }),
+        );
+        await firstValueFrom(containersService.stopContainer({ containerId }));
+        await loadContainers();
+      } catch (error) {
+        patchState(store, setError(error));
+        throw error;
+      } finally {
+        patchState(
+          store,
+          updateEntity({
+            id: containerId,
+            changes: {
+              updating: false,
+            },
+          }),
+        );
+      }
+    };
+
+    return { ensureLoaded, startContainer, stopContainer };
   }),
 );

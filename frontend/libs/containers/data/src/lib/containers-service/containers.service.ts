@@ -8,7 +8,10 @@ import {
   GetContainersRequestSchema,
   GetContainersResponseSchema,
   StartContainerRequest,
+  StartContainerRequestSchema,
+  StopContainerRequestSchema,
 } from '../models';
+import { StopContainerRequest } from '../models/requests/stop-container.request';
 
 export const ApiBaseUrl = `${Environment.serverOrigin}/api/containers`;
 
@@ -31,8 +34,19 @@ export class ContainersService {
   }
 
   public startContainer(request: StartContainerRequest): Observable<void> {
+    const parsedRequest = StartContainerRequestSchema.parse(request);
+
     return this.httpClient.post<void>(
-      `${ApiBaseUrl}/${request.containerId}/start`,
+      `${ApiBaseUrl}/${parsedRequest.containerId}/start`,
+      null,
+    );
+  }
+
+  public stopContainer(request: StopContainerRequest): Observable<void> {
+    const parsedRequest = StopContainerRequestSchema.parse(request);
+
+    return this.httpClient.post<void>(
+      `${ApiBaseUrl}/${parsedRequest.containerId}/stop`,
       null,
     );
   }

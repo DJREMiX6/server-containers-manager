@@ -234,8 +234,8 @@ export class ContainersOverviewComponent implements OnInit {
     await this.containersOverviewStore.startContainer(containerInfo.id);
   }
 
-  protected stopBtnClick_evt(containerInfo: ContainerOverviewInfo) {
-    console.log('StopStopBtn', containerInfo.id);
+  protected async stopBtnClick_evt(containerInfo: ContainerOverviewInfo) {
+    await this.containersOverviewStore.stopContainer(containerInfo.id);
   }
 
   protected resumeBtnClick_evt(containerInfo: ContainerOverviewInfo) {
