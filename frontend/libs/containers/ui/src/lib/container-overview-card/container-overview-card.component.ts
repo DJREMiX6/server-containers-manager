@@ -259,7 +259,7 @@ export class ContainerOverviewCardComponent {
     },
     scales: {
       x: {
-        display: true,
+        display: false,
       },
       y: {
         display: true,
