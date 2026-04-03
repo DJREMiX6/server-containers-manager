@@ -5,35 +5,38 @@
         <div class="w-1/2 bg-surface-50 rounded-lg overflow-hidden p-2 flex flex-col border border-surface-400">
           <div class="text-md text-center font-semibold">CPU</div>
           <p-chart type="line" class="w-full grow" [data]="cpuChart()" [options]="chartOptions" />
-          <!-- <p-skeleton width="100%" height="100%" /> -->
         </div>
         <div class="w-1/2 bg-surface-50 rounded-lg overflow-hidden p-2 flex flex-col border border-surface-400">
           <div class="text-md text-center font-semibold">Memory</div>
           <p-chart type="line" class="w-full grow" [data]="memoryChart()" [options]="chartOptions" />
-          <!-- <p-skeleton width="100%" height="100%" /> -->
         </div>
       </div>
       <div class="w-full h-1/2 flex flex-row gap-2">
         <div class="w-1/2 bg-surface-50 rounded-lg overflow-hidden p-2 flex flex-col border border-surface-400">
           <div class="text-md text-center font-semibold">Disk</div>
           <p-chart type="line" class="w-full grow" [data]="diskChart()" [options]="chartOptions" />
-          <!-- <p-skeleton width="100%" height="100%" /> -->
         </div>
         <div class="w-1/2 bg-surface-50 rounded-lg overflow-hidden p-2 flex flex-col border border-surface-400">
           <div class="text-md text-center font-semibold">Network</div>
           <p-chart type="line" class="w-full grow" [data]="networkChart()" [options]="chartOptions" />
-          <!-- <p-skeleton width="100%" height="100%" /> -->
         </div>
       </div>
     </div>
   </ng-template>
-  <ng-template #title>{{ containerInfo().name }}</ng-template>
+  <ng-template #title>
+    <div class="w-full flex flex-row items-center gap-2">
+      <div class="min-w-0 shrink truncate" [pTooltip]="containerInfo().name" tooltipPosition="top" showDelay="200" hideDelay="200">
+        {{ containerInfo().name }}
+      </div>
+      <p-tag class="shrink-0 ml-auto" [value]="containerInfo().state" [severity]="containerStateSeverity()"></p-tag>
+    </div>
+  </ng-template>
   <ng-template #subtitle>
     <div
       class="w-full overflow-x-auto flex flex-row align-middle items-start gap-2"
     >
       @for (namespace of containerInfo().namespaces; track namespace) {
-        <p-tag [value]="namespace" />
+        <p-tag [value]="namespace" severity="contrast" />
       }
     </div>
   </ng-template>

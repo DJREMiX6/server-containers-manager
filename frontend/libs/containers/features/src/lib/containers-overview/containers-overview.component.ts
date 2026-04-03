@@ -238,19 +238,19 @@ export class ContainersOverviewComponent implements OnInit {
     await this.containersOverviewStore.stopContainer(containerInfo.id);
   }
 
-  protected resumeBtnClick_evt(containerInfo: ContainerOverviewInfo) {
-    console.log('ResumePauseBtn', containerInfo.id);
+  protected async resumeBtnClick_evt(containerInfo: ContainerOverviewInfo) {
+    await this.containersOverviewStore.resumeContainer(containerInfo.id);
   }
 
-  protected pauseBtnClick_evt(containerInfo: ContainerOverviewInfo) {
-    console.log('PausePauseBtn', containerInfo.id);
+  protected async pauseBtnClick_evt(containerInfo: ContainerOverviewInfo) {
+    await this.containersOverviewStore.pauseContainer(containerInfo.id);
   }
 
-  protected restartBtnClick_evt(containerInfo: ContainerOverviewInfo) {
-    console.log('RestartBtn', containerInfo.id);
+  protected async restartBtnClick_evt(containerInfo: ContainerOverviewInfo) {
+    await this.containersOverviewStore.restartContainer(containerInfo.id);
   }
 
-  protected killBtnClick_evt(containerInfo: ContainerOverviewInfo) {
-    console.log('KillBtn', containerInfo.id);
+  protected async killBtnClick_evt(containerInfo: ContainerOverviewInfo) {
+    await this.containersOverviewStore.killContainer(containerInfo.id);
   }
 }

@@ -1,15 +1,15 @@
 import { Component, computed, input, output, Signal } from '@angular/core';
-import { CardModule } from 'primeng/card';
-import { TagModule } from 'primeng/tag';
-import { ButtonModule } from 'primeng/button';
-import { SkeletonModule } from 'primeng/skeleton';
+import { Card } from 'primeng/card';
+import { Tag } from 'primeng/tag';
+import { Button } from 'primeng/button';
+import { Tooltip } from 'primeng/tooltip';
 import { ChartModule } from 'primeng/chart';
 import { ContainerOverviewInfo, ContainerResourcesData } from '../models';
 import { ChartOptions, ChartData, Point } from 'chart.js';
 
 @Component({
   selector: 'lib-container-overview-card',
-  imports: [CardModule, TagModule, ButtonModule, SkeletonModule, ChartModule],
+  imports: [Card, Tag, Button, Tooltip, ChartModule],
   templateUrl: './container-overview-card.component.html',
   styleUrl: './container-overview-card.component.css',
 })
@@ -101,6 +101,36 @@ export class ContainerOverviewCardComponent {
         return false;
     }
   });
+
+  protected readonly containerStateSeverity = computed(
+    ():
+      | 'success'
+      | 'secondary'
+      | 'info'
+      | 'warn'
+      | 'danger'
+      | 'contrast'
+      | undefined => {
+      switch (this.containerInfo().state) {
+        case 'Running':
+          return 'success';
+        case 'Dead':
+          return 'danger';
+        case 'Paused':
+          return 'warn';
+        case 'Exited':
+          return 'danger';
+        case 'Restarting':
+          return 'info';
+        case 'Created':
+          return 'info';
+        case 'Removing':
+          return 'danger';
+        default:
+          return undefined;
+      }
+    },
+  );
 
   private readonly chartsLabels: Signal<number[]> = computed(() => {
     {

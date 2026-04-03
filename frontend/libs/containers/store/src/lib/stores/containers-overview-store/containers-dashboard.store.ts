@@ -133,6 +133,158 @@ export const ContainersOverviewStore = signalStore(
       }
     };
 
-    return { ensureLoaded, startContainer, stopContainer };
+    const pauseContainer = async (containerId: string) => {
+      try {
+        if (store.loadingStatus() !== 'loaded')
+          throw new Error('Containers not loaded.');
+
+        if (!store.entityMap()[containerId])
+          throw new Error(`Missing container with id ${containerId}.`);
+
+        patchState(
+          store,
+          updateEntity({
+            id: containerId,
+            changes: {
+              updating: true,
+            },
+          }),
+        );
+        await firstValueFrom(containersService.pauseContainer({ containerId }));
+        await loadContainers();
+      } catch (error) {
+        patchState(store, setError(error));
+        throw error;
+      } finally {
+        patchState(
+          store,
+          updateEntity({
+            id: containerId,
+            changes: {
+              updating: false,
+            },
+          }),
+        );
+      }
+    };
+
+    const resumeContainer = async (containerId: string) => {
+      try {
+        if (store.loadingStatus() !== 'loaded')
+          throw new Error('Containers not loaded.');
+
+        if (!store.entityMap()[containerId])
+          throw new Error(`Missing container with id ${containerId}.`);
+
+        patchState(
+          store,
+          updateEntity({
+            id: containerId,
+            changes: {
+              updating: true,
+            },
+          }),
+        );
+        await firstValueFrom(
+          containersService.resumeContainer({ containerId }),
+        );
+        await loadContainers();
+      } catch (error) {
+        patchState(store, setError(error));
+        throw error;
+      } finally {
+        patchState(
+          store,
+          updateEntity({
+            id: containerId,
+            changes: {
+              updating: false,
+            },
+          }),
+        );
+      }
+    };
+
+    const restartContainer = async (containerId: string) => {
+      try {
+        if (store.loadingStatus() !== 'loaded')
+          throw new Error('Containers not loaded.');
+
+        if (!store.entityMap()[containerId])
+          throw new Error(`Missing container with id ${containerId}.`);
+
+        patchState(
+          store,
+          updateEntity({
+            id: containerId,
+            changes: {
+              updating: true,
+            },
+          }),
+        );
+        await firstValueFrom(
+          containersService.restartContainer({ containerId }),
+        );
+        await loadContainers();
+      } catch (error) {
+        patchState(store, setError(error));
+        throw error;
+      } finally {
+        patchState(
+          store,
+          updateEntity({
+            id: containerId,
+            changes: {
+              updating: false,
+            },
+          }),
+        );
+      }
+    };
+
+    const killContainer = async (containerId: string) => {
+      try {
+        if (store.loadingStatus() !== 'loaded')
+          throw new Error('Containers not loaded.');
+
+        if (!store.entityMap()[containerId])
+          throw new Error(`Missing container with id ${containerId}.`);
+
+        patchState(
+          store,
+          updateEntity({
+            id: containerId,
+            changes: {
+              updating: true,
+            },
+          }),
+        );
+        await firstValueFrom(containersService.killContainer({ containerId }));
+        await loadContainers();
+      } catch (error) {
+        patchState(store, setError(error));
+        throw error;
+      } finally {
+        patchState(
+          store,
+          updateEntity({
+            id: containerId,
+            changes: {
+              updating: false,
+            },
+          }),
+        );
+      }
+    };
+
+    return {
+      ensureLoaded,
+      startContainer,
+      stopContainer,
+      pauseContainer,
+      resumeContainer,
+      restartContainer,
+      killContainer,
+    };
   }),
 );
