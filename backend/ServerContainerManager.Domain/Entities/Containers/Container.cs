@@ -101,7 +101,7 @@ namespace ServerContainerManager.Domain.Entities.Containers
 
         public ErrorOr<Success> Stop(Actor actor, DateTime now)
         {
-            if (State != ContainerState.Running || State != ContainerState.Paused)
+            if (State != ContainerState.Running && State != ContainerState.Paused)
                 return ContainerErrors.NotRunning(Id);
 
             return UpdateState(ContainerState.Exited, actor, now);
