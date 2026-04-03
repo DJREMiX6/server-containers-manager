@@ -4,7 +4,7 @@ import { ShellComponent } from './features/shell/shell.component';
 export const appRoutes: Route[] = [
   {
     path: 'auth',
-    loadChildren: () => import('@scm/auth/features').then((m) => m.routes),
+    loadChildren: () => import('@scm/auth/features').then((i) => i.routes),
   },
   {
     path: '',
@@ -25,7 +25,11 @@ export const appRoutes: Route[] = [
       {
         path: 'containers',
         loadChildren: () =>
-          import('@scm/containers/features').then((m) => m.routes),
+          import('@scm/containers/features').then((i) => i.routes),
+      },
+      {
+        path: 'users',
+        loadChildren: () => import('@scm/users/features').then((i) => i.routes),
       },
     ],
   },

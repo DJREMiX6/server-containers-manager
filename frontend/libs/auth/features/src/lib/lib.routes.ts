@@ -1,6 +1,9 @@
-import { Route } from "@angular/router";
-import { LoginFeatureComponent } from "./login-feature/login-feature.component";
+import { Route } from '@angular/router';
 
 export const routes: Route[] = [
-    {path: "login", component: LoginFeatureComponent}
-]
+  {
+    path: 'login',
+    loadComponent: () =>
+      import('./features').then((i) => i.LoginFeatureComponent),
+  },
+];

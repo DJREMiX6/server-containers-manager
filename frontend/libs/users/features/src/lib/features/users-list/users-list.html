@@ -1,0 +1,64 @@
+<div class="w-full h-fit p-2 rounded-lg border border-surface-200">
+  <p-table [value]="users" class="w-full">
+    <ng-template #header>
+      <tr>
+        <th>Username</th>
+        <th>
+          <div class="text-center">Last Access</div>
+        </th>
+        <th>
+          <div class="text-center">Status</div>
+        </th>
+        <th class="w-px whitespace-nowrap">
+          <div class="text-center">Namespaces</div>
+        </th>
+        <th class="w-px whitespace-nowrap">
+          <div class="text-end">Actions</div>
+        </th>
+      </tr>
+    </ng-template>
+    <ng-template #body let-user>
+      <tr>
+        <td>{{ user.username }}</td>
+        <td>
+          <div class="text-center">{{ user.lastAccess | date:"short" }}</div>
+        </td>
+        <td>
+          <div class="flex justify-center">
+            @if(user.isConfirmed) {
+            <p-tag value="Confirmed" severity="success"></p-tag>
+            }@else {
+            <p-tag value="Not Confirmed" severity="danger"></p-tag>
+            }
+          </div>
+        </td>
+        <td class="w-px whitespace-nowrap">
+          <div class="flex gap-2">
+            @for(namespace of user.namespaces; track namespace.id) {
+          <p-tag [value]="namespace.name" severity="contrast"></p-tag>
+          }
+          </div>
+        </td>
+        <td class="w-px whitespace-nowrap">
+          <p-button-group>
+            <p-button
+              icon="pi pi-list"
+              severity="primary"
+              size="small"
+            ></p-button>
+            <p-button
+              icon="pi pi-unlock"
+              severity="warn"
+              size="small"
+            ></p-button>
+            <p-button
+              icon="pi pi-trash"
+              severity="danger"
+              size="small"
+            ></p-button>
+          </p-button-group>
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+</div>

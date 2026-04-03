@@ -3,7 +3,7 @@
         <app-side-nav-menu [username]="authStore.user()!.username"></app-side-nav-menu>
     </div>
     <div class="grow h-full overflow-y-auto overflow-x-hidden">
-        <div class="p-1 h-fit w-fit">
+        <div class="p-1 min-h-full min-w-full h-fit w-fit">
             <router-outlet></router-outlet>
         </div>
     </div>
