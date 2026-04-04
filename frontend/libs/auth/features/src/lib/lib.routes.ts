@@ -6,4 +6,9 @@ export const routes: Route[] = [
     loadComponent: () =>
       import('./features').then((i) => i.LoginFeatureComponent),
   },
+  {
+    path: 'user/change-password',
+    loadComponent: () =>
+      import('./features').then((i) => i.ChangePasswordComponent),
+  },
 ];
