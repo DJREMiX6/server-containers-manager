@@ -6,6 +6,7 @@ using ServerContainerManager.API.Models.Requests.Auth;
 using ServerContainerManager.API.Models.Requests.AuthController;
 using ServerContainerManager.API.Models.Responses.AuthController;
 using ServerContainerManager.API.Models.Responses.Extensions;
+using ServerContainerManager.API.Policies;
 using ServerContainerManager.Application.Commands.Abstraction;
 using ServerContainerManager.Application.Commands.Auth.GetSessionInfo;
 using ServerContainerManager.Application.Commands.Auth.SignIn;
@@ -15,7 +16,6 @@ using ServerContainerManager.Application.Commands.User.ChangeUsername;
 
 namespace ServerContainerManager.API.Controllers
 {
-    [Authorize]
     [ApiController]
     [Route("api/[controller]")]
     public class AuthController(ILogger<AuthController> logger) : ControllerBase
@@ -60,6 +60,7 @@ namespace ServerContainerManager.API.Controllers
             return TypedResults.Ok();
         }
 
+        [Authorize(Policy = AuthPolicies.AuthenticatedUserPolicy.Name)]
         [HttpGet("session")]
         public async Task<Results<Ok<GetSessionInfoResponse>, ProblemHttpResult>> GetSessionInfo(
             ICommandHandler<GetSessionInfoCommand, GetSessionInfoCommandResult> handler,
@@ -77,6 +78,7 @@ namespace ServerContainerManager.API.Controllers
             return TypedResults.Ok(getSessionInfoResult.Value.ToContract());
         }
 
+        [Authorize(Policy = AuthPolicies.AuthenticatedUserPolicy.Name)]
         [HttpPost("user/change-password")]
         public async Task<Results<Ok, ProblemHttpResult>> ChangePassword(
             ChangePasswordRequest request,
@@ -87,7 +89,7 @@ namespace ServerContainerManager.API.Controllers
             {
                 UserId = User.GetUserId(), 
                 CurrentPassword = request.CurrentPassword, 
-                NewPassword = request.NewPassword
+                NewPassword = request.NewPassword,
             };
             var result = await handler.HandleAsync(command, cancellationToken);
 
@@ -97,6 +99,7 @@ namespace ServerContainerManager.API.Controllers
             return TypedResults.Ok();
         }
 
+        [Authorize]
         [HttpPatch("user")]
         public async Task<Results<Ok, ProblemHttpResult>> ChangeUsername(
             ChangeUsernameRequest request,

@@ -22,17 +22,18 @@ namespace ServerContainerManager.Application.Commands.User.GetUserList
             var users = await _userManager.Users
                 .Include(u => u.Namespaces)
                 .ToListAsync(cancellationToken);
-            var userInfoList = new List<GetUserListCommandResultUserInfo>();
+            var userInfoList = new List<Models.User>();
 
             users.ForEach(async u =>
             {
                 var roles = await _userManager.GetRolesAsync(u);
                 userInfoList.Add(new()
                 {
-                    Id = u.Id,
+                    UserId = u.Id,
                     Username = u.UserName!,
                     Roles = roles,
-                    Namespaces = [.. u.Namespaces.Select(NamespaceInfo.FromDomain)]
+                    Namespaces = [.. u.Namespaces.Select(NamespaceInfo.FromDomain)],
+                    IsConfirmed = u.IsConfirmed,
                 });
             });
 

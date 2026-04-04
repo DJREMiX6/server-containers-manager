@@ -5,10 +5,16 @@ namespace ServerContainerManager.API.Models.Responses.Extensions
 {
     public static class AuthControllerResponsesExtensions
     {
-        public static GetSessionInfoResponse ToContract(this GetSessionInfoCommandResult result) => new(
-            id: result.UserId,
-            username: result.Username,
-            roles: result.Roles,
-            namespaces: [.. result.Namespaces.ToResponseModel()]);
+        public static GetSessionInfoResponse ToContract(this GetSessionInfoCommandResult result) => new()
+        {
+            User = new()
+            {
+                UserId = result.User.UserId,
+                Username = result.User.Username,
+                Roles = result.User.Roles,
+                Namespaces = [.. result.User.Namespaces.ToResponseModel()],
+                IsConfirmed = result.User.IsConfirmed
+            }
+        };
     }
 }

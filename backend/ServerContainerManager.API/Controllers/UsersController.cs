@@ -6,17 +6,20 @@ using ServerContainerManager.API.Models.Requests.Auth;
 using ServerContainerManager.API.Models.Requests.UsersController;
 using ServerContainerManager.API.Models.Responses.Extensions;
 using ServerContainerManager.API.Models.Responses.UsersController;
+using ServerContainerManager.API.Policies;
 using ServerContainerManager.Application.Commands.Abstraction;
 using ServerContainerManager.Application.Commands.User.ChangePassword;
 using ServerContainerManager.Application.Commands.User.CreateUser;
 using ServerContainerManager.Application.Commands.User.DeleteUser;
 using ServerContainerManager.Application.Commands.User.GetUserList;
+using ServerContainerManager.Application.Commands.User.ResetPassword;
 using ServerContainerManager.Application.Commands.User.UpdateUserNamespaces;
 using ServerContainerManager.Application.Consts;
 
 namespace ServerContainerManager.API.Controllers
 {
     [Authorize(Roles = UserRoles.Admin)]
+    [Authorize(Policy = AuthPolicies.ConfirmedUserPolicy.Name)]
     [ApiController]
     [Route("api/[controller]")]
     public class UsersController(ILogger<UsersController> logger) : Controller
@@ -54,18 +57,17 @@ namespace ServerContainerManager.API.Controllers
             return TypedResults.Ok(createUserResult.Value.UserId);
         }
 
-        [HttpPatch("{userId:guid}/change-password")]
-        public async Task<Results<Ok, ProblemHttpResult>> ChangeUserPassword(
+        [HttpPost("{userId:guid}/reset-password")]
+        public async Task<Results<Ok, ProblemHttpResult>> ResetUserPassword(
             Guid userId,
-            ChangePasswordRequest request,
-            ICommandHandler<ChangePasswordCommand, ChangePasswordCommandResult> handler,
+            ResetUserPasswordRequest request,
+            ICommandHandler<ResetUserPasswordCommand, ResetUserPasswordCommandResult> handler,
             CancellationToken cancellationToken = default)
         {
-            var command = new ChangePasswordCommand()
+            var command = new ResetUserPasswordCommand()
             {
                 UserId = userId,
-                CurrentPassword = request.CurrentPassword,
-                NewPassword = request.NewPassword
+                Password = request.Password
             };
 
             var changePasswordResult = await handler.HandleAsync(command, cancellationToken);

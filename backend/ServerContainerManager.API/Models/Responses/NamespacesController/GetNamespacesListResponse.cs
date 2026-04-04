@@ -1,4 +1,4 @@
-﻿using ServerContainerManager.API.Models.Responses.Models;
+﻿using ServerContainerManager.API.Models.Responses.Common;
 
 namespace ServerContainerManager.API.Models.Responses.NamespacesController
 {

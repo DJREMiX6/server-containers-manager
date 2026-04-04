@@ -30,10 +30,14 @@ namespace ServerContainerManager.Application.Commands.Auth.GetSessionInfo
 
             return new GetSessionInfoCommandResult() 
             {
-                UserId = user.Id,
-                Username = user.UserName!,
-                Roles = roles,
-                Namespaces = [.. user.Namespaces.Select(NamespaceInfo.FromDomain)] 
+                User = new Models.User ()
+                {
+                    UserId = user.Id,
+                    Username = user.UserName!,
+                    Roles = roles,
+                    Namespaces = [.. user.Namespaces.Select(NamespaceInfo.FromDomain)],
+                    IsConfirmed = user.IsConfirmed,
+                }
             };
         }
     }

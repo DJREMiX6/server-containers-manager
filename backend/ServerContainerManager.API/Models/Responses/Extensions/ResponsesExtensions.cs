@@ -1,4 +1,4 @@
-﻿using ServerContainerManager.API.Models.Responses.Models;
+﻿using ServerContainerManager.API.Models.Responses.Common;
 using ServerContainerManager.Application.Models;
 
 namespace ServerContainerManager.API.Models.Responses.Extensions

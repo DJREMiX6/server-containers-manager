@@ -1,6 +1,6 @@
 ﻿using ServerContainerManager.Application.Models;
 
-namespace ServerContainerManager.API.Models.Responses.Models
+namespace ServerContainerManager.API.Models.Responses.Common
 {
     public sealed record ContainerPortResponseModel
     {
