@@ -1,5 +1,8 @@
 import { Route } from '@angular/router';
-import { ShellComponent } from './features/shell/shell.component';
+import {
+  userAuthenticationGuard,
+  userConfirmationGuard,
+} from '@scm/auth/utils';
 
 export const appRoutes: Route[] = [
   {
@@ -13,7 +16,10 @@ export const appRoutes: Route[] = [
   },
   {
     path: '',
-    component: ShellComponent,
+    loadComponent: () =>
+      import('./features/shell/shell.component').then((i) => i.ShellComponent),
+    canActivate: [userAuthenticationGuard, userConfirmationGuard],
+    canActivateChild: [userAuthenticationGuard, userConfirmationGuard],
     children: [
       {
         path: 'dashboard',

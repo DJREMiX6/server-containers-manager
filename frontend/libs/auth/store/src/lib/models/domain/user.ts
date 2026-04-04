@@ -6,4 +6,5 @@ export type User = {
   username: string;
   roles: UserRole[];
   namespaces: Namespace[];
+  isConfirmed: boolean;
 };

@@ -5,9 +5,10 @@ import { GetSessionInfoResponse } from '@scm/auth/data';
 
 export function userMapper(sessionInfo: GetSessionInfoResponse): User {
   return {
-    id: sessionInfo.userId,
-    username: sessionInfo.username,
-    roles: sessionInfo.roles.map(userRoleMapper),
-    namespaces: sessionInfo.namespaces.map(namespaceMapper),
+    id: sessionInfo.user.userId,
+    username: sessionInfo.user.username,
+    roles: sessionInfo.user.roles.map(userRoleMapper),
+    namespaces: sessionInfo.user.namespaces.map(namespaceMapper),
+    isConfirmed: sessionInfo.user.isConfirmed,
   };
 }
