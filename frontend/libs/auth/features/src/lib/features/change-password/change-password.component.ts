@@ -6,10 +6,19 @@ import { InputTextModule } from 'primeng/inputtext';
 import { MessageModule } from 'primeng/message';
 import { ButtonModule } from 'primeng/button';
 import { FloatLabelModule } from 'primeng/floatlabel';
+import { Message } from 'primeng/message';
 import { MessageService } from 'primeng/api';
 import { AuthStore } from '@scm/auth/store';
 import { ChangePasswordFormModel } from '../../models';
-import { form, FormField, required, submit, validate } from '@angular/forms/signals';
+import {
+  form,
+  FormField,
+  minLength,
+  required,
+  submit,
+  validate,
+  pattern,
+} from '@angular/forms/signals';
 
 @Component({
   selector: 'lib-change-password',
@@ -20,6 +29,7 @@ import { form, FormField, required, submit, validate } from '@angular/forms/sign
     ButtonModule,
     MessageModule,
     FloatLabelModule,
+    Message,
     FormField,
   ],
   templateUrl: './change-password.component.html',
@@ -30,7 +40,10 @@ export class ChangePasswordComponent {
   private readonly toastService = inject(MessageService);
   private readonly router = inject(Router);
 
-  protected isBuisy = signal<boolean>(false);
+  protected readonly isUserConfirmed =
+    this.authStore.user()?.isConfirmed ?? false;
+
+  protected readonly isBuisy = signal<boolean>(false);
 
   private changePasswordModel = signal<ChangePasswordFormModel>({
     currentPassword: '',
@@ -44,6 +57,28 @@ export class ChangePasswordComponent {
     });
 
     required(schema.newPassword, { message: 'New password is required' });
+
+    minLength(schema.newPassword, 6, {
+      message: `New password must be at least 6 characters long`,
+    });
+
+    pattern(schema.newPassword, /[a-z]/, {
+      message: 'Must contain at least one lowercase letter',
+    });
+
+    pattern(schema.newPassword, /[A-Z]/, {
+      message: 'Must contain at least one uppercase letter',
+    });
+
+    pattern(schema.newPassword, /\d/, {
+      message: 'Must contain at least one number',
+    });
+
+    pattern(schema.newPassword, /[!@#$%^&*()_\-+=\][{};:'",.<>/?\\|`~]/, {
+      message:
+        'Must contain at least one special character: ! @ # $ % ^ & * ( ) _ - + = [ ] { } ; : \' " , . < > / ? \\ | ` ~',
+    });
+
     validate(schema.newPassword, ({ value, valueOf }) => {
       const newPassword = value();
       const currentPassword = valueOf(schema.currentPassword);
