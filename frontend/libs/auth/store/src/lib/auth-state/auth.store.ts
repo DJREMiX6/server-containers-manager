@@ -7,6 +7,7 @@ import { withAuthState } from './auth.state';
 import { LoginRequestModel } from '../models/requests/login-request-model';
 import { Router } from '@angular/router';
 import { userMapper } from '../mappers';
+import { ChangePasswordRequestModel } from '../models';
 
 export const AuthStore = signalStore(
   withAuthState(),
@@ -14,7 +15,7 @@ export const AuthStore = signalStore(
     (store, authService = inject(AuthService), router = inject(Router)) => {
       const login = async (loginRequest: LoginRequestModel): Promise<void> => {
         try {
-          patchState(store, clearError());
+          patchState(store, { requestStatus: 'pending' }, clearError());
 
           await firstValueFrom(authService.login(loginRequest));
           const sessionInfo = await firstValueFrom(
@@ -25,6 +26,7 @@ export const AuthStore = signalStore(
           patchState(
             store,
             {
+              requestStatus: 'fullfilled',
               isAuthenticated: true,
               user,
             },
@@ -34,6 +36,7 @@ export const AuthStore = signalStore(
           patchState(
             store,
             {
+              requestStatus: 'rejected',
               isAuthenticated: false,
               user: null,
             },
@@ -84,7 +87,28 @@ export const AuthStore = signalStore(
         }
       };
 
-      return { login, logout, checkAuth };
+      const changePassword = async (request: ChangePasswordRequestModel) => {
+        try {
+          patchState(store, { requestStatus: 'pending' }, clearError());
+
+          await firstValueFrom(authService.changePassword(request));
+
+          patchState(store, {
+            requestStatus: 'fullfilled',
+          });
+        } catch (error) {
+          patchState(
+            store,
+            {
+              requestStatus: 'rejected',
+            },
+            setError(error),
+          );
+          throw error;
+        }
+      };
+
+      return { login, logout, checkAuth, changePassword };
     },
   ),
 );

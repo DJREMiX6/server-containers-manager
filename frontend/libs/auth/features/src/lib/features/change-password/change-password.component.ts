@@ -8,7 +8,7 @@ import { ButtonModule } from 'primeng/button';
 import { FloatLabelModule } from 'primeng/floatlabel';
 import { Message } from 'primeng/message';
 import { MessageService } from 'primeng/api';
-import { AuthStore } from '@scm/auth/store';
+import { AuthStore, ChangePasswordRequestModel } from '@scm/auth/store';
 import { ChangePasswordFormModel } from '../../models';
 import {
   form,
@@ -115,27 +115,27 @@ export class ChangePasswordComponent {
     this.isBuisy.set(true);
 
     await submit(this.changePasswordForm, async (form) => {
-      /* try {
-        const loginRequest: LoginRequestModel = {
-          username: form().value().username,
-          password: form().value().password,
+      try {
+        const changePasswordRequest: ChangePasswordRequestModel = {
+          currentPassword: form.currentPassword().value(),
+          newPassword: form.newPassword().value(),
         };
 
-        await this.authStore.login(loginRequest);
+        await this.authStore.changePassword(changePasswordRequest);
         this.toastService.add({
-          summary: 'Login successful',
+          summary: 'Password change successful',
           severity: 'success',
         });
 
-        this.router.navigate(['']);
+        this.router.navigate(['auth', 'login']);
       } catch (error) {
         console.error(error);
 
         this.toastService.add({
-          summary: 'Invalid login credentials',
+          summary: 'Invalid Password',
           severity: 'error',
         });
-      } */
+      }
     }).finally(() => this.isBuisy.set(false));
   }
 }

@@ -1,4 +1,4 @@
-import * as z from 'zod';
+import { z } from 'zod';
 import { UserDto } from './user.dto';
 import { UserRoleSchema } from './user-role.schema';
 import { NamespaceInfoDtoSchema } from './namespace-info.schema';

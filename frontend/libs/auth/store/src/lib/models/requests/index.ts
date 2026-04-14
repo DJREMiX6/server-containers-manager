@@ -1,1 +1,2 @@
-export type { LoginRequestModel } from './login-request-model';
+export * from './login-request-model';
+export * from './change-password-request-model';

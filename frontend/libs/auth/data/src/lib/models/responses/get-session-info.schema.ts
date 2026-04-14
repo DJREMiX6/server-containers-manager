@@ -1,4 +1,4 @@
-import * as z from 'zod';
+import { z } from 'zod';
 import { GetSessionInfoResponse } from './get-session-info.response';
 import { UserDtoSchema } from '../dto';
 

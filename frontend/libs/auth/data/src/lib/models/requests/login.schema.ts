@@ -1,4 +1,4 @@
-import * as z from 'zod';
+import { z } from 'zod';
 import { LoginRequest } from './login.request';
 
 export const LoginRequestSchema: z.ZodType<LoginRequest> = z.object({
