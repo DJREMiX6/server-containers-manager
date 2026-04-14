@@ -2,7 +2,11 @@
 
 namespace ServerContainerManager.API.Models.Requests.Auth
 {
-    public sealed record ChangePasswordRequest(string CurrentPassword, string NewPassword);
+    public sealed record ChangePasswordRequest
+    {
+        public required string CurrentPassword { get; init; }
+        public required string NewPassword { get; init; }
+    }
 
     public sealed class ChangePasswordRequestValidator : AbstractValidator<ChangePasswordRequest>
     {

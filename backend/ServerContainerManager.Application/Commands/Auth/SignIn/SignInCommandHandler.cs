@@ -7,7 +7,7 @@ using ServerContainerManager.Shared.Utils.Errors;
 
 namespace ServerContainerManager.Application.Commands.Auth.SignIn
 {
-    internal class SignInCommandHandler(ILogger<SignInCommandHandler> logger, SignInManager<AppUser> signInManager) : ICommandHandler<SignInCommand, SignInCommandResult>
+    internal class SignInCommandHandler(ILogger<SignInCommandHandler> logger, SignInManager<AppUser> signInManager) : IQueryHandler<SignInCommand, SignInCommandResult>
     {
         private readonly ILogger<SignInCommandHandler> _logger = logger;
         private readonly SignInManager<AppUser> _signInManager = signInManager;

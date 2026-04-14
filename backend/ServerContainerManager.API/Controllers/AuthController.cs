@@ -26,7 +26,7 @@ namespace ServerContainerManager.API.Controllers
         [HttpPost("signin")]
         public async Task<Results<Ok, ProblemHttpResult>> SignIn(
             SignInRequest request,
-            ICommandHandler<SignInCommand, SignInCommandResult> handler,
+            IQueryHandler<SignInCommand, SignInCommandResult> handler,
             CancellationToken cancellationToken = default)
         {
             var command = new SignInCommand()
@@ -48,7 +48,7 @@ namespace ServerContainerManager.API.Controllers
         [AllowAnonymous]
         [HttpPost("signout")]
         public async Task<Results<Ok, ProblemHttpResult>> SignOut(
-            ICommandHandler<SignOutCommand, SignOutCommandResult> handler,
+            IQueryHandler<SignOutCommand, SignOutCommandResult> handler,
             CancellationToken cancellationToken = default)
         {
             var command = new SignOutCommand();
@@ -63,7 +63,7 @@ namespace ServerContainerManager.API.Controllers
         [Authorize(Policy = AuthPolicies.AuthenticatedUserPolicy.Name)]
         [HttpGet("session")]
         public async Task<Results<Ok<GetSessionInfoResponse>, ProblemHttpResult>> GetSessionInfo(
-            ICommandHandler<GetSessionInfoCommand, GetSessionInfoCommandResult> handler,
+            IQueryHandler<GetSessionInfoCommand, GetSessionInfoCommandResult> handler,
             CancellationToken cancellationToken = default)
         {
             var command = new GetSessionInfoCommand()
@@ -82,7 +82,7 @@ namespace ServerContainerManager.API.Controllers
         [HttpPost("user/change-password")]
         public async Task<Results<Ok, ProblemHttpResult>> ChangePassword(
             ChangePasswordRequest request,
-            ICommandHandler<ChangePasswordCommand, ChangePasswordCommandResult> handler,
+            IQueryHandler<ChangePasswordCommand, ChangePasswordCommandResult> handler,
             CancellationToken cancellationToken = default)
         {
             var command = new ChangePasswordCommand()
@@ -103,7 +103,7 @@ namespace ServerContainerManager.API.Controllers
         [HttpPatch("user")]
         public async Task<Results<Ok, ProblemHttpResult>> ChangeUsername(
             ChangeUsernameRequest request,
-            ICommandHandler<ChangeUsernameCommand, ChangeUsernameCommandResult> handler,
+            IQueryHandler<ChangeUsernameCommand, ChangeUsernameCommandResult> handler,
             CancellationToken cancellationToken = default)
         {
             var command = new ChangeUsernameCommand()

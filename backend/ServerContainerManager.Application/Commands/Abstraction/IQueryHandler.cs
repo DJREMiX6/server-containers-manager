@@ -2,7 +2,7 @@
 
 namespace ServerContainerManager.Application.Commands.Abstraction
 {
-    public interface ICommandHandler<TCommand, TResult> 
+    public interface IQueryHandler<TCommand, TResult> 
         where TCommand : class 
         where TResult : class
     {

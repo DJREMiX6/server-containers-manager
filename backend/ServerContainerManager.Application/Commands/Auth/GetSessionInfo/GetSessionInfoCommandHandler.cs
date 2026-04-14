@@ -10,7 +10,7 @@ using ServerContainerManager.Shared.Utils.Errors;
 
 namespace ServerContainerManager.Application.Commands.Auth.GetSessionInfo
 {
-    internal class GetSessionInfoCommandHandler(ILogger<GetSessionInfoCommandHandler> logger, AppDbContext appDbContext, UserManager<AppUser> userManager) : ICommandHandler<GetSessionInfoCommand, GetSessionInfoCommandResult>
+    internal class GetSessionInfoCommandHandler(ILogger<GetSessionInfoCommandHandler> logger, AppDbContext appDbContext, UserManager<AppUser> userManager) : IQueryHandler<GetSessionInfoCommand, GetSessionInfoCommandResult>
     {
         private readonly ILogger<GetSessionInfoCommandHandler> _logger = logger;
         private readonly AppDbContext _appDbContext = appDbContext;

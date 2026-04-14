@@ -7,11 +7,11 @@ using ServerContainerManager.Application.Entities;
 using ServerContainerManager.Application.Extensions;
 using ServerContainerManager.Application.Models;
 using ServerContainerManager.Application.Queries.Abstraction;
-using ServerContainerManager.Application.Queries.GetContainerList;
+using ServerContainerManager.Application.Queries.Container.GetContainerList;
+using ServerContainerManager.Application.Queries.Namespace.GetNamespacesList;
 using ServerContainerManager.Domain.Entities.Auth;
-using ServerContainerManager.Domain.Entities.Namespaces;
 
-namespace ServerContainerManager.Application.Queries.GetNamespacesList
+namespace ServerContainerManager.Application.Queries.Namespace.GetNamespacesList
 {
     internal class GetNamespacesListQueryHandler(
         ILogger<GetNamespacesListQueryHandler> logger,
@@ -50,10 +50,10 @@ namespace ServerContainerManager.Application.Queries.GetNamespacesList
 
     file static class GetNamespacesListQueryHandlerExtensions
     {
-        public static IQueryable<Namespace> ApplyFilter(this IQueryable<Namespace> query, IEnumerable<Guid> namespacesIds) =>
+        public static IQueryable<Domain.Entities.Namespaces.Namespace> ApplyFilter(this IQueryable<Domain.Entities.Namespaces.Namespace> query, IEnumerable<Guid> namespacesIds) =>
             query.Where(n => namespacesIds.Contains(n.Id));
 
-        public static IQueryable<NamespaceInfo> Parse(this IQueryable<Namespace> query) => 
+        public static IQueryable<NamespaceInfo> Parse(this IQueryable<Domain.Entities.Namespaces.Namespace> query) => 
             query.Select(n => NamespaceInfo.FromDomain(n));
     }
 }

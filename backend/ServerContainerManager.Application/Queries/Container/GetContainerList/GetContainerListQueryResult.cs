@@ -1,8 +1,7 @@
 using ServerContainerManager.Application.Models;
 using ServerContainerManager.Application.Models.Enums;
-using ServerContainerManager.Domain.Entities.Containers;
 
-namespace ServerContainerManager.Application.Queries.GetContainerList
+namespace ServerContainerManager.Application.Queries.Container.GetContainerList
 {
     public record GetContainerListQueryResultContainerInfo
     {
@@ -15,7 +14,7 @@ namespace ServerContainerManager.Application.Queries.GetContainerList
         public required IReadOnlyCollection<ContainerPort> Ports { get; init; }
         public required IReadOnlyCollection<NamespaceInfo> Namespaces { get; init; }
 
-        public static GetContainerListQueryResultContainerInfo FromDomain(Container container, IReadOnlyCollection<NamespaceInfo> namespaces) => new ()
+        public static GetContainerListQueryResultContainerInfo FromDomain(Domain.Entities.Containers.Container container, IReadOnlyCollection<NamespaceInfo> namespaces) => new ()
         {
             Id = container.Id,
             Name = container.Name,

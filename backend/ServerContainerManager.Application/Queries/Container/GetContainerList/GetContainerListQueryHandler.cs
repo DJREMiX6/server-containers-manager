@@ -7,9 +7,8 @@ using ServerContainerManager.Application.Entities;
 using ServerContainerManager.Application.Extensions;
 using ServerContainerManager.Application.Queries.Abstraction;
 using ServerContainerManager.Domain.Entities.Auth;
-using ServerContainerManager.Domain.Entities.Containers;
 
-namespace ServerContainerManager.Application.Queries.GetContainerList
+namespace ServerContainerManager.Application.Queries.Container.GetContainerList
 {
     internal class GetContainerListQueryHandler(
         ILogger<GetContainerListQueryHandler> logger,
@@ -32,7 +31,7 @@ namespace ServerContainerManager.Application.Queries.GetContainerList
                 ? await dbContext.Namespaces.Select(n => n.Id).ToListAsync(cancellationToken) 
                 : user.Namespaces.Select(n => n.Id))
                 .ToList();
-            IQueryable<Container> containersQuery = _dbContext.Containers
+            IQueryable<Domain.Entities.Containers.Container> containersQuery = _dbContext.Containers
                 .AsNoTracking();
                 
             if(!isUserAdmin)

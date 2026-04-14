@@ -7,15 +7,15 @@ using ServerContainerManager.Application.Entities;
 using ServerContainerManager.Application.Models;
 using ServerContainerManager.Domain.Entities.Auth;
 
-namespace ServerContainerManager.Application.Commands.User.GetUserList
+namespace ServerContainerManager.Application.Queries.User.GetUserList
 {
-    internal class GetUserListCommandHandler(ILogger<GetUserListCommandHandler> logger, AppDbContext appDbContext, UserManager<AppUser> userManager) : ICommandHandler<GetUserListCommand, GetUserListCommandResult>
+    internal class GetUserListQueryHandler(ILogger<GetUserListQueryHandler> logger, AppDbContext appDbContext, UserManager<AppUser> userManager) : IQueryHandler<GetUserListQuery, GetUserListQueryResult>
     {
-        private readonly ILogger<GetUserListCommandHandler> logger = logger;
+        private readonly ILogger<GetUserListQueryHandler> logger = logger;
         private readonly AppDbContext _appDbContext = appDbContext;
         private readonly UserManager<AppUser> _userManager = userManager;
 
-        public async Task<ErrorOr<GetUserListCommandResult>> HandleAsync(GetUserListCommand command, CancellationToken cancellationToken = default)
+        public async Task<ErrorOr<GetUserListQueryResult>> HandleAsync(GetUserListQuery command, CancellationToken cancellationToken = default)
         {
             using var transaction = await _appDbContext.Database.BeginTransactionAsync(cancellationToken);
 
@@ -39,7 +39,7 @@ namespace ServerContainerManager.Application.Commands.User.GetUserList
 
             await transaction.CommitAsync(cancellationToken);
 
-            return new GetUserListCommandResult()
+            return new GetUserListQueryResult()
             {
                 Users = userInfoList
             };

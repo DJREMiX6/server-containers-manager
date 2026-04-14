@@ -1,6 +1,6 @@
 using ServerContainerManager.Application.Models;
 
-namespace ServerContainerManager.Application.Queries.GetContainerList
+namespace ServerContainerManager.Application.Queries.Container.GetContainerList
 {
     public sealed record GetContainerListQuery
     {

@@ -10,10 +10,10 @@ using ServerContainerManager.API.Policies;
 using ServerContainerManager.Application.Commands.Abstraction;
 using ServerContainerManager.Application.Commands.User.CreateUser;
 using ServerContainerManager.Application.Commands.User.DeleteUser;
-using ServerContainerManager.Application.Commands.User.GetUserList;
 using ServerContainerManager.Application.Commands.User.ResetPassword;
 using ServerContainerManager.Application.Commands.User.UpdateUserNamespaces;
 using ServerContainerManager.Application.Consts;
+using ServerContainerManager.Application.Queries.User.GetUserList;
 
 namespace ServerContainerManager.API.Controllers
 {
@@ -26,10 +26,10 @@ namespace ServerContainerManager.API.Controllers
 
         [HttpGet]
         public async Task<Ok<GetUserListResponse>> GetUserList(
-            ICommandHandler<GetUserListCommand, GetUserListCommandResult> handler,
+            IQueryHandler<GetUserListQuery, GetUserListQueryResult> handler,
             CancellationToken cancellationToken = default)
         {
-            var command = new GetUserListCommand();
+            var command = new GetUserListQuery();
             var getUserListResult = await handler.HandleAsync(command, cancellationToken);
 
             return TypedResults.Ok(getUserListResult.Value.ToContract());
@@ -38,7 +38,7 @@ namespace ServerContainerManager.API.Controllers
         [HttpPost]
         public async Task<Results<Ok<Guid>, ProblemHttpResult>> CreateUser(
             CreateUserRequest request,
-            ICommandHandler<CreateUserCommand, CreateUserCommandResult> handler,
+            IQueryHandler<CreateUserCommand, CreateUserCommandResult> handler,
             CancellationToken cancellationToken = default)
         {
             var command = new CreateUserCommand()
@@ -59,7 +59,7 @@ namespace ServerContainerManager.API.Controllers
         public async Task<Results<Ok, ProblemHttpResult>> ResetUserPassword(
             Guid userId,
             ResetUserPasswordRequest request,
-            ICommandHandler<ResetUserPasswordCommand, ResetUserPasswordCommandResult> handler,
+            IQueryHandler<ResetUserPasswordCommand, ResetUserPasswordCommandResult> handler,
             CancellationToken cancellationToken = default)
         {
             var command = new ResetUserPasswordCommand()
@@ -79,7 +79,7 @@ namespace ServerContainerManager.API.Controllers
         [HttpDelete("{userId:guid}")]
         public async Task<Results<Ok, ProblemHttpResult>> DeleteUser(
             Guid userId,
-            ICommandHandler<DeleteUserCommand, DeleteUserCommandResult> handler,
+            IQueryHandler<DeleteUserCommand, DeleteUserCommandResult> handler,
             CancellationToken cancellationToken = default)
         {
             var command = new DeleteUserCommand()
@@ -98,7 +98,7 @@ namespace ServerContainerManager.API.Controllers
         public async Task<Results<Ok, ProblemHttpResult>> UpdateUserNamespaces(
             Guid userId,
             UpdateUserNamespacesRequest request,
-            ICommandHandler<UpdateUserNamespacesCommand, UpdateUserNamespacesCommandResult> handler,
+            IQueryHandler<UpdateUserNamespacesCommand, UpdateUserNamespacesCommandResult> handler,
             CancellationToken cancellationToken = default)
         {
             var command = new UpdateUserNamespacesCommand

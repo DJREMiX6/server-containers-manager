@@ -20,7 +20,7 @@ namespace ServerContainerManager.Application.Commands.Container.StartContainer
         AppDbContext dbContext,
         UserManager<AppUser> userManager,
         DockerClient dockerClient,
-        TimeProvider timeProvider) : ICommandHandler<StartContainerCommand, StartContainerCommandResult>
+        TimeProvider timeProvider) : IQueryHandler<StartContainerCommand, StartContainerCommandResult>
     {
         private readonly ILogger<StartContainerCommandHandler> _logger = logger;
         private readonly AppDbContext _dbContext = dbContext;

@@ -48,7 +48,7 @@ namespace ServerContainerManager.Domain.Entities.Auth
 
         public ErrorOr<Success> Unconfirm()
         {
-            if (IsConfirmed)
+            if (!IsConfirmed)
                 return UserValidationErrors.AlreadyNotConfirmed(Id);
 
             IsConfirmed = false;

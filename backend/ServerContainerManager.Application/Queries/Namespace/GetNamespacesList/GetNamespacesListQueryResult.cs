@@ -1,6 +1,6 @@
 ﻿using ServerContainerManager.Application.Models;
 
-namespace ServerContainerManager.Application.Queries.GetNamespacesList
+namespace ServerContainerManager.Application.Queries.Namespace.GetNamespacesList
 {
     public sealed record GetNamespacesListQueryResult
     {

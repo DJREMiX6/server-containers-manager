@@ -1,6 +1,6 @@
 ﻿using ServerContainerManager.API.Models.Enums;
 using ServerContainerManager.API.Models.Responses.ContainersController;
-using ServerContainerManager.Application.Queries.GetContainerList;
+using ServerContainerManager.Application.Queries.Container.GetContainerList;
 
 namespace ServerContainerManager.API.Models.Responses.Extensions
 {

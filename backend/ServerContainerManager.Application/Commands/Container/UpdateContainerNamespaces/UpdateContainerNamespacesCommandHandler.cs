@@ -16,7 +16,7 @@ namespace ServerContainerManager.Application.Commands.Container.UpdateContainerN
         ILogger<UpdateContainerNamespacesCommandHandler> logger,
         AppDbContext dbContext,
         UserManager<AppUser> userManager,
-        TimeProvider timeProvider) : ICommandHandler<UpdateContainerNamespacesCommand, UpdateContainerNamespacesCommandResult>
+        TimeProvider timeProvider) : IQueryHandler<UpdateContainerNamespacesCommand, UpdateContainerNamespacesCommandResult>
     {
         private readonly ILogger<UpdateContainerNamespacesCommandHandler> _logger = logger;
         private readonly AppDbContext _appDbContext = dbContext;

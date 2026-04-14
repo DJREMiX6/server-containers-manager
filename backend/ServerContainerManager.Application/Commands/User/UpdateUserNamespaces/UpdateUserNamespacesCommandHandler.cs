@@ -11,7 +11,7 @@ using ServerContainerManager.Shared.Utils.Errors;
 
 namespace ServerContainerManager.Application.Commands.User.UpdateUserNamespaces
 {
-    internal class UpdateUserNamespacesCommandHandler(ILogger<UpdateUserNamespacesCommandHandler> logger, AppDbContext dbContext, UserManager<AppUser> userManager) : ICommandHandler<UpdateUserNamespacesCommand, UpdateUserNamespacesCommandResult>
+    internal class UpdateUserNamespacesCommandHandler(ILogger<UpdateUserNamespacesCommandHandler> logger, AppDbContext dbContext, UserManager<AppUser> userManager) : IQueryHandler<UpdateUserNamespacesCommand, UpdateUserNamespacesCommandResult>
     {
         private readonly ILogger<UpdateUserNamespacesCommandHandler> _logger = logger;
         private readonly AppDbContext _dbContext = dbContext;

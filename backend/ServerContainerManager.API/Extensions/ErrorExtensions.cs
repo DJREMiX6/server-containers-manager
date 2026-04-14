@@ -11,7 +11,7 @@ namespace ServerContainerManager.API.Extensions
                 return TypedResults.Problem();
 
             if (errors.All(error => error.Type == ErrorType.Validation))
-                return TypedResults.Problem(errors.ToValidationProblemResult().ProblemDetails);
+                return errors.ToValidationProblemHttpResult();
 
             return errors[0].ToProblemHttpResult();
         }
@@ -38,15 +38,18 @@ namespace ServerContainerManager.API.Extensions
             return TypedResults.Problem(statusCode: statusCode, title: description);
         }
 
-        private static ValidationProblem ToValidationProblemResult(this List<Error> errors)
+        private static ProblemHttpResult ToValidationProblemHttpResult(this List<Error> errors)
         {
-            Dictionary<string, string[]> validationErrors = errors
+            var validationErrors = errors
                 .GroupBy(error => error.Code)
                 .ToDictionary(
                     group => group.Key,
                     group => group.Select(error => error.Description).ToArray());
 
-            return TypedResults.ValidationProblem(validationErrors);
+            return TypedResults.Problem(
+                statusCode: StatusCodes.Status400BadRequest,
+                title: "One or more validation errors occurred.",
+                extensions: new Dictionary<string, object?> { ["errors"] = validationErrors });
         }
     }
 }
