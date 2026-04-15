@@ -28,7 +28,8 @@
       ],
       "@scm/auth/store": ["libs/auth/store/src/index.ts"],
       "@scm/users/features": ["libs/users/features/src/index.ts"],
-      "@scm/users/data": ["libs/users/data/src/index.ts"]
+      "@scm/users/data": ["libs/users/data/src/index.ts"],
+      "@scm/users/store": ["libs/users/store/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]
