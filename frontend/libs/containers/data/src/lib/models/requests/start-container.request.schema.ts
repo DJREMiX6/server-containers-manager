@@ -1,4 +1,4 @@
-import * as z from 'zod';
+import { z } from 'zod';
 import { StartContainerRequest } from './start-container.request';
 import { ContainerIdSchema } from '../shared-schemas';
 

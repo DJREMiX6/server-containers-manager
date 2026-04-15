@@ -8,3 +8,9 @@ export type {
   UserRoleDto,
   UserDto,
 } from './lib/models';
+
+export {
+  UserDtoSchema,
+  UserRoleSchema,
+  NamespaceInfoDtoSchema,
+} from './lib/models';
