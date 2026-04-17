@@ -8,7 +8,7 @@ import { MessageService } from 'primeng/api';
 import { UsersListStore, provideUsersListStore } from '@scm/users/store';
 
 @Component({
-  selector: 'lib-users-features',
+  selector: 'lib-users-list-features',
   imports: [TableModule, Tag, Button, ButtonGroup, DatePipe, NgClass],
   providers: [provideUsersListStore()],
   templateUrl: './users-list.html',
