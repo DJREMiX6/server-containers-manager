@@ -4,13 +4,13 @@ export type {
   LoginRequest,
   ChangePasswordRequest,
   GetSessionInfoResponse,
-  NamespaceInfo,
+  NamespaceDto,
   UserRoleDto,
   UserDto,
 } from './lib/models';
 
 export {
   UserDtoSchema,
-  UserRoleSchema,
-  NamespaceInfoDtoSchema,
+  UserRoleDtoSchema,
+  NamespaceDtoSchema,
 } from './lib/models';

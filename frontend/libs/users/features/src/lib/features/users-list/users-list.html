@@ -26,8 +26,11 @@
         <td>{{ user.username }}</td>
         <td>
           <div class="text-center">
-            <!-- {{ user.lastAccess | date:"short" }} -->
-            Not Implemented Yet
+            @if(user.lastLoginDate) {
+              {{ user.lastLoginDate| date:"short" }}
+            } @else {
+              Never logged
+            }
           </div>
         </td>
         <td>

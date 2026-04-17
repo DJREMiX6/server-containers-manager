@@ -6,11 +6,12 @@ import { userRoleMapper } from './user-role.dto.mapper';
 export function getUsersResponseMapper(response: GetUsersResponse): User[] {
   return response.users.map(
     (u): User => ({
-      id: u.userId,
+      id: u.id,
       username: u.username,
       isConfirmed: u.isConfirmed,
       namespaces: u.namespaces.map(namespaceInfoDtoMapper),
       roles: u.roles.map(userRoleMapper),
+      lastLoginDate: u.lastLoginDate ? new Date(u.lastLoginDate) : null,
     }),
   );
 }

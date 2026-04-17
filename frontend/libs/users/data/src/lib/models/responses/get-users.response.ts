@@ -1,4 +1,4 @@
-import { UserDto } from '@scm/auth/data';
+import { UserDto } from '../dtos';
 
 export type GetUsersResponse = {
   users: UserDto[];

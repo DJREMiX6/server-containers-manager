@@ -7,4 +7,5 @@ export type User = {
   roles: UserRole[];
   namespaces: Namespace[];
   isConfirmed: boolean;
+  lastLoginDate: null | Date;
 };

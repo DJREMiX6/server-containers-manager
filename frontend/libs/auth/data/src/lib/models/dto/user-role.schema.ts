@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { UserRoleDto } from './user-role.dto';
 
-export const UserRoleSchema: z.ZodType<UserRoleDto> = z.literal([
+export const UserRoleDtoSchema: z.ZodType<UserRoleDto> = z.literal([
   'Admin',
   'Member',
 ]);
