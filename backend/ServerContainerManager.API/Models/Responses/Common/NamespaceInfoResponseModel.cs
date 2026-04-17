@@ -1,16 +1,8 @@
-﻿using ServerContainerManager.Application.Models;
-
-namespace ServerContainerManager.API.Models.Responses.Common
+﻿namespace ServerContainerManager.API.Models.Responses.Common
 {
     public record NamespaceInfoResponseModel
     {
         public required Guid Id { get; init; }
         public required string Name { get; init; }
-
-        public static NamespaceInfoResponseModel FromQueryModel(NamespaceInfo queryModel) => new()
-        {
-            Id = queryModel.Id,
-            Name = queryModel.Name,
-        };
     }
 }

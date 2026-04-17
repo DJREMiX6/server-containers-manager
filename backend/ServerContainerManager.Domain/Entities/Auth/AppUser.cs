@@ -11,12 +11,15 @@ namespace ServerContainerManager.Domain.Entities.Auth
 
         public IReadOnlyList<Namespace> Namespaces => _namespaces;
         public bool IsConfirmed { get; private set; }
+        public DateTime? LastLoginDate { get; private set; }
 
         private AppUser() { } // EF
 
         private AppUser(string username, IEnumerable<Namespace> namespaces) : base(username)
         {
             _namespaces = [.. namespaces];
+            IsConfirmed = false;
+            LastLoginDate = null;
         }
 
         public static ErrorOr<AppUser> Create(string username, IEnumerable<Namespace> namespaces)
@@ -52,6 +55,15 @@ namespace ServerContainerManager.Domain.Entities.Auth
                 return UserValidationErrors.AlreadyNotConfirmed(Id);
 
             IsConfirmed = false;
+            return Result.Success;
+        }
+
+        public ErrorOr<Success> UpdateLastLogin(DateTime lastLoginDate)
+        {
+            if(lastLoginDate < LastLoginDate)
+                return UserValidationErrors.InvalidDate();
+
+            LastLoginDate = lastLoginDate;
             return Result.Success;
         }
     }
