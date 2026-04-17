@@ -4,13 +4,18 @@
   "sourceRoot": "libs/containers/store/src",
   "prefix": "lib",
   "projectType": "library",
-  "tags": ["scope:containers", "type:store"],
+  "tags": [
+    "scope:containers",
+    "type:store"
+  ],
   "targets": {
     "test": {
       "executor": "@nx/vitest:test",
-      "outputs": ["{options.reportsDirectory}"],
+      "outputs": [
+        "{options.reportsDirectory}"
+      ],
       "options": {
-        "reportsDirectory": "../../../coverage/libs/containers/store"
+        "reportsDirectory": "{projectRoot}/../../../coverage/libs/containers/store"
       }
     },
     "lint": {

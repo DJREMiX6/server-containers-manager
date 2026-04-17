@@ -4,13 +4,18 @@
   "sourceRoot": "libs/auth/utils/src",
   "prefix": "lib",
   "projectType": "library",
-  "tags": ["scope:auth", "type:utils"],
+  "tags": [
+    "scope:auth",
+    "type:utils"
+  ],
   "targets": {
     "test": {
       "executor": "@nx/vitest:test",
-      "outputs": ["{options.reportsDirectory}"],
+      "outputs": [
+        "{options.reportsDirectory}"
+      ],
       "options": {
-        "reportsDirectory": "../../../coverage/libs/auth/utils"
+        "reportsDirectory": "{projectRoot}/../../../coverage/libs/auth/utils"
       }
     },
     "lint": {

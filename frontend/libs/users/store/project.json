@@ -4,13 +4,18 @@
   "sourceRoot": "libs/users/store/src",
   "prefix": "lib",
   "projectType": "library",
-  "tags": ["scope:users", "type:store"],
+  "tags": [
+    "scope:users",
+    "type:store"
+  ],
   "targets": {
     "test": {
       "executor": "@nx/vitest:test",
-      "outputs": ["{options.reportsDirectory}"],
+      "outputs": [
+        "{options.reportsDirectory}"
+      ],
       "options": {
-        "reportsDirectory": "../../../coverage/libs/users/store"
+        "reportsDirectory": "{projectRoot}/../../../coverage/libs/users/store"
       }
     },
     "lint": {
