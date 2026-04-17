@@ -1,0 +1,89 @@
+<div class="w-full h-fit p-2 rounded-lg border border-surface-200">
+  <p-table
+    [value]="usersListStore.users()"
+    [loading]="usersListStore.loadingStatus() === 'loading'"
+    [paginator]="true"
+    [rows]="5"
+    [rowsPerPageOptions]="[5, 10, 20]"
+    [showCurrentPageReport]="true"
+    currentPageReportTemplate="Showing {first} to {last} of {totalRecords} users"
+    class="w-full"
+  >
+    <ng-template #header>
+      <tr>
+        <th pSortableColumn="username">
+          <div class="flex items-center gap-2">
+            Username
+            <p-sortIcon field="username" />
+          </div>
+        </th>
+        <th pSortableColumn="lastLoginDate">
+          <div class="flex items-center justify-center gap-2">
+            Last Access
+            <p-sortIcon field="lastLoginDate" />
+          </div>
+        </th>
+        <th pSortableColumn="isConfirmed">
+          <div class="flex items-center justify-center gap-2">
+            Status
+            <p-sortIcon field="isConfirmed" />
+          </div>
+        </th>
+        <th class="w-px whitespace-nowrap">
+          <div class="text-center">Namespaces</div>
+        </th>
+        <th class="w-px whitespace-nowrap">
+          <div class="text-center">Actions</div>
+        </th>
+      </tr>
+    </ng-template>
+    <ng-template #body let-user>
+      <tr [ngClass]="{ 'bg-primary! text-primary-contrast!': user.isAdmin }">
+        <td>{{ user.username }}</td>
+        <td>
+          <div class="text-center">
+            @if(user.lastLoginDate) { {{ user.lastLoginDate| date:"short" }} }
+            @else { Never }
+          </div>
+        </td>
+        <td>
+          <div class="flex justify-center">
+            @if(user.isConfirmed) {
+            <p-tag value="Confirmed" severity="success"></p-tag>
+            }@else {
+            <p-tag value="Not Confirmed" severity="warn"></p-tag>
+            }
+          </div>
+        </td>
+        <td class="w-px whitespace-nowrap">
+          <div class="flex gap-2">
+            @for(namespace of user.namespaces; track namespace.id) {
+            <p-tag [value]="namespace.name" severity="contrast"></p-tag>
+            }
+          </div>
+        </td>
+        <td class="w-px whitespace-nowrap">
+          @if(!user.isAdmin) {
+          <p-button-group>
+            <p-button
+              icon="pi pi-list"
+              severity="primary"
+              size="small"
+            ></p-button>
+            <p-button
+              icon="pi pi-unlock"
+              severity="warn"
+              size="small"
+            ></p-button>
+            <p-button
+              icon="pi pi-trash"
+              severity="danger"
+              size="small"
+            ></p-button>
+          </p-button-group>
+          }
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+</div>

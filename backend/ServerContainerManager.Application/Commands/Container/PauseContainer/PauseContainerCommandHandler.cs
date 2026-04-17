@@ -19,7 +19,7 @@ namespace ServerContainerManager.Application.Commands.Container.PauseContainer
         AppDbContext dbContext,
         UserManager<AppUser> userManager,
         DockerClient dockerClient,
-        TimeProvider timeProvider) : ICommandHandler<PauseContainerCommand, PauseContainerCommandResult>
+        TimeProvider timeProvider) : IQueryHandler<PauseContainerCommand, PauseContainerCommandResult>
     {
         private readonly ILogger<PauseContainerCommandHandler> _logger = logger;
         private readonly AppDbContext _dbContext = dbContext;

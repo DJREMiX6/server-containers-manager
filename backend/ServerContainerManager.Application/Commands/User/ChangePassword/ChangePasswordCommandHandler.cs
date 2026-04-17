@@ -9,7 +9,7 @@ using ServerContainerManager.Shared.Utils.Errors;
 
 namespace ServerContainerManager.Application.Commands.User.ChangePassword
 {
-    internal class ChangePasswordCommandHandler(ILogger<ChangePasswordCommandHandler> logger, AppDbContext dbContext, UserManager<AppUser> userManager) : ICommandHandler<ChangePasswordCommand, ChangePasswordCommandResult>
+    internal class ChangePasswordCommandHandler(ILogger<ChangePasswordCommandHandler> logger, AppDbContext dbContext, UserManager<AppUser> userManager) : IQueryHandler<ChangePasswordCommand, ChangePasswordCommandResult>
     {
         private readonly ILogger<ChangePasswordCommandHandler> _logger = logger;
         private readonly AppDbContext _dbContext = dbContext;
@@ -21,11 +21,22 @@ namespace ServerContainerManager.Application.Commands.User.ChangePassword
             if (user is null)
                 return UserErrors.UnauthorizedNotFound(command.UserId);
 
+            await using var transaction = await _dbContext.Database.BeginTransactionAsync(cancellationToken);
+
             var changePasswordResult = await _userManager.ChangePasswordAsync(user, command.CurrentPassword, command.NewPassword);
             if (!changePasswordResult.Succeeded)
-                return changePasswordResult.Errors
-                    .Select(e => Error.Validation($"{nameof(ChangePasswordCommandHandler)}.{nameof(HandleAsync)}", e.Description))
-                    .ToList();
+                return changePasswordResult.Errors.ToError().ToList();
+
+            if(!user.IsConfirmed)
+            {
+                var confirmResult = user.Confirm();
+                if (confirmResult.IsError)
+                    return confirmResult.Errors;
+            }
+
+            await _userManager.UpdateSecurityStampAsync(user);
+            await _dbContext.SaveChangesAsync(cancellationToken);
+            await transaction.CommitAsync(cancellationToken);
 
             return new ChangePasswordCommandResult();
         }

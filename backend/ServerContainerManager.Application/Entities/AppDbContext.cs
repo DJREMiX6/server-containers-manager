@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using ServerContainerManager.Application.Entities.Converters;
 using ServerContainerManager.Domain.Entities.Auth;
 using ServerContainerManager.Domain.Entities.Containers;
 using ServerContainerManager.Domain.Entities.Namespaces;
@@ -15,6 +16,14 @@ namespace ServerContainerManager.Application.Entities
         {
             base.OnModelCreating(builder);
             builder.ApplyConfigurationsFromAssembly(typeof(AppDbContext).Assembly);
+        }
+
+        protected override void ConfigureConventions(ModelConfigurationBuilder configurationBuilder)
+        {
+            base.ConfigureConventions(configurationBuilder);
+            configurationBuilder
+                .Properties<DateTime>()
+                .HaveConversion<UtcDateTimeConverter>();
         }
     }
 }

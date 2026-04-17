@@ -9,7 +9,7 @@ using ServerContainerManager.Application.Commands.Abstraction;
 using ServerContainerManager.Application.Commands.Namespace.CreateNamespace;
 using ServerContainerManager.Application.Consts;
 using ServerContainerManager.Application.Queries.Abstraction;
-using ServerContainerManager.Application.Queries.GetNamespacesList;
+using ServerContainerManager.Application.Queries.Namespace.GetNamespacesList;
 
 namespace ServerContainerManager.API.Controllers
 {
@@ -22,7 +22,7 @@ namespace ServerContainerManager.API.Controllers
 
         [HttpGet]
         public async Task<Results<Ok<GetNamespacesListResponse>, ProblemHttpResult>> GetNamespaces(
-            [FromServices] IQueryHandler<GetNamespacesListQuery, GetNamespacesListQueryResult> queryHandler,
+            [FromServices] Application.Queries.Abstraction.IQueryHandler<GetNamespacesListQuery, GetNamespacesListQueryResult> queryHandler,
             CancellationToken cancellationToken = default)
         {
             var query = new GetNamespacesListQuery
@@ -42,7 +42,7 @@ namespace ServerContainerManager.API.Controllers
         [HttpPost]
         public async Task<Results<Ok<CreateNamespaceResponse>, ProblemHttpResult>> CreateNamespace(
             [FromBody] CreateNamespaceRequest request,
-            [FromServices] ICommandHandler<CreateNamespaceCommand, CreateNamespaceCommandResult> commandHandler,
+            [FromServices] Application.Commands.Abstraction.IQueryHandler<CreateNamespaceCommand, CreateNamespaceCommandResult> commandHandler,
             CancellationToken cancellationToken = default)
         {
             var command = new CreateNamespaceCommand() { Name = request.Name };

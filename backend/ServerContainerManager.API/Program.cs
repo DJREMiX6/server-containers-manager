@@ -1,12 +1,15 @@
 using FluentValidation;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Scalar.AspNetCore;
 using Serilog;
 using ServerContainerManager.API.ErrorHandling;
 using ServerContainerManager.API.Json;
+using ServerContainerManager.API.Policies;
 using ServerContainerManager.Application;
 using ServerContainerManager.Application.Entities.Extensions;
+using ServerContainerManager.Application.Identity;
 using SharpGrip.FluentValidation.AutoValidation.Mvc.Extensions;
 using System.Text.Json.Serialization;
 
@@ -37,6 +40,12 @@ try
     builder.Services.AddOpenApi();
     builder.Services.AddValidatorsFromAssembly(typeof(Program).Assembly);
     builder.Services.AddFluentValidationAutoValidation();
+
+    builder.Services.AddAuthorizationBuilder()
+        .AddPolicy(AuthPolicies.AuthenticatedUserPolicy.Name, AuthPolicies.AuthenticatedUserPolicy.Policy)
+        .AddPolicy(AuthPolicies.ConfirmedUserPolicy.Name, AuthPolicies.ConfirmedUserPolicy.Policy)
+        .AddPolicy(AuthPolicies.UnconfirmedUserPolicy.Name, AuthPolicies.UnconfirmedUserPolicy.Policy)
+        .SetDefaultPolicy(AuthPolicies.ConfirmedUserPolicy.Policy);
 
     builder.Services.ConfigureHttpJsonOptions(options =>
     {

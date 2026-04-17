@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using ServerContainerManager.Application.Commands;
 using ServerContainerManager.Application.Entities;
+using ServerContainerManager.Application.Identity;
 using ServerContainerManager.Application.Queries;
 using ServerContainerManager.Application.Services;
 using ServerContainerManager.Domain.Entities.Auth;
@@ -31,6 +32,8 @@ namespace ServerContainerManager.Application
             services.AddIdentity<AppUser, AppRole>()
                 .AddEntityFrameworkStores<AppDbContext>()
                 .AddDefaultTokenProviders();
+
+            services.AddScoped<IUserClaimsPrincipalFactory<AppUser>, AppUserClaimsPrincipalFactory>();
 
             return services;
         }

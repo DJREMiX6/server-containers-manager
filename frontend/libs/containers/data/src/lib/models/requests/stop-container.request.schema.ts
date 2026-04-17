@@ -1,4 +1,4 @@
-import * as z from 'zod';
+import { z } from 'zod';
 import { StopContainerRequest } from './stop-container.request';
 import { ContainerIdSchema } from '../shared-schemas';
 

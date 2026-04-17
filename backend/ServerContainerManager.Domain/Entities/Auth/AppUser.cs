@@ -10,23 +10,22 @@ namespace ServerContainerManager.Domain.Entities.Auth
         private List<Namespace> _namespaces;
 
         public IReadOnlyList<Namespace> Namespaces => _namespaces;
+        public bool IsConfirmed { get; private set; }
+        public DateTime? LastLoginDate { get; private set; }
 
         private AppUser() { } // EF
 
         private AppUser(string username, IEnumerable<Namespace> namespaces) : base(username)
         {
             _namespaces = [.. namespaces];
+            IsConfirmed = false;
+            LastLoginDate = null;
         }
 
         public static ErrorOr<AppUser> Create(string username, IEnumerable<Namespace> namespaces)
         {
-            var errors = new List<Error>();
-
             if (string.IsNullOrEmpty(username) || username.Length < 3)
-                errors.Add(Error.Validation($"{nameof(AppUser)}.{nameof(Create)}", "Username must be at least 3 characters long"));
-
-            if (errors.Count > 0)
-                return errors;
+                return UserValidationErrors.UsernameTooShort();
 
             return new AppUser(username, namespaces);
         }
@@ -38,6 +37,33 @@ namespace ServerContainerManager.Domain.Entities.Auth
 
             _namespaces = [.. namespaces];
 
+            return Result.Success;
+        }
+
+        public ErrorOr<Success> Confirm()
+        {
+            if (IsConfirmed)
+                return UserValidationErrors.AlreadyConfirmed(Id);
+
+            IsConfirmed = true;
+            return Result.Success;
+        }
+
+        public ErrorOr<Success> Unconfirm()
+        {
+            if (!IsConfirmed)
+                return UserValidationErrors.AlreadyNotConfirmed(Id);
+
+            IsConfirmed = false;
+            return Result.Success;
+        }
+
+        public ErrorOr<Success> UpdateLastLogin(DateTime lastLoginDate)
+        {
+            if(lastLoginDate < LastLoginDate)
+                return UserValidationErrors.InvalidDate();
+
+            LastLoginDate = lastLoginDate;
             return Result.Success;
         }
     }

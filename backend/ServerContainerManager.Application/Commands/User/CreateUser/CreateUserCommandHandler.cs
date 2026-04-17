@@ -7,7 +7,7 @@ using ServerContainerManager.Domain.Entities.Auth;
 
 namespace ServerContainerManager.Application.Commands.User.CreateUser
 {
-    internal class CreateUserCommandHandler(ILogger<CreateUserCommandHandler> logger, UserManager<AppUser> userManager) : ICommandHandler<CreateUserCommand, CreateUserCommandResult>
+    internal class CreateUserCommandHandler(ILogger<CreateUserCommandHandler> logger, UserManager<AppUser> userManager) : IQueryHandler<CreateUserCommand, CreateUserCommandResult>
     {
         private readonly ILogger<CreateUserCommandHandler> logger = logger;
         private readonly UserManager<AppUser> _userManager = userManager;

@@ -9,7 +9,7 @@ using ServerContainerManager.Shared.Utils.Errors;
 
 namespace ServerContainerManager.Application.Commands.User.ChangeUsername
 {
-    internal class ChangeUsernameCommandHandler(ILogger<ChangeUsernameCommandHandler> logger, AppDbContext dbContext, UserManager<AppUser> userManager) : ICommandHandler<ChangeUsernameCommand, ChangeUsernameCommandResult>
+    internal class ChangeUsernameCommandHandler(ILogger<ChangeUsernameCommandHandler> logger, AppDbContext dbContext, UserManager<AppUser> userManager) : IQueryHandler<ChangeUsernameCommand, ChangeUsernameCommandResult>
     {
         private readonly ILogger<ChangeUsernameCommandHandler> _logger = logger;
         private readonly AppDbContext _dbContext;

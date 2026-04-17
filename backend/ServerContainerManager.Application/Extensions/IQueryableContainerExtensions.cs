@@ -1,5 +1,5 @@
 ﻿using ServerContainerManager.Application.Models;
-using ServerContainerManager.Application.Queries.GetContainerList;
+using ServerContainerManager.Application.Queries.Container.GetContainerList;
 using ServerContainerManager.Domain.Entities.Containers;
 
 namespace ServerContainerManager.Application.Extensions

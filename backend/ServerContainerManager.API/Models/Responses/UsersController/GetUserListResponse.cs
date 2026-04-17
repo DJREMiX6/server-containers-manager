@@ -1,33 +1,19 @@
-﻿using ServerContainerManager.API.Models.Responses.Models;
+﻿using ServerContainerManager.API.Models.Responses.Common;
 
 namespace ServerContainerManager.API.Models.Responses.UsersController
 {
-    public record GetUserListItemResponse
+    public record GetUserListUserResponse
     {
-        public Guid Id { get; }
-        public string Username { get; }
-        public IList<string> Roles { get; }
-        public IList<NamespaceInfoResponseModel> Namespaces { get; }
-
-        public GetUserListItemResponse(
-            Guid id,
-            string username,
-            IList<string> roles,
-            IList<NamespaceInfoResponseModel> namespaces)
-        {
-            Id = id;
-            Username = username;
-            Roles = roles;
-            Namespaces = namespaces;
-        }
+        public required Guid Id { get; init; }
+        public required string Username { get; init; }
+        public required IList<string> Roles { get; init; }
+        public required IList<NamespaceInfoResponseModel> Namespaces { get; init; }
+        public required bool IsConfirmed { get; init; }
+        public required DateTime? LastLoginDate { get; init; }
     }
+
     public record GetUserListResponse
     {
-        public IList<GetUserListItemResponse> Items { get; }
-
-        public GetUserListResponse(IList<GetUserListItemResponse> items)
-        {
-            Items = items;
-        }
+        public required IList<GetUserListUserResponse> Users { get; init; }
     }
 }

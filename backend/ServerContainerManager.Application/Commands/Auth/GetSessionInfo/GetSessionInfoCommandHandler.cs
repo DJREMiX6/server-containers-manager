@@ -10,7 +10,7 @@ using ServerContainerManager.Shared.Utils.Errors;
 
 namespace ServerContainerManager.Application.Commands.Auth.GetSessionInfo
 {
-    internal class GetSessionInfoCommandHandler(ILogger<GetSessionInfoCommandHandler> logger, AppDbContext appDbContext, UserManager<AppUser> userManager) : ICommandHandler<GetSessionInfoCommand, GetSessionInfoCommandResult>
+    internal class GetSessionInfoCommandHandler(ILogger<GetSessionInfoCommandHandler> logger, AppDbContext appDbContext, UserManager<AppUser> userManager) : IQueryHandler<GetSessionInfoCommand, GetSessionInfoCommandResult>
     {
         private readonly ILogger<GetSessionInfoCommandHandler> _logger = logger;
         private readonly AppDbContext _appDbContext = appDbContext;
@@ -30,10 +30,14 @@ namespace ServerContainerManager.Application.Commands.Auth.GetSessionInfo
 
             return new GetSessionInfoCommandResult() 
             {
-                UserId = user.Id,
-                Username = user.UserName!,
-                Roles = roles,
-                Namespaces = [.. user.Namespaces.Select(NamespaceInfo.FromDomain)] 
+                User = new Models.User ()
+                {
+                    UserId = user.Id,
+                    Username = user.UserName!,
+                    Roles = roles,
+                    Namespaces = [.. user.Namespaces.Select(NamespaceInfo.FromDomain)],
+                    IsConfirmed = user.IsConfirmed,
+                }
             };
         }
     }
