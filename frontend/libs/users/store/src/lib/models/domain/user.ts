@@ -8,4 +8,5 @@ export type User = {
   namespaces: Namespace[];
   isConfirmed: boolean;
   lastLoginDate: null | Date;
+  isAdmin: boolean;
 };

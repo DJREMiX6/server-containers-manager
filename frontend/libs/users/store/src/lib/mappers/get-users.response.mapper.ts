@@ -12,6 +12,7 @@ export function getUsersResponseMapper(response: GetUsersResponse): User[] {
       namespaces: u.namespaces.map(namespaceInfoDtoMapper),
       roles: u.roles.map(userRoleMapper),
       lastLoginDate: u.lastLoginDate ? new Date(u.lastLoginDate) : null,
+      isAdmin: u.roles.map(userRoleMapper).includes('Admin'),
     }),
   );
 }

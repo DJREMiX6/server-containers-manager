@@ -1,5 +1,5 @@
-import { DatePipe } from '@angular/common';
-import { Component, effect, inject, OnInit } from '@angular/core';
+import { DatePipe, NgClass } from '@angular/common';
+import { Component, effect, inject, OnDestroy, OnInit } from '@angular/core';
 import { TableModule } from 'primeng/table';
 import { Tag } from 'primeng/tag';
 import { ButtonGroup } from 'primeng/buttongroup';
@@ -9,12 +9,12 @@ import { UsersListStore, provideUsersListStore } from '@scm/users/store';
 
 @Component({
   selector: 'lib-users-features',
-  imports: [TableModule, Tag, Button, ButtonGroup, DatePipe],
+  imports: [TableModule, Tag, Button, ButtonGroup, DatePipe, NgClass],
   providers: [provideUsersListStore()],
   templateUrl: './users-list.html',
   styleUrl: './users-list.css',
 })
-export class UsersList implements OnInit {
+export class UsersList implements OnInit, OnDestroy {
   private readonly toastService = inject(MessageService);
   protected readonly usersListStore = inject(UsersListStore);
 
@@ -31,5 +31,9 @@ export class UsersList implements OnInit {
 
   ngOnInit(): void {
     this.usersListStore.ensureLoaded();
+  }
+
+  ngOnDestroy(): void {
+    this.onUsersListStoreError.destroy();
   }
 }
