@@ -2,7 +2,14 @@ import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { map, Observable } from 'rxjs';
 import { Environment } from '@scm/environments';
-import { GetUsersResponse, GetUsersResponseSchema } from '../models';
+import {
+  CreateUserRequest,
+  CreateUserRequestSchema,
+  CreateUserResponse,
+  CreateUserResponseSchema,
+  GetUsersResponse,
+  GetUsersResponseSchema,
+} from '../models';
 
 export const ApiBaseEndpoint = `${Environment.serverOrigin}/api/users`;
 
@@ -14,5 +21,17 @@ export class UsersService {
     return this.httClient
       .get<unknown>(ApiBaseEndpoint)
       .pipe(map((raw) => GetUsersResponseSchema.parse(raw)));
+  }
+
+  public createUser(
+    request: CreateUserRequest,
+  ): Observable<CreateUserResponse> {
+    const parsedRequest = CreateUserRequestSchema.parse(request);
+
+    return this.httClient
+      .post<unknown>(ApiBaseEndpoint, {
+        ...parsedRequest,
+      })
+      .pipe(map((raw) => CreateUserResponseSchema.parse(raw)));
   }
 }

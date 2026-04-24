@@ -1,0 +1,92 @@
+<div class="w-150 h-fit flex flex-col items-center justify-center">
+  <p-stepper [value]="step()" [linear]="true" class="w-full">
+    <p-step-list>
+      <p-step [value]="1">Create User</p-step>
+      <p-step [value]="2">Copy Temporary Password</p-step>
+    </p-step-list>
+    <p-step-panels>
+      <p-step-panel [value]="1">
+        <ng-template #content let-activateCallback="activateCallback">
+          <form class="w-full flex flex-col gap-4" [formRoot]="createUserForm">
+            <div class="w-full">
+              <p-float-label variant="on">
+                <p-icon-field iconPosition="left">
+                  <p-inputIcon class="pi pi-user"></p-inputIcon>
+                  <input
+                    [formField]="createUserForm.username"
+                    id="usernameInput"
+                    class="w-full"
+                    type="text"
+                    pInputText
+                    [class.p-invalid]="
+                createUserForm.username().touched() && createUserForm.username().invalid()
+              "
+                  />
+                </p-icon-field>
+                <label for="usernameInput">Username</label>
+              </p-float-label>
+              @if (createUserForm.username().touched() &&
+              createUserForm.username().invalid()) {
+              <p-message severity="error" variant="simple" size="small"
+                >{{ createUserForm.username().errors()[0].message }}</p-message
+              >
+              }
+            </div>
+            <div class="w-full flex flex-row gap-2 justify-end">
+              <p-button
+                (onClick)="onCancelBtnClick()"
+                label="Cancel"
+                severity="danger"
+              ></p-button>
+              <p-button
+                [disabled]="createUserForm().submitting() || createUserForm().invalid()"
+                label="Create"
+                type="submit"
+                severity="primary"
+              ></p-button>
+            </div>
+          </form>
+        </ng-template>
+      </p-step-panel>
+
+      <p-step-panel [value]="2">
+        <ng-template #content let-activateCallback="activateCallback">
+          <div class="w-full flex flex-col gap-2">
+            <div class="w-full">
+              <p-message severity="info">Copy the password to close this modal</p-message>
+            </div>
+            <div class="w-full">
+              <p-input-group>
+                <input
+                  [value]="createUserStore.generatedPassword()"
+                  id="generatedUserPassword"
+                  class="w-full"
+                  type="text"
+                  pInputText
+                  readonly
+                />
+                <p-inputgroup-addon>
+                  <p-button
+                    severity="primary"
+                    (onClick)="onCopyPasswordBtnClick()"
+                    icon="pi pi-clipboard"
+                    pTooltip="Copied!"
+                    tooltipEvent="focus"
+                  ></p-button>
+                </p-inputgroup-addon>
+              </p-input-group>
+            </div>
+            <div class="w-full flex flex-row gap-2 justify-end">
+              <p-button
+                (onClick)="onCloseBtnClick()"
+                [disabled]="!userCopiedPassword()"
+                label="Close"
+                severity="primary"
+              ></p-button>
+            </div>
+          </div>
+        </ng-template>
+      </p-step-panel>
+    </p-step-panels>
+  </p-stepper>
+</div>

@@ -1,89 +1,131 @@
-<div class="w-full h-fit p-2 rounded-lg border border-surface-200">
-  <p-table
-    [value]="usersListStore.users()"
-    [loading]="usersListStore.loadingStatus() === 'loading'"
-    [paginator]="true"
-    [rows]="5"
-    [rowsPerPageOptions]="[5, 10, 20]"
-    [showCurrentPageReport]="true"
-    currentPageReportTemplate="Showing {first} to {last} of {totalRecords} users"
-    class="w-full"
-  >
-    <ng-template #header>
-      <tr>
-        <th pSortableColumn="username">
-          <div class="flex items-center gap-2">
-            Username
-            <p-sortIcon field="username" />
-          </div>
-        </th>
-        <th pSortableColumn="lastLoginDate">
-          <div class="flex items-center justify-center gap-2">
-            Last Access
-            <p-sortIcon field="lastLoginDate" />
-          </div>
-        </th>
-        <th pSortableColumn="isConfirmed">
-          <div class="flex items-center justify-center gap-2">
-            Status
-            <p-sortIcon field="isConfirmed" />
-          </div>
-        </th>
-        <th class="w-px whitespace-nowrap">
-          <div class="text-center">Namespaces</div>
-        </th>
-        <th class="w-px whitespace-nowrap">
-          <div class="text-center">Actions</div>
-        </th>
-      </tr>
-    </ng-template>
-    <ng-template #body let-user>
-      <tr [ngClass]="{ 'bg-primary! text-primary-contrast!': user.isAdmin }">
-        <td>{{ user.username }}</td>
-        <td>
-          <div class="text-center">
-            @if(user.lastLoginDate) { {{ user.lastLoginDate| date:"short" }} }
-            @else { Never }
-          </div>
-        </td>
-        <td>
-          <div class="flex justify-center">
-            @if(user.isConfirmed) {
-            <p-tag value="Confirmed" severity="success"></p-tag>
-            }@else {
-            <p-tag value="Not Confirmed" severity="warn"></p-tag>
+<div class="w-full h-full flex flex-col gap-4 p-4">
+  <div class="w-full h-fit flex flex-row gap-2">
+    <p class="grow text-4xl">Users</p>
+    <p-button
+      label="Create User"
+      severity="primary"
+      size="large"
+      icon="pi pi-plus"
+      (onClick)="onCreateUserBtnClick()"
+    ></p-button>
+  </div>
+  <div class="w-full h-fit p-2 rounded-lg border border-surface-200">
+    <p-table
+      [value]="usersListStore.users()"
+      [loading]="usersListStore.loadingStatus() === 'loading'"
+      [paginator]="true"
+      [rows]="5"
+      [rowsPerPageOptions]="[5, 10, 20]"
+      [showCurrentPageReport]="true"
+      currentPageReportTemplate="Showing {first} to {last} of {totalRecords} users"
+      sortField="username" 
+      [sortOrder]="1"
+      class="w-full"
+    >
+      <ng-template #header>
+        <tr>
+          <th pSortableColumn="username">
+            <div class="flex items-center gap-2">
+              Username
+              <p-sortIcon field="username" />
+            </div>
+          </th>
+          <th pSortableColumn="lastLoginDate">
+            <div class="flex items-center justify-center gap-2">
+              Last Access
+              <p-sortIcon field="lastLoginDate" />
+            </div>
+          </th>
+          <th pSortableColumn="isConfirmed">
+            <div class="flex items-center justify-center gap-2">
+              Status
+              <p-sortIcon field="isConfirmed" />
+            </div>
+          </th>
+          <th class="w-px whitespace-nowrap">
+            <div class="text-center">Namespaces</div>
+          </th>
+          <th class="w-px whitespace-nowrap">
+            <div class="text-center">Actions</div>
+          </th>
+        </tr>
+      </ng-template>
+      <ng-template #body let-user>
+        <tr [ngClass]="{ 'bg-surface-100!': user.isAdmin }">
+          <td>{{ user.username }}</td>
+          <td>
+            <div class="text-center">
+              @if(user.lastLoginDate) { {{ user.lastLoginDate| date:"short" }} }
+              @else { Never }
+            </div>
+          </td>
+          <td>
+            <div class="flex justify-center">
+              @if(user.isConfirmed) {
+              <p-tag value="Confirmed" severity="success"></p-tag>
+              }@else {
+              <p-tag value="Not Confirmed" severity="warn"></p-tag>
+              }
+            </div>
+          </td>
+          <td class="w-px whitespace-nowrap">
+            <div class="flex gap-2 justify-center">
+              @for(namespace of user.namespaces; track namespace.id) {
+              <p-tag [value]="namespace.name" severity="contrast"></p-tag>
+              }
+            </div>
+          </td>
+          <td class="w-px whitespace-nowrap">
+            @if(!user.isAdmin) {
+            <p-button-group>
+              <p-button
+                icon="pi pi-list"
+                severity="primary"
+                size="small"
+                pTooltip="Namespaces"
+                showDelay="200"
+                hideDelay="100"
+                tooltipPosition="top"
+              ></p-button>
+              <p-button
+                icon="pi pi-unlock"
+                severity="warn"
+                size="small"
+                pTooltip="Reset Password"
+                showDelay="200"
+                hideDelay="100"
+                tooltipPosition="top"
+              ></p-button>
+              <p-button
+                icon="pi pi-trash"
+                severity="danger"
+                size="small"
+                pTooltip="Delete"
+                showDelay="200"
+                hideDelay="100"
+                tooltipPosition="top"
+              ></p-button>
+            </p-button-group>
             }
-          </div>
-        </td>
-        <td class="w-px whitespace-nowrap">
-          <div class="flex gap-2">
-            @for(namespace of user.namespaces; track namespace.id) {
-            <p-tag [value]="namespace.name" severity="contrast"></p-tag>
-            }
-          </div>
-        </td>
-        <td class="w-px whitespace-nowrap">
-          @if(!user.isAdmin) {
-          <p-button-group>
-            <p-button
-              icon="pi pi-list"
-              severity="primary"
-              size="small"
-            ></p-button>
-            <p-button
-              icon="pi pi-unlock"
-              severity="warn"
-              size="small"
-            ></p-button>
-            <p-button
-              icon="pi pi-trash"
-              severity="danger"
-              size="small"
-            ></p-button>
-          </p-button-group>
-          }
-        </td>
-      </tr>
-    </ng-template>
-  </p-table>
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
 </div>
+
+<p-dialog
+  header="Create user"
+  [modal]="true"
+  [closable]="false"
+  [closeOnEscape]="false"
+  [dismissableMask]="false"
+  [(visible)]="isCreateUserModalShown"
+  (onHide)="onCreateUserModalHide()"
+>
+  <lib-create-user
+    #CreateUserFeature
+    (operationCanceled)="onCreateUserOperationCanceled()"
+    (operationCompleted)="onCreateUserOperationCompleted()"
+  ></lib-create-user>
+</p-dialog>
