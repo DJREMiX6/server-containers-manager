@@ -4,13 +4,18 @@
   "sourceRoot": "libs/shared/store/error-store-feature/src",
   "prefix": "lib",
   "projectType": "library",
-  "tags": ["scope:shared", "type:store"],
+  "tags": [
+    "scope:shared",
+    "type:store"
+  ],
   "targets": {
     "test": {
       "executor": "@nx/vitest:test",
-      "outputs": ["{options.reportsDirectory}"],
+      "outputs": [
+        "{options.reportsDirectory}"
+      ],
       "options": {
-        "reportsDirectory": "../../../../coverage/libs/shared/store/error-store-feature"
+        "reportsDirectory": "{projectRoot}/../../../../coverage/libs/shared/store/error-store-feature"
       }
     },
     "lint": {

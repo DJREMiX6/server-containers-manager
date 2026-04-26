@@ -1,9 +1,11 @@
 ﻿using ErrorOr;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using ServerContainerManager.Application.Commands.Abstraction;
 using ServerContainerManager.Application.Consts;
 using ServerContainerManager.Domain.Entities.Auth;
+using ServerContainerManager.Shared.Utils.Errors;
 
 namespace ServerContainerManager.Application.Commands.User.CreateUser
 {
@@ -14,6 +16,9 @@ namespace ServerContainerManager.Application.Commands.User.CreateUser
 
         public async Task<ErrorOr<CreateUserCommandResult>> HandleAsync(CreateUserCommand command, CancellationToken cancellationToken = default)
         {
+            if (await _userManager.Users.AnyAsync(u => u.UserName == command.Username, cancellationToken))
+                return UserErrors.UsernameAlreadyExists(command.Username);
+
             var createUserResult = AppUser.Create(command.Username, []);
             if (createUserResult.IsError)
                 return createUserResult.Errors;

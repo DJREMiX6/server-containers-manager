@@ -2,17 +2,16 @@
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using ServerContainerManager.API.Extensions;
-using ServerContainerManager.API.Models.Requests.Auth;
 using ServerContainerManager.API.Models.Requests.UsersController;
 using ServerContainerManager.API.Models.Responses.Extensions;
 using ServerContainerManager.API.Models.Responses.UsersController;
-using ServerContainerManager.API.Policies;
 using ServerContainerManager.Application.Commands.Abstraction;
 using ServerContainerManager.Application.Commands.User.CreateUser;
 using ServerContainerManager.Application.Commands.User.DeleteUser;
 using ServerContainerManager.Application.Commands.User.ResetPassword;
 using ServerContainerManager.Application.Commands.User.UpdateUserNamespaces;
 using ServerContainerManager.Application.Consts;
+using ServerContainerManager.Application.Queries.User.CheckUsernameAvailability;
 using ServerContainerManager.Application.Queries.User.GetUserList;
 
 namespace ServerContainerManager.API.Controllers
@@ -26,9 +25,11 @@ namespace ServerContainerManager.API.Controllers
 
         [HttpGet]
         public async Task<Ok<GetUserListResponse>> GetUserList(
+            [FromQuery]GetUserListQueryParameters queryParameters,
             IQueryHandler<GetUserListQuery, GetUserListQueryResult> handler,
             CancellationToken cancellationToken = default)
         {
+            var username = queryParameters.Username;
             var command = new GetUserListQuery();
             var getUserListResult = await handler.HandleAsync(command, cancellationToken);
 
@@ -36,7 +37,7 @@ namespace ServerContainerManager.API.Controllers
         }
 
         [HttpPost]
-        public async Task<Results<Ok<Guid>, ProblemHttpResult>> CreateUser(
+        public async Task<Results<Ok<CreateUserResponse>, ProblemHttpResult>> CreateUser(
             CreateUserRequest request,
             IQueryHandler<CreateUserCommand, CreateUserCommandResult> handler,
             CancellationToken cancellationToken = default)
@@ -52,7 +53,28 @@ namespace ServerContainerManager.API.Controllers
             if (createUserResult.IsError)
                 return createUserResult.Errors.ToProblemHttpResult();
 
-            return TypedResults.Ok(createUserResult.Value.UserId);
+            return TypedResults.Ok(createUserResult.Value.ToContract());
+        }
+
+        [HttpHead("check-username")]
+        public async Task<Results<NoContent, Conflict, ProblemHttpResult>> CheckUsernameAvailability(
+            [FromQuery]CheckUsernameAvailabilityRequest request,
+            IQueryHandler<CheckUsernameAvailabilityQuery, CheckUsernameAvailabilityQueryResult> query,
+            CancellationToken cancellationToken = default)
+        {
+            var command = new CheckUsernameAvailabilityQuery()
+            {
+                Username = request.Username
+            };
+            
+            var checkUsernameAvailabilityResult = await query.HandleAsync(command, cancellationToken);
+
+            if (checkUsernameAvailabilityResult.IsError)
+                return checkUsernameAvailabilityResult.Errors.ToProblemHttpResult();
+
+            return checkUsernameAvailabilityResult.Value.IsAvailable
+                ? TypedResults.NoContent()
+                : TypedResults.Conflict();
         }
 
         [HttpPost("{userId:guid}/reset-password")]

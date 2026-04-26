@@ -44,6 +44,12 @@ export const UsersListStore = signalStore(
       await loadUsers();
     };
 
-    return { ensureLoaded };
+    const refresh = async () => {
+      if (store.loadingStatus() === 'loading') return;
+
+      await loadUsers();
+    };
+
+    return { ensureLoaded, refresh };
   }),
 );

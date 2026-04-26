@@ -1,0 +1,6 @@
+.p-inputgroup > .p-floatlabel > .p-iconfield > .p-component {
+    border-radius: 0;
+    margin: 0;
+    border-start-start-radius: var(--p-inputgroup-addon-border-radius);
+    border-end-start-radius: var(--p-inputgroup-addon-border-radius);
+}

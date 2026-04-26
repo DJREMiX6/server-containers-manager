@@ -30,9 +30,12 @@ namespace ServerContainerManager.Application.Commands.User.ResetPassword
             if (!result.Succeeded)
                 return result.Errors.ToError().ToList();
 
-            var unconfirmUserResult = user.Unconfirm();
-            if (unconfirmUserResult.IsError)
-                return unconfirmUserResult.Errors;
+            if(user.IsConfirmed)
+            {
+                var unconfirmUserResult = user.Unconfirm();
+                if (unconfirmUserResult.IsError)
+                    return unconfirmUserResult.Errors;
+            }
 
             await _userManager.UpdateSecurityStampAsync(user);
             await _userManager.UpdateAsync(user);

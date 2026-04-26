@@ -12,5 +12,6 @@ namespace ServerContainerManager.Shared.Utils.Errors
         public static Error SignInNotAllowed(string username) => Error.Forbidden($"{CodeKey}.{nameof(SignInNotAllowed)}", $"User {username} is not allowed to sign in.");
         public static Error LockedOut(string username) => Error.Forbidden($"{CodeKey}.{nameof(LockedOut)}", $"User {username} is locked out.");
         public static Error InvalidCredentials(string username) => Error.Unauthorized($"{CodeKey}.{nameof(InvalidCredentials)}", $"Invalid credentials for user {username}.");
+        public static Error UsernameAlreadyExists(string username) => Error.Conflict($"{CodeKey}.{nameof(UsernameAlreadyExists)}", $"Username {username} already exists.");
     }
 }
