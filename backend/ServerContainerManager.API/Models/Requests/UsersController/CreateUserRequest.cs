@@ -1,6 +1,6 @@
 ﻿using FluentValidation;
 
-namespace ServerContainerManager.API.Models.Requests.Auth
+namespace ServerContainerManager.API.Models.Requests.UsersController
 {
     public record CreateUserRequest(string Username, string Password);
 

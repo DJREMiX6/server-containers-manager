@@ -1,5 +1,6 @@
 ﻿using ServerContainerManager.API.Models.Responses.Common;
 using ServerContainerManager.API.Models.Responses.UsersController;
+using ServerContainerManager.Application.Commands.User.CreateUser;
 using ServerContainerManager.Application.Queries.User.GetUserList;
 
 namespace ServerContainerManager.API.Models.Responses.Extensions
@@ -19,6 +20,11 @@ namespace ServerContainerManager.API.Models.Responses.Extensions
         public static GetUserListResponse ToContract(this GetUserListQueryResult result) => new()
         {
             Users = [.. result.Users.Select(ToContract)]
+        };
+
+        public static CreateUserResponse ToContract(this CreateUserCommandResult result) => new()
+        {
+            UserId = result.UserId,
         };
     }
 }
