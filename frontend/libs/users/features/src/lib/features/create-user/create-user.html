@@ -25,7 +25,8 @@
                 </p-icon-field>
                 <label for="usernameInput">Username</label>
               </p-float-label>
-              @if (createUserForm.username().touched() &&
+              @if ((createUserForm.username().touched() ||
+              createUserForm.username().dirty()) &&
               createUserForm.username().invalid()) {
               <p-message severity="error" variant="simple" size="small"
                 >{{ createUserForm.username().errors()[0].message }}</p-message
@@ -53,7 +54,9 @@
         <ng-template #content let-activateCallback="activateCallback">
           <div class="w-full flex flex-col gap-2">
             <div class="w-full">
-              <p-message severity="info">Copy the password to close this modal</p-message>
+              <p-message severity="info"
+                >Copy the password to close this modal</p-message
+              >
             </div>
             <div class="w-full">
               <p-input-group>

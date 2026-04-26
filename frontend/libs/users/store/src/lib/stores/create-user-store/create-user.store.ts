@@ -6,6 +6,7 @@ import { generatePassword } from '../../utils';
 import { firstValueFrom } from 'rxjs';
 import { inject } from '@angular/core';
 import { UsersService } from '@scm/users/data';
+import { HttpErrorResponse, HttpStatusCode } from '@angular/common/http';
 
 export const CreateUserStore = signalStore(
   withCreateUserState(),
@@ -32,6 +33,30 @@ export const CreateUserStore = signalStore(
       }
     };
 
-    return { createUser };
+    const checkUsernameAvailability = async (
+      username: string,
+    ): Promise<{ isAvailable: boolean }> => {
+      try {
+        patchState(store, clearError());
+
+        await firstValueFrom(
+          usersService.checkUsernameAvailability({ username }),
+        );
+
+        return { isAvailable: true };
+      } catch (error) {
+        if (
+          error instanceof HttpErrorResponse &&
+          error.status == HttpStatusCode.Conflict
+        ) {
+          return { isAvailable: false };
+        }
+
+        patchState(store, setError(error));
+        throw error;
+      }
+    };
+
+    return { createUser, checkUsernameAvailability };
   }),
 );

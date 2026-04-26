@@ -1,10 +1,19 @@
-import { Component, effect, inject, output, signal } from '@angular/core';
+import {
+  Component,
+  effect,
+  inject,
+  output,
+  resource,
+  signal,
+} from '@angular/core';
 import {
   FormRoot,
   FormField,
   form,
   required,
   minLength,
+  validateAsync,
+  debounce,
 } from '@angular/forms/signals';
 import { FloatLabel } from 'primeng/floatlabel';
 import { IconField } from 'primeng/iconfield';
@@ -83,6 +92,36 @@ export class CreateUserComponent {
       required(schema.username, { message: 'Username is required.' });
       minLength(schema.username, 3, {
         message: 'Username must be at least 3 characters long.',
+      });
+      debounce(schema.username, 300);
+      validateAsync(schema.username, {
+        params: ({ value }) => value(),
+        factory: (params) =>
+          resource({
+            params,
+            loader: async ({ params }) =>
+              await this.createUserStore.checkUsernameAvailability(params),
+          }),
+        onSuccess: ({ isAvailable }) => {
+          if (isAvailable) return undefined;
+
+          return {
+            kind: 'UsernameAlreadyTaken',
+            message: 'Username is already in use.',
+          };
+        },
+        onError: (error) => {
+          console.error(error);
+          this.toastService.add({
+            summary: 'Unexpected error',
+            detail: 'An unexpected error has ocurred',
+          });
+          return {
+            kind: 'Unexpected error',
+            message:
+              'An unexpected error has ocurred, colud not validate the username.',
+          };
+        },
       });
     },
     {
