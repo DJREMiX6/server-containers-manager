@@ -5,6 +5,9 @@ import {
   OnInit,
 } from '@angular/core';
 import { TableModule } from 'primeng/table';
+import { Button } from 'primeng/button';
+import { ButtonGroup } from 'primeng/buttongroup';
+import { Tooltip } from 'primeng/tooltip';
 import {
   provideNamespaceListStore,
   NamespaceListStore,
@@ -12,7 +15,7 @@ import {
 
 @Component({
   selector: 'lib-namespace-list-feature',
-  imports: [TableModule],
+  imports: [TableModule, Button, ButtonGroup, Tooltip],
   providers: [provideNamespaceListStore()],
   templateUrl: './namespace-list.feature.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
