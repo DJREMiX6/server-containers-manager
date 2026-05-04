@@ -37,6 +37,11 @@ export const appRoutes: Route[] = [
         path: 'users',
         loadChildren: () => import('@scm/users/features').then((i) => i.routes),
       },
+      {
+        path: 'namespaces',
+        loadChildren: () =>
+          import('@scm/namespaces/features').then((i) => i.routes),
+      },
     ],
   },
 ];

@@ -25,10 +25,7 @@ namespace ServerContainerManager.API.Controllers
             [FromServices] Application.Queries.Abstraction.IQueryHandler<GetNamespacesListQuery, GetNamespacesListQueryResult> queryHandler,
             CancellationToken cancellationToken = default)
         {
-            var query = new GetNamespacesListQuery
-            {
-                UserId = User.GetUserId()
-            };
+            var query = new GetNamespacesListQuery();
 
             var result = await queryHandler.HandleAsync(query, cancellationToken);
 

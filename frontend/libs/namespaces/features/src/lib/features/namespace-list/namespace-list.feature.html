@@ -1,0 +1,97 @@
+<div class="w-full h-fit p-2 rounded-lg border border-surface-200">
+    <p-table
+      [value]="namespaceListStore.entities()"
+      [loading]="namespaceListStore.loadingStatus() === 'loading'"
+      [paginator]="true"
+      [rows]="5"
+      [rowsPerPageOptions]="[5, 10, 20]"
+      [showCurrentPageReport]="true"
+      currentPageReportTemplate="Showing {first} to {last} of {totalRecords} namespaces"
+      sortField="name" 
+      [sortOrder]="1"
+      class="w-full"
+    >
+      <ng-template #header>
+        <tr>
+          <th pSortableColumn="name">
+            <div class="flex items-center gap-2">
+              Name
+              <p-sortIcon field="name" />
+            </div>
+          </th>
+          <th pSortableColumn="associatedUsersCount">
+            <div class="flex items-center justify-center gap-2">
+              Associated Users
+              <p-sortIcon field="associatedUsersCount" />
+            </div>
+          </th>
+          <th pSortableColumn="associatedContainersCount">
+            <div class="flex items-center justify-center gap-2">
+              Associated Containers
+              <p-sortIcon field="associatedContainersCount" />
+            </div>
+          </th>
+          <th class="w-px whitespace-nowrap">
+            <div class="text-center">Actions</div>
+          </th>
+        </tr>
+      </ng-template>
+      <ng-template #body let-namespace>
+        <tr>
+          <td>{{ namespace.name }}</td>
+          <td>
+            <div class="text-center">
+              {{namespace.associatedUsersCount}}
+            </div>
+          </td>
+          <td>
+            <div class="text-center">
+              {{namespace.associatedContainersCount}}
+            </div>
+          </td>
+          <td class="w-px whitespace-nowrap">
+            @if(!namespace.isAdmin) {
+            <p-button-group>
+              <p-button
+                icon="pi pi-users"
+                severity="primary"
+                size="small"
+                pTooltip="Associated Users"
+                showDelay="200"
+                hideDelay="100"
+                tooltipPosition="top"
+              ></p-button>
+              <p-button
+                icon="pi pi-th-large"
+                severity="primary"
+                size="small"
+                pTooltip="Associated Containers"
+                showDelay="200"
+                hideDelay="100"
+                tooltipPosition="top"
+              ></p-button>
+              <p-button
+                icon="pi pi-pencil"
+                severity="primary"
+                size="small"
+                pTooltip="Rename"
+                showDelay="200"
+                hideDelay="100"
+                tooltipPosition="top"
+              ></p-button>
+              <p-button
+                icon="pi pi-trash"
+                severity="danger"
+                size="small"
+                pTooltip="Delete"
+                showDelay="200"
+                hideDelay="100"
+                tooltipPosition="top"
+              ></p-button>
+            </p-button-group>
+            }
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
