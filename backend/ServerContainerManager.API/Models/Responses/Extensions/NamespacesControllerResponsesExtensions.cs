@@ -8,7 +8,7 @@ namespace ServerContainerManager.API.Models.Responses.Extensions
     {
         public static GetNamespacesListResponse ToContract(this GetNamespacesListQueryResult result) => new()
         {
-            Namespaces = result.Namespaces.ToResponseModel(),
+            Namespaces = [.. result.Namespaces.ToResponseModel()],
             TotalCount = result.TotalCount
         };
 
@@ -16,5 +16,15 @@ namespace ServerContainerManager.API.Models.Responses.Extensions
         {
             NamespaceId = result.NamespaceId
         };
+
+        private static GetNamespacesListResponseNamespace ToResponseModel(this GetNamespacesListQueryResultNamespace result) => new()
+        {
+            Id = result.Id,
+            Name = result.Name,
+            AssociatedContainersCount = result.AssociatedContainersCount,
+            AssociatedUsersCount = result.AssociatedUsersCount,
+        };
+
+        private static IEnumerable<GetNamespacesListResponseNamespace> ToResponseModel(this IEnumerable<GetNamespacesListQueryResultNamespace> results) => results.Select(ToResponseModel);
     }
 }
