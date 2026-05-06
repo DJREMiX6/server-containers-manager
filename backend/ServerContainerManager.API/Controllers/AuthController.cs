@@ -8,11 +8,12 @@ using ServerContainerManager.API.Models.Responses.AuthController;
 using ServerContainerManager.API.Models.Responses.Extensions;
 using ServerContainerManager.API.Policies;
 using ServerContainerManager.Application.Commands.Abstraction;
-using ServerContainerManager.Application.Commands.Auth.GetSessionInfo;
 using ServerContainerManager.Application.Commands.Auth.SignIn;
 using ServerContainerManager.Application.Commands.Auth.SignOut;
 using ServerContainerManager.Application.Commands.User.ChangePassword;
 using ServerContainerManager.Application.Commands.User.ChangeUsername;
+using ServerContainerManager.Application.Queries.Abstraction;
+using ServerContainerManager.Application.Queries.Auth.GetSessionInfo;
 
 namespace ServerContainerManager.API.Controllers
 {
@@ -26,7 +27,7 @@ namespace ServerContainerManager.API.Controllers
         [HttpPost("signin")]
         public async Task<Results<Ok, ProblemHttpResult>> SignIn(
             SignInRequest request,
-            IQueryHandler<SignInCommand, SignInCommandResult> handler,
+            ICommandHandler<SignInCommand, SignInCommandResult> handler,
             CancellationToken cancellationToken = default)
         {
             var command = new SignInCommand()
@@ -48,7 +49,7 @@ namespace ServerContainerManager.API.Controllers
         [AllowAnonymous]
         [HttpPost("signout")]
         public async Task<Results<Ok, ProblemHttpResult>> SignOut(
-            IQueryHandler<SignOutCommand, SignOutCommandResult> handler,
+            ICommandHandler<SignOutCommand, SignOutCommandResult> handler,
             CancellationToken cancellationToken = default)
         {
             var command = new SignOutCommand();
@@ -63,10 +64,10 @@ namespace ServerContainerManager.API.Controllers
         [Authorize(Policy = AuthPolicies.AuthenticatedUserPolicy.Name)]
         [HttpGet("session")]
         public async Task<Results<Ok<GetSessionInfoResponse>, ProblemHttpResult>> GetSessionInfo(
-            IQueryHandler<GetSessionInfoCommand, GetSessionInfoCommandResult> handler,
+            IQueryHandler<GetSessionInfoQuery, GetSessionInfoQueryResult> handler,
             CancellationToken cancellationToken = default)
         {
-            var command = new GetSessionInfoCommand()
+            var command = new GetSessionInfoQuery()
             {
                 UserId = User.GetUserId()
             };
@@ -82,7 +83,7 @@ namespace ServerContainerManager.API.Controllers
         [HttpPost("user/change-password")]
         public async Task<Results<Ok, ProblemHttpResult>> ChangePassword(
             ChangePasswordRequest request,
-            IQueryHandler<ChangePasswordCommand, ChangePasswordCommandResult> handler,
+            ICommandHandler<ChangePasswordCommand, ChangePasswordCommandResult> handler,
             CancellationToken cancellationToken = default)
         {
             var command = new ChangePasswordCommand()
@@ -103,7 +104,7 @@ namespace ServerContainerManager.API.Controllers
         [HttpPatch("user")]
         public async Task<Results<Ok, ProblemHttpResult>> ChangeUsername(
             ChangeUsernameRequest request,
-            IQueryHandler<ChangeUsernameCommand, ChangeUsernameCommandResult> handler,
+            ICommandHandler<ChangeUsernameCommand, ChangeUsernameCommandResult> handler,
             CancellationToken cancellationToken = default)
         {
             var command = new ChangeUsernameCommand()

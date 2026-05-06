@@ -12,7 +12,7 @@ namespace ServerContainerManager.Application.Commands.User.ResetPassword
     internal class ResetUserPasswordCommandHandler(
         ILogger<ResetUserPasswordCommandHandler> logger,
         AppDbContext dbContext,
-        UserManager<AppUser> userManager) : IQueryHandler<ResetUserPasswordCommand, ResetUserPasswordCommandResult>
+        UserManager<AppUser> userManager) : ICommandHandler<ResetUserPasswordCommand, ResetUserPasswordCommandResult>
     {
         private readonly ILogger<ResetUserPasswordCommandHandler> _logger = logger;
         private readonly AppDbContext _dbContext = dbContext;

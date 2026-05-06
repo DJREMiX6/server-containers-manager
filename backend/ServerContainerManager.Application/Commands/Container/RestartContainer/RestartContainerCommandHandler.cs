@@ -21,7 +21,7 @@ namespace ServerContainerManager.Application.Commands.Container.RestartContainer
         AppDbContext dbContext,
         UserManager<AppUser> userManager,
         DockerClient dockerClient,
-        TimeProvider timeProvider) : IQueryHandler<RestartContainerCommand, RestartContainerCommandResult>
+        TimeProvider timeProvider) : ICommandHandler<RestartContainerCommand, RestartContainerCommandResult>
     {
         private readonly ILogger<RestartContainerCommandHandler> _logger = logger;
         private readonly AppDbContext _dbContext = dbContext;

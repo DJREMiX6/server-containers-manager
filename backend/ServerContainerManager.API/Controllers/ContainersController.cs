@@ -29,7 +29,7 @@ namespace ServerContainerManager.API.Controllers
         [HttpGet]
         public async Task<Results<Ok<GetContainerListResponse>, ProblemHttpResult>> GetContainers(
             [FromQuery] GetContainersRequest request,
-            [FromServices] Application.Queries.Abstraction.IQueryHandler<GetContainerListQuery, GetContainerListQueryResult> queryHandler,
+            [FromServices] IQueryHandler<GetContainerListQuery, GetContainerListQueryResult> queryHandler,
             CancellationToken cancellationToken = default)
         {
             var query = new GetContainerListQuery
@@ -54,7 +54,7 @@ namespace ServerContainerManager.API.Controllers
         public async Task<Results<NoContent, ProblemHttpResult>> UpdateContainerNamespaces(
             [FromRoute] string containerId,
             [FromBody] UpdateContainerNamespacesRequest request,
-            [FromServices] Application.Commands.Abstraction.IQueryHandler<UpdateContainerNamespacesCommand, UpdateContainerNamespacesCommandResult> commandHandler,
+            [FromServices] ICommandHandler<UpdateContainerNamespacesCommand, UpdateContainerNamespacesCommandResult> commandHandler,
             CancellationToken cancellationToken = default)
         {
             var userId = User.GetUserId();
@@ -77,7 +77,7 @@ namespace ServerContainerManager.API.Controllers
         [HttpPost("{containerId}/start")]
         public async Task<Results<NoContent, ProblemHttpResult>> StartContainer(
             [FromRoute] string containerId,
-            [FromServices] Application.Commands.Abstraction.IQueryHandler<StartContainerCommand, StartContainerCommandResult> commandHandler,
+            [FromServices]  ICommandHandler<StartContainerCommand, StartContainerCommandResult> commandHandler,
             CancellationToken cancellationToken = default)
         {
             var userId = User.GetUserId();
@@ -99,7 +99,7 @@ namespace ServerContainerManager.API.Controllers
         [HttpPost("{containerId}/stop")]
         public async Task<Results<NoContent, ProblemHttpResult>> StopContainer(
             [FromRoute] string containerId,
-            [FromServices] Application.Commands.Abstraction.IQueryHandler<StopContainerCommand, StopContainerCommandResult> commandHandler,
+            [FromServices] ICommandHandler<StopContainerCommand, StopContainerCommandResult> commandHandler,
             CancellationToken cancellationToken = default)
         {
             var userId = User.GetUserId();
@@ -121,7 +121,7 @@ namespace ServerContainerManager.API.Controllers
         [HttpPost("{containerId}/restart")]
         public async Task<Results<NoContent, ProblemHttpResult>> RestartContainer(
             [FromRoute] string containerId,
-            [FromServices] Application.Commands.Abstraction.IQueryHandler<RestartContainerCommand, RestartContainerCommandResult> commandHandler,
+            [FromServices] ICommandHandler<RestartContainerCommand, RestartContainerCommandResult> commandHandler,
             CancellationToken cancellationToken = default)
         {
             var userId = User.GetUserId();
@@ -143,7 +143,7 @@ namespace ServerContainerManager.API.Controllers
         [HttpPost("{containerId}/pause")]
         public async Task<Results<NoContent, ProblemHttpResult>> PauseContainer(
             [FromRoute] string containerId,
-            [FromServices] Application.Commands.Abstraction.IQueryHandler<PauseContainerCommand, PauseContainerCommandResult> commandHandler,
+            [FromServices] ICommandHandler<PauseContainerCommand, PauseContainerCommandResult> commandHandler,
             CancellationToken cancellationToken = default)
         {
             var userId = User.GetUserId();
@@ -165,7 +165,7 @@ namespace ServerContainerManager.API.Controllers
         [HttpPost("{containerId}/resume")]
         public async Task<Results<NoContent, ProblemHttpResult>> ResumeContainer(
             [FromRoute] string containerId,
-            [FromServices] Application.Commands.Abstraction.IQueryHandler<ResumeContainerCommand, ResumeContainerCommandResult> commandHandler,
+            [FromServices] ICommandHandler<ResumeContainerCommand, ResumeContainerCommandResult> commandHandler,
             CancellationToken cancellationToken = default)
         {
             var userId = User.GetUserId();
@@ -187,7 +187,7 @@ namespace ServerContainerManager.API.Controllers
         [HttpPost("{containerId}/kill")]
         public async Task<Results<NoContent, ProblemHttpResult>> KillContainer(
             [FromRoute] string containerId,
-            [FromServices] Application.Commands.Abstraction.IQueryHandler<KillContainerCommand, KillContainerCommandResult> commandHandler,
+            [FromServices] ICommandHandler<KillContainerCommand, KillContainerCommandResult> commandHandler,
             CancellationToken cancellationToken = default)
         {
             var userId = User.GetUserId();

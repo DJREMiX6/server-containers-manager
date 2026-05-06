@@ -13,7 +13,7 @@ namespace ServerContainerManager.Application.Commands.Auth.SignIn
         ILogger<SignInCommandHandler> logger,
         AppDbContext dbContext,
         SignInManager<AppUser> signInManager,
-        UserManager<AppUser> userManager) : IQueryHandler<SignInCommand, SignInCommandResult>
+        UserManager<AppUser> userManager) : ICommandHandler<SignInCommand, SignInCommandResult>
     {
         private readonly ILogger<SignInCommandHandler> _logger = logger;
         private readonly AppDbContext _dbContext = dbContext;

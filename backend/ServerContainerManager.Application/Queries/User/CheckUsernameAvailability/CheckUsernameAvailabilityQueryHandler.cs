@@ -9,7 +9,7 @@ namespace ServerContainerManager.Application.Queries.User.CheckUsernameAvailabil
 {
     internal sealed class CheckUsernameAvailabilityQueryHandler(
         ILogger<CheckUsernameAvailabilityQueryHandler> logger,
-        UserManager<AppUser> userManager) : IQueryHandler<CheckUsernameAvailabilityQuery, CheckUsernameAvailabilityQueryResult>
+        UserManager<AppUser> userManager) : ICommandHandler<CheckUsernameAvailabilityQuery, CheckUsernameAvailabilityQueryResult>
     {
         private readonly ILogger<CheckUsernameAvailabilityQueryHandler> _logger = logger;
         private readonly UserManager<AppUser> _userManager = userManager;

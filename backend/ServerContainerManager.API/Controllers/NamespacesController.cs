@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json.Linq;
 using ServerContainerManager.API.Extensions;
 using ServerContainerManager.API.Models.Requests.NamespacesController;
 using ServerContainerManager.API.Models.Responses.Extensions;
@@ -9,6 +10,7 @@ using ServerContainerManager.Application.Commands.Abstraction;
 using ServerContainerManager.Application.Commands.Namespace.CreateNamespace;
 using ServerContainerManager.Application.Consts;
 using ServerContainerManager.Application.Queries.Abstraction;
+using ServerContainerManager.Application.Queries.Namespace.CheckNamespaceNameAvailability;
 using ServerContainerManager.Application.Queries.Namespace.GetNamespacesList;
 
 namespace ServerContainerManager.API.Controllers
@@ -22,7 +24,7 @@ namespace ServerContainerManager.API.Controllers
 
         [HttpGet]
         public async Task<Results<Ok<GetNamespacesListResponse>, ProblemHttpResult>> GetNamespaces(
-            [FromServices] Application.Queries.Abstraction.IQueryHandler<GetNamespacesListQuery, GetNamespacesListQueryResult> queryHandler,
+            [FromServices] IQueryHandler<GetNamespacesListQuery, GetNamespacesListQueryResult> queryHandler,
             CancellationToken cancellationToken = default)
         {
             var query = new GetNamespacesListQuery();
@@ -35,11 +37,32 @@ namespace ServerContainerManager.API.Controllers
             return TypedResults.Ok(result.Value.ToContract());
         }
 
+        [HttpHead("check-name")]
+        public async Task<Results<NoContent, Conflict, ProblemHttpResult>> CheckNamespaceNameAvailability(
+            [FromQuery] CheckNameAvailabilityRequest request,
+            [FromServices] IQueryHandler<CheckNamespaceNameAvailabilityQuery, CheckNamespaceNameAvailabilityQueryResult> queryHandler,
+            CancellationToken cancellationToken = default)
+        {
+            var query = new CheckNamespaceNameAvailabilityQuery()
+            { 
+                Name = request.Name
+            };
+
+            var result = await queryHandler.HandleAsync(query, cancellationToken);
+
+            if (result.IsError)
+                return result.Errors.ToProblemHttpResult();
+
+            return result.Value.IsAvailable
+                ? TypedResults.NoContent()
+                : TypedResults.Conflict();
+        }
+
         [Authorize(Roles = UserRoles.Admin)]
         [HttpPost]
         public async Task<Results<Ok<CreateNamespaceResponse>, ProblemHttpResult>> CreateNamespace(
             [FromBody] CreateNamespaceRequest request,
-            [FromServices] Application.Commands.Abstraction.IQueryHandler<CreateNamespaceCommand, CreateNamespaceCommandResult> commandHandler,
+            [FromServices] ICommandHandler<CreateNamespaceCommand, CreateNamespaceCommandResult> commandHandler,
             CancellationToken cancellationToken = default)
         {
             var command = new CreateNamespaceCommand() { Name = request.Name };

@@ -9,7 +9,7 @@ namespace ServerContainerManager.Application.Commands.Namespace.CreateNamespace
 {
     internal class CreateNamespaceCommandHandler(
         ILogger<CreateNamespaceCommandHandler> logger,
-        AppDbContext dbContext) : IQueryHandler<CreateNamespaceCommand, CreateNamespaceCommandResult>
+        AppDbContext dbContext) : ICommandHandler<CreateNamespaceCommand, CreateNamespaceCommandResult>
     {
         private readonly ILogger<CreateNamespaceCommandHandler> _logger = logger;
         private readonly AppDbContext _dbContext = dbContext;
