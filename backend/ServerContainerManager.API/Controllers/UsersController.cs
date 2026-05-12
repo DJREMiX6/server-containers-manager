@@ -26,11 +26,9 @@ namespace ServerContainerManager.API.Controllers
 
         [HttpGet]
         public async Task<Ok<GetUserListResponse>> GetUserList(
-            [FromQuery]GetUserListQueryParameters queryParameters,
             IQueryHandler<GetUserListQuery, GetUserListQueryResult> handler,
             CancellationToken cancellationToken = default)
         {
-            var username = queryParameters.Username;
             var command = new GetUserListQuery();
             var getUserListResult = await handler.HandleAsync(command, cancellationToken);
 

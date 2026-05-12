@@ -2,14 +2,14 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using ServerContainerManager.Application.Commands.Abstraction;
 using ServerContainerManager.Application.Entities;
 using ServerContainerManager.Application.Models;
+using ServerContainerManager.Application.Queries.Abstraction;
 using ServerContainerManager.Domain.Entities.Auth;
 
 namespace ServerContainerManager.Application.Queries.User.GetUserList
 {
-    internal class GetUserListQueryHandler(ILogger<GetUserListQueryHandler> logger, AppDbContext appDbContext, UserManager<AppUser> userManager) : ICommandHandler<GetUserListQuery, GetUserListQueryResult>
+    internal class GetUserListQueryHandler(ILogger<GetUserListQueryHandler> logger, AppDbContext appDbContext, UserManager<AppUser> userManager) : IQueryHandler<GetUserListQuery, GetUserListQueryResult>
     {
         private readonly ILogger<GetUserListQueryHandler> logger = logger;
         private readonly AppDbContext _appDbContext = appDbContext;
