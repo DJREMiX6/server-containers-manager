@@ -17,11 +17,9 @@ namespace ServerContainerManager.Application.Queries.Namespace.CheckNamespaceNam
         public async Task<ErrorOr<CheckNamespaceNameAvailabilityQueryResult>> HandleAsync(CheckNamespaceNameAvailabilityQuery query, CancellationToken cancellationToken = default)
         {
             var normalizedName = query.Name.Trim();
+            var exists = await _dbContext.Namespaces.AnyAsync(n => n.Name == normalizedName, cancellationToken);
 
-            if (await _dbContext.Namespaces.AnyAsync(n => n.Name == normalizedName, cancellationToken))
-                return NamespaceErrors.AlreadyExists(normalizedName);
-
-            return new();
+            return new CheckNamespaceNameAvailabilityQueryResult() { IsAvailable = !exists };
         }
     }
 }

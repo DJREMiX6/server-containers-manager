@@ -44,7 +44,7 @@ export class NamespacesService {
   ): Observable<HttpResponse<void>> {
     const parsedRequest = CheckNameAvailabilityRequestSchema.parse(request);
 
-    return this.httpClient.head<void>(ApiBaseUrl, {
+    return this.httpClient.head<void>(`${ApiBaseUrl}/check-name`, {
       params: {
         ...parsedRequest,
       },

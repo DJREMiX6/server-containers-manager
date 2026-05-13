@@ -44,12 +44,12 @@ import {
     TooltipModule,
   ],
   providers: [provideCreateNamespaceStore()],
-  templateUrl: './create-namespace.html',
-  styleUrl: './create-namespace.css',
+  templateUrl: './create-namespace.feature.html',
+  styleUrl: './create-namespace.feature.css',
 })
-export class CreateNamespaceComponent {
+export class CreateNamespaceFeature {
   public readonly operationCanceled = output<void>();
-  public readonly operationCompleted = output<{ namespaceId: string }>();
+  public readonly operationCompleted = output<void>();
 
   private readonly toastService = inject(MessageService);
   protected readonly createNamespaceStore = inject(CreateNamespaceStore);
@@ -58,10 +58,12 @@ export class CreateNamespaceComponent {
     if (this.createNamespaceStore.requestStatus() !== 'fulfilled') return;
 
     this.toastService.add({
-      summary: 'User creation success',
-      detail: `User ${this.formState().name} was created successfully`,
+      summary: 'Namespace creation success',
+      detail: `Namespace ${this.formState().name} was created successfully`,
       severity: 'success',
     });
+
+    this.operationCompleted.emit();
   });
 
   private readonly onCreateNamespaceError = effect(() => {
@@ -112,7 +114,7 @@ export class CreateNamespaceComponent {
           return {
             kind: 'Unexpected error',
             message:
-              'An unexpected error has ocurred, colud not validate the username.',
+              'An unexpected error has ocurred, colud not validate the name.',
           };
         },
       });
@@ -121,7 +123,7 @@ export class CreateNamespaceComponent {
       submission: {
         action: async (form) => {
           const request: CreateNamespaceRequest = {
-            username: form.name().value(),
+            name: form.name().value(),
           };
           await this.createNamespaceStore.createNamespace(request);
         },
@@ -138,14 +140,5 @@ export class CreateNamespaceComponent {
 
   protected onCancelBtnClick(): void {
     this.operationCanceled.emit();
-  }
-
-  protected onCloseBtnClick(): void {
-    const createdNamespaceId = this.createNamespaceStore.createdNamespaceId();
-    if (!createdNamespaceId) throw new Error('Created Namespace Id is null or undefined');
-
-    this.operationCompleted.emit({
-      namespaceId: createdNamespaceId,
-    });
   }
 }

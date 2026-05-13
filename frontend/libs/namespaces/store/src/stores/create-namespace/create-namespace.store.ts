@@ -7,7 +7,7 @@ import { inject } from '@angular/core';
 import { NamespacesService } from '@scm/namespaces/data';
 import { HttpErrorResponse, HttpStatusCode } from '@angular/common/http';
 
-export const CreateUserStore = signalStore(
+export const CreateNamespaceStore = signalStore(
   withCreateNamespaceState(),
   withMethods((store, namespacesService = inject(NamespacesService)) => {
     const createNamespace = async (request: LocalCreateNamespaceRequest) => {
@@ -35,9 +35,7 @@ export const CreateUserStore = signalStore(
       try {
         patchState(store, clearError());
 
-        await firstValueFrom(
-          namespacesService.checkNameAvailability({ name }),
-        );
+        await firstValueFrom(namespacesService.checkNameAvailability({ name }));
 
         return { isAvailable: true };
       } catch (error) {

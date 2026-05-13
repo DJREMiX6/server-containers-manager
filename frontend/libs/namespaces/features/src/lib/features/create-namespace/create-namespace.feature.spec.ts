@@ -1,16 +1,16 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { CreateNamespaceComponent } from './create-namespace';
+import { CreateNamespaceFeature } from './create-namespace.feature';
 
-describe('CreateNamespaceComponent', () => {
-  let component: CreateNamespaceComponent;
-  let fixture: ComponentFixture<CreateNamespaceComponent>;
+describe('CreateNamespaceFeature', () => {
+  let component: CreateNamespaceFeature;
+  let fixture: ComponentFixture<CreateNamespaceFeature>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [CreateNamespaceComponent],
+      imports: [CreateNamespaceFeature],
     }).compileComponents();
 
-    fixture = TestBed.createComponent(CreateNamespaceComponent);
+    fixture = TestBed.createComponent(CreateNamespaceFeature);
     component = fixture.componentInstance;
     await fixture.whenStable();
   });

@@ -2,6 +2,6 @@
 {
     public sealed record CheckNamespaceNameAvailabilityQueryResult
     {
-        public bool IsAvailable { get; init; }
+        public required bool IsAvailable { get; init; }
     }
 }
