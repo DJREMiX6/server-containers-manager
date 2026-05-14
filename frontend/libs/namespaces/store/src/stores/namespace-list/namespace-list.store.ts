@@ -39,6 +39,12 @@ export const NamespaceListStore = signalStore(
       await loadNamespaces();
     };
 
-    return { ensureLoaded };
+    const refresh = async () => {
+      if (store.loadingStatus() === 'loading') return;
+
+      await loadNamespaces();
+    };
+
+    return { ensureLoaded, refresh };
   }),
 );

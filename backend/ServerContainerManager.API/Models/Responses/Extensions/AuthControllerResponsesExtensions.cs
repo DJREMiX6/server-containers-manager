@@ -1,11 +1,11 @@
 ﻿using ServerContainerManager.API.Models.Responses.AuthController;
-using ServerContainerManager.Application.Commands.Auth.GetSessionInfo;
+using ServerContainerManager.Application.Queries.Auth.GetSessionInfo;
 
 namespace ServerContainerManager.API.Models.Responses.Extensions
 {
     public static class AuthControllerResponsesExtensions
     {
-        public static GetSessionInfoResponse ToContract(this GetSessionInfoCommandResult result) => new()
+        public static GetSessionInfoResponse ToContract(this GetSessionInfoQueryResult result) => new()
         {
             User = new()
             {

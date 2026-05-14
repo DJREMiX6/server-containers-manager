@@ -1,0 +1,40 @@
+<form class="w-full flex flex-col gap-2 p-2" [formRoot]="createNamespaceForm">
+  <div class="w-full">
+    <p-float-label variant="on">
+      <p-icon-field iconPosition="left">
+        <p-inputIcon class="pi pi-user"></p-inputIcon>
+        <input
+          [formField]="createNamespaceForm.name"
+          id="nameInput"
+          class="w-full"
+          type="text"
+          pInputText
+          [class.p-invalid]="
+                createNamespaceForm.name().touched() && createNamespaceForm.name().invalid()
+              "
+        />
+      </p-icon-field>
+      <label for="nameInput">Name</label>
+    </p-float-label>
+    @if ((createNamespaceForm.name().touched() ||
+    createNamespaceForm.name().dirty()) && createNamespaceForm.name().invalid())
+    {
+    <p-message severity="error" variant="simple" size="small"
+      >{{ createNamespaceForm.name().errors()[0].message }}</p-message
+    >
+    }
+  </div>
+  <div class="w-full flex flex-row gap-2 justify-end">
+    <p-button
+      (onClick)="onCancelBtnClick()"
+      label="Cancel"
+      severity="danger"
+    ></p-button>
+    <p-button
+      [disabled]="createNamespaceForm().submitting() || createNamespaceForm().invalid()"
+      label="Create"
+      type="submit"
+      severity="primary"
+    ></p-button>
+  </div>
+</form>

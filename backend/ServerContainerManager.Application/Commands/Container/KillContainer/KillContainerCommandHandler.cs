@@ -20,7 +20,7 @@ namespace ServerContainerManager.Application.Commands.Container.KillContainer
         AppDbContext dbContext,
         UserManager<AppUser> userManager,
         DockerClient dockerClient,
-        TimeProvider timeProvider) : IQueryHandler<KillContainerCommand, KillContainerCommandResult>
+        TimeProvider timeProvider) : ICommandHandler<KillContainerCommand, KillContainerCommandResult>
     {
         private readonly ILogger<KillContainerCommandHandler> _logger = logger;
         private readonly AppDbContext _dbContext = dbContext;

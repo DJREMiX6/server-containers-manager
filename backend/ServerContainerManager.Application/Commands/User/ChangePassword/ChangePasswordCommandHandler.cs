@@ -9,7 +9,7 @@ using ServerContainerManager.Shared.Utils.Errors;
 
 namespace ServerContainerManager.Application.Commands.User.ChangePassword
 {
-    internal class ChangePasswordCommandHandler(ILogger<ChangePasswordCommandHandler> logger, AppDbContext dbContext, UserManager<AppUser> userManager) : IQueryHandler<ChangePasswordCommand, ChangePasswordCommandResult>
+    internal class ChangePasswordCommandHandler(ILogger<ChangePasswordCommandHandler> logger, AppDbContext dbContext, UserManager<AppUser> userManager) : ICommandHandler<ChangePasswordCommand, ChangePasswordCommandResult>
     {
         private readonly ILogger<ChangePasswordCommandHandler> _logger = logger;
         private readonly AppDbContext _dbContext = dbContext;

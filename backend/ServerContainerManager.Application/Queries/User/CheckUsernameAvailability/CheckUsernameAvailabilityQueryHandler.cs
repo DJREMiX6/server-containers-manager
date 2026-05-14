@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using ServerContainerManager.Application.Commands.Abstraction;
+using ServerContainerManager.Application.Queries.Abstraction;
 using ServerContainerManager.Domain.Entities.Auth;
 
 namespace ServerContainerManager.Application.Queries.User.CheckUsernameAvailability

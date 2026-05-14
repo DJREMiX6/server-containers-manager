@@ -1,22 +1,22 @@
 ﻿using ErrorOr;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
-using ServerContainerManager.Application.Commands.Abstraction;
 using ServerContainerManager.Application.Entities;
 using ServerContainerManager.Application.Extensions;
 using ServerContainerManager.Application.Models;
+using ServerContainerManager.Application.Queries.Abstraction;
 using ServerContainerManager.Domain.Entities.Auth;
 using ServerContainerManager.Shared.Utils.Errors;
 
-namespace ServerContainerManager.Application.Commands.Auth.GetSessionInfo
+namespace ServerContainerManager.Application.Queries.Auth.GetSessionInfo
 {
-    internal class GetSessionInfoCommandHandler(ILogger<GetSessionInfoCommandHandler> logger, AppDbContext appDbContext, UserManager<AppUser> userManager) : IQueryHandler<GetSessionInfoCommand, GetSessionInfoCommandResult>
+    internal class GetSessionInfoCommandHandler(ILogger<GetSessionInfoCommandHandler> logger, AppDbContext appDbContext, UserManager<AppUser> userManager) : IQueryHandler<GetSessionInfoQuery, GetSessionInfoQueryResult>
     {
         private readonly ILogger<GetSessionInfoCommandHandler> _logger = logger;
         private readonly AppDbContext _appDbContext = appDbContext;
         private readonly UserManager<AppUser> _userManager = userManager;
 
-        public async Task<ErrorOr<GetSessionInfoCommandResult>> HandleAsync(GetSessionInfoCommand command, CancellationToken cancellationToken = default)
+        public async Task<ErrorOr<GetSessionInfoQueryResult>> HandleAsync(GetSessionInfoQuery command, CancellationToken cancellationToken = default)
         {
             using var transaction = await _appDbContext.Database.BeginTransactionAsync(cancellationToken);
 
@@ -28,7 +28,7 @@ namespace ServerContainerManager.Application.Commands.Auth.GetSessionInfo
 
             await transaction.CommitAsync(cancellationToken);
 
-            return new GetSessionInfoCommandResult() 
+            return new GetSessionInfoQueryResult() 
             {
                 User = new Models.User ()
                 {

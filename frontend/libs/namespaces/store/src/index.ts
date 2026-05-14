@@ -1,5 +1,8 @@
-export { NamespaceListStore } from './stores';
+export { NamespaceListStore, CreateNamespaceStore } from './stores';
 
-export { provideNamespaceListStore } from './providers';
+export {
+  provideNamespaceListStore,
+  provideCreateNamespaceStore,
+} from './providers';
 
-export type { Namespace } from './models';
+export type { Namespace, CreateNamespaceRequest } from './models';

@@ -9,7 +9,7 @@ namespace ServerContainerManager.Application.Commands
         internal static IServiceCollection RegisterCommandsFromAssembly(this IServiceCollection services, Assembly assembly)
         {
             // Capture the open generic type definition once.
-            var handlerInterfaceType = typeof(IQueryHandler<,>);
+            var handlerInterfaceType = typeof(ICommandHandler<,>);
 
             var handlerTypes = assembly
                 .GetTypes()

@@ -10,7 +10,7 @@ using ServerContainerManager.Shared.Utils.Errors;
 
 namespace ServerContainerManager.Application.Commands.User.DeleteUser
 {
-    internal class DeleteUserCommandHandler(ILogger<DeleteUserCommandHandler> logger, AppDbContext appDbContext, UserManager<AppUser> userManager) : IQueryHandler<DeleteUserCommand, DeleteUserCommandResult>
+    internal class DeleteUserCommandHandler(ILogger<DeleteUserCommandHandler> logger, AppDbContext appDbContext, UserManager<AppUser> userManager) : ICommandHandler<DeleteUserCommand, DeleteUserCommandResult>
     {
         private readonly ILogger<DeleteUserCommandHandler> _logger = logger;
         private readonly AppDbContext _appDbContext = appDbContext = appDbContext;
