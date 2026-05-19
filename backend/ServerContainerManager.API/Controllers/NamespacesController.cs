@@ -11,6 +11,7 @@ using ServerContainerManager.Application.Commands.Namespace.CreateNamespace;
 using ServerContainerManager.Application.Consts;
 using ServerContainerManager.Application.Queries.Abstraction;
 using ServerContainerManager.Application.Queries.Namespace.CheckNamespaceNameAvailability;
+using ServerContainerManager.Application.Queries.Namespace.GetNamespaceAssociatedUsers;
 using ServerContainerManager.Application.Queries.Namespace.GetNamespacesList;
 
 namespace ServerContainerManager.API.Controllers
@@ -37,27 +38,6 @@ namespace ServerContainerManager.API.Controllers
             return TypedResults.Ok(result.Value.ToContract());
         }
 
-        [HttpHead("check-name")]
-        public async Task<Results<NoContent, Conflict, ProblemHttpResult>> CheckNamespaceNameAvailability(
-            [FromQuery] CheckNameAvailabilityRequest request,
-            [FromServices] IQueryHandler<CheckNamespaceNameAvailabilityQuery, CheckNamespaceNameAvailabilityQueryResult> queryHandler,
-            CancellationToken cancellationToken = default)
-        {
-            var query = new CheckNamespaceNameAvailabilityQuery()
-            { 
-                Name = request.Name
-            };
-
-            var result = await queryHandler.HandleAsync(query, cancellationToken);
-
-            if (result.IsError)
-                return result.Errors.ToProblemHttpResult();
-
-            return result.Value.IsAvailable
-                ? TypedResults.NoContent()
-                : TypedResults.Conflict();
-        }
-
         [Authorize(Roles = UserRoles.Admin)]
         [HttpPost]
         public async Task<Results<Ok<CreateNamespaceResponse>, ProblemHttpResult>> CreateNamespace(
@@ -73,6 +53,47 @@ namespace ServerContainerManager.API.Controllers
                 return result.Errors.ToProblemHttpResult();
 
             return TypedResults.Ok(result.Value.ToContract());
+        }
+
+        [Authorize(Roles = UserRoles.Admin)]
+        [HttpGet("{namespaceId:guid}/users")]
+        public async Task<Results<Ok<GetNamespaceUsersResponse>, ProblemHttpResult>> GetNamespaceUsers(
+            [FromRoute] Guid namespaceId,
+            [FromServices] IQueryHandler<GetNamespaceAssociatedUsersQuery, GetNamespaceAssociatedUsersQueryResult> queryHandler,
+            CancellationToken cancellationToken = default)
+        {
+            var query = new GetNamespaceAssociatedUsersQuery()
+            {
+                NamespaceId = namespaceId,
+            };
+
+            var result = await queryHandler.HandleAsync(query, cancellationToken);
+
+            if (result.IsError)
+                return result.Errors.ToProblemHttpResult();
+
+            return TypedResults.Ok(result.Value.ToContract());
+        }
+
+        [HttpHead("check-name")]
+        public async Task<Results<NoContent, Conflict, ProblemHttpResult>> CheckNamespaceNameAvailability(
+            [FromQuery] CheckNameAvailabilityRequest request,
+            [FromServices] IQueryHandler<CheckNamespaceNameAvailabilityQuery, CheckNamespaceNameAvailabilityQueryResult> queryHandler,
+            CancellationToken cancellationToken = default)
+        {
+            var query = new CheckNamespaceNameAvailabilityQuery()
+            {
+                Name = request.Name
+            };
+
+            var result = await queryHandler.HandleAsync(query, cancellationToken);
+
+            if (result.IsError)
+                return result.Errors.ToProblemHttpResult();
+
+            return result.Value.IsAvailable
+                ? TypedResults.NoContent()
+                : TypedResults.Conflict();
         }
     }
 }

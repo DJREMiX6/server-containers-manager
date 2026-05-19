@@ -1,5 +1,6 @@
 ﻿using ServerContainerManager.API.Models.Responses.NamespacesController;
 using ServerContainerManager.Application.Commands.Namespace.CreateNamespace;
+using ServerContainerManager.Application.Queries.Namespace.GetNamespaceAssociatedUsers;
 using ServerContainerManager.Application.Queries.Namespace.GetNamespacesList;
 
 namespace ServerContainerManager.API.Models.Responses.Extensions
@@ -17,6 +18,11 @@ namespace ServerContainerManager.API.Models.Responses.Extensions
             NamespaceId = result.NamespaceId
         };
 
+        public static GetNamespaceUsersResponse ToContract(this GetNamespaceAssociatedUsersQueryResult result) => new()
+        {
+            AssociatedUsers = [.. result.AssociatedUsers.ToResponseModel()]
+        };
+
         private static GetNamespacesListResponseNamespace ToResponseModel(this GetNamespacesListQueryResultNamespace result) => new()
         {
             Id = result.Id,
@@ -26,5 +32,13 @@ namespace ServerContainerManager.API.Models.Responses.Extensions
         };
 
         private static IEnumerable<GetNamespacesListResponseNamespace> ToResponseModel(this IEnumerable<GetNamespacesListQueryResultNamespace> results) => results.Select(ToResponseModel);
+
+        private static GetNamespaceUsersAssociatedUserResponse ToResponseModel(this NamespaceAssociatedUser associatedUser) => new()
+        {
+            Id = associatedUser.Id,
+            Username = associatedUser.Username
+        };
+
+        private static IEnumerable<GetNamespaceUsersAssociatedUserResponse> ToResponseModel(this IEnumerable<NamespaceAssociatedUser> associatedUsers) => associatedUsers.Select(ToResponseModel);
     }
 }
