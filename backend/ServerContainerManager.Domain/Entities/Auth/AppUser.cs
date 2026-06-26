@@ -30,7 +30,7 @@ namespace ServerContainerManager.Domain.Entities.Auth
             return new AppUser(username, namespaces);
         }
 
-        public ErrorOr<Success> UpsertNamespaces(IList<Namespace> namespaces)
+        public ErrorOr<Success> UpdateNamespaces(IList<Namespace> namespaces)
         {
             if (namespaces.Count == 0)
                 return UserValidationErrors.EmptyNamespaces();

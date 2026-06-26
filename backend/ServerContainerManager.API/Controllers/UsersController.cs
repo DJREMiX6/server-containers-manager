@@ -5,6 +5,7 @@ using ServerContainerManager.API.Extensions;
 using ServerContainerManager.API.Models.Requests.UsersController;
 using ServerContainerManager.API.Models.Responses.Extensions;
 using ServerContainerManager.API.Models.Responses.UsersController;
+using ServerContainerManager.API.Policies;
 using ServerContainerManager.Application.Commands.Abstraction;
 using ServerContainerManager.Application.Commands.User.CreateUser;
 using ServerContainerManager.Application.Commands.User.DeleteUser;
@@ -17,7 +18,7 @@ using ServerContainerManager.Application.Queries.User.GetUserList;
 
 namespace ServerContainerManager.API.Controllers
 {
-    [Authorize(Roles = UserRoles.Admin)]
+    [Authorize(Policy = AuthPolicies.ConfirmedAdminPolicy.Name)]
     [ApiController]
     [Route("api/[controller]")]
     public class UsersController(ILogger<UsersController> logger) : ControllerBase

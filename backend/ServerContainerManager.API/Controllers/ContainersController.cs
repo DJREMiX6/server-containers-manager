@@ -5,6 +5,7 @@ using ServerContainerManager.API.Extensions;
 using ServerContainerManager.API.Models.Requests.ContainersController;
 using ServerContainerManager.API.Models.Responses.ContainersController;
 using ServerContainerManager.API.Models.Responses.Extensions;
+using ServerContainerManager.API.Policies;
 using ServerContainerManager.Application.Commands.Abstraction;
 using ServerContainerManager.Application.Commands.Container.KillContainer;
 using ServerContainerManager.Application.Commands.Container.PauseContainer;
@@ -49,7 +50,7 @@ namespace ServerContainerManager.API.Controllers
             return TypedResults.Ok(result.Value.ToContract());
         }
 
-        [Authorize(Roles = UserRoles.Admin)]
+        [Authorize(Policy = AuthPolicies.ConfirmedAdminPolicy.Name)]
         [HttpPatch("{containerId}/namespaces")]
         public async Task<Results<NoContent, ProblemHttpResult>> UpdateContainerNamespaces(
             [FromRoute] string containerId,
@@ -73,7 +74,6 @@ namespace ServerContainerManager.API.Controllers
             return TypedResults.NoContent();
         }
 
-        [Authorize(Roles = UserRoles.Member)]
         [HttpPost("{containerId}/start")]
         public async Task<Results<NoContent, ProblemHttpResult>> StartContainer(
             [FromRoute] string containerId,
@@ -95,7 +95,6 @@ namespace ServerContainerManager.API.Controllers
             return TypedResults.NoContent();
         }
 
-        [Authorize(Roles = UserRoles.Member)]
         [HttpPost("{containerId}/stop")]
         public async Task<Results<NoContent, ProblemHttpResult>> StopContainer(
             [FromRoute] string containerId,
@@ -117,7 +116,6 @@ namespace ServerContainerManager.API.Controllers
             return TypedResults.NoContent();
         }
 
-        [Authorize(Roles = UserRoles.Member)]
         [HttpPost("{containerId}/restart")]
         public async Task<Results<NoContent, ProblemHttpResult>> RestartContainer(
             [FromRoute] string containerId,
@@ -139,7 +137,6 @@ namespace ServerContainerManager.API.Controllers
             return TypedResults.NoContent();
         }
 
-        [Authorize(Roles = UserRoles.Member)]
         [HttpPost("{containerId}/pause")]
         public async Task<Results<NoContent, ProblemHttpResult>> PauseContainer(
             [FromRoute] string containerId,
@@ -161,7 +158,6 @@ namespace ServerContainerManager.API.Controllers
             return TypedResults.NoContent();
         }
 
-        [Authorize(Roles = UserRoles.Member)]
         [HttpPost("{containerId}/resume")]
         public async Task<Results<NoContent, ProblemHttpResult>> ResumeContainer(
             [FromRoute] string containerId,
@@ -183,7 +179,6 @@ namespace ServerContainerManager.API.Controllers
             return TypedResults.NoContent();
         }
 
-        [Authorize(Roles = UserRoles.Member)]
         [HttpPost("{containerId}/kill")]
         public async Task<Results<NoContent, ProblemHttpResult>> KillContainer(
             [FromRoute] string containerId,

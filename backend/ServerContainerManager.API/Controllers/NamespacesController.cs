@@ -6,8 +6,10 @@ using ServerContainerManager.API.Extensions;
 using ServerContainerManager.API.Models.Requests.NamespacesController;
 using ServerContainerManager.API.Models.Responses.Extensions;
 using ServerContainerManager.API.Models.Responses.NamespacesController;
+using ServerContainerManager.API.Policies;
 using ServerContainerManager.Application.Commands.Abstraction;
 using ServerContainerManager.Application.Commands.Namespace.CreateNamespace;
+using ServerContainerManager.Application.Commands.Namespace.UpdateNamespaceAssociatedUsers;
 using ServerContainerManager.Application.Consts;
 using ServerContainerManager.Application.Queries.Abstraction;
 using ServerContainerManager.Application.Queries.Namespace.CheckNamespaceNameAvailability;
@@ -38,7 +40,7 @@ namespace ServerContainerManager.API.Controllers
             return TypedResults.Ok(result.Value.ToContract());
         }
 
-        [Authorize(Roles = UserRoles.Admin)]
+        [Authorize(Policy = AuthPolicies.ConfirmedAdminPolicy.Name)]
         [HttpPost]
         public async Task<Results<Ok<CreateNamespaceResponse>, ProblemHttpResult>> CreateNamespace(
             [FromBody] CreateNamespaceRequest request,
@@ -55,7 +57,7 @@ namespace ServerContainerManager.API.Controllers
             return TypedResults.Ok(result.Value.ToContract());
         }
 
-        [Authorize(Roles = UserRoles.Admin)]
+        [Authorize(Policy = AuthPolicies.ConfirmedAdminPolicy.Name)]
         [HttpGet("{namespaceId:guid}/users")]
         public async Task<Results<Ok<GetNamespaceUsersResponse>, ProblemHttpResult>> GetNamespaceUsers(
             [FromRoute] Guid namespaceId,
@@ -73,6 +75,28 @@ namespace ServerContainerManager.API.Controllers
                 return result.Errors.ToProblemHttpResult();
 
             return TypedResults.Ok(result.Value.ToContract());
+        }
+
+        [Authorize(Policy = AuthPolicies.ConfirmedAdminPolicy.Name)]
+        [HttpPatch("{namespaceId:guid}/users")]
+        public async Task<Results<NoContent, ProblemHttpResult>> UpdateNamespaceUsers(
+            [FromRoute] Guid namespaceId,
+            [FromBody] UpdateNamespaceUsersRequest updateNamespaceUsersRequest,
+            [FromServices] ICommandHandler<UpdateNamespaceAssociatedUsersCommand, UpdateNamespaceAssociatedUsersCommandResult> commandHandler,
+            CancellationToken cancellationToken = default)
+        {
+            var command = new UpdateNamespaceAssociatedUsersCommand()
+            {
+                NamespaceId = namespaceId,
+                AssociatedUserIds = updateNamespaceUsersRequest.AssociatedUserIds
+            };
+
+            var result = await commandHandler.HandleAsync(command, cancellationToken);
+
+            if (result.IsError)
+                return result.Errors.ToProblemHttpResult();
+
+            return TypedResults.NoContent();
         }
 
         [HttpHead("check-name")]

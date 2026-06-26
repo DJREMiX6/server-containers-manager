@@ -31,7 +31,7 @@ namespace ServerContainerManager.Application.Commands.User.UpdateUserNamespaces
             if (namespaces.Count != command.NamespacesIds.Count)
                 return NamespaceErrors.SomeNotExist(command.NamespacesIds.Except(namespaces.Select(n => n.Id)));
 
-            var upsertResult = user.UpsertNamespaces(namespaces);
+            var upsertResult = user.UpdateNamespaces(namespaces);
             if (upsertResult.IsError)
                 return upsertResult.Errors;
 
