@@ -19,7 +19,7 @@
       [rowsPerPageOptions]="[5, 10, 20]"
       [showCurrentPageReport]="true"
       currentPageReportTemplate="Showing {first} to {last} of {totalRecords} namespaces"
-      sortField="name" 
+      sortField="name"
       [sortOrder]="1"
       class="w-full"
     >
@@ -52,9 +52,7 @@
         <tr>
           <td>{{ namespace.name }}</td>
           <td>
-            <div class="text-center">
-              {{namespace.associatedUsersCount}}
-            </div>
+            <div class="text-center">{{namespace.associatedUsersCount}}</div>
           </td>
           <td>
             <div class="text-center">
@@ -72,6 +70,7 @@
                 showDelay="200"
                 hideDelay="100"
                 tooltipPosition="top"
+                (onClick)="onAssignUsersBtnClick(namespace)"
               ></p-button>
               <p-button
                 icon="pi pi-th-large"
@@ -109,10 +108,7 @@
   </div>
 </div>
 
-
-
-
-  <p-dialog
+<p-dialog
   header="Create namespace"
   [modal]="true"
   [closable]="false"
@@ -126,4 +122,18 @@
     (operationCanceled)="onCreateNamespaceOperationCanceled()"
     (operationCompleted)="onCreateNamespaceOperationCompleted()"
   ></lib-create-namespace>
+</p-dialog>
+
+<p-dialog
+  header="Assign Users to {{ selectedNamespaceForUserAssignment()?.name }}"
+  [modal]="true"
+  [closable]="false"
+  [closeOnEscape]="false"
+  [dismissableMask]="false"
+  [(visible)]="isNamespaceUserAssignmentModalShown"
+>
+  <lib-namespace-user-assignment 
+  [selectedNamespaceId]="selectedNamespaceForUserAssignment()?.id"
+  (operationCanceled)="onNamespaceUsersAssignmentOperationCanceled()"
+  (operationCompleted)="onNamespaceUsersAssignmentOperationCompleted()"/>
 </p-dialog>

@@ -12,6 +12,9 @@
 @source "../../../libs/containers/features";
 @source "../../../libs/containers/store";
 @source "../../../libs/containers/ui";
+@source "../../../libs/namespaces/data";
+@source "../../../libs/namespaces/features";
+@source "../../../libs/namespaces/store";
 @source "../../../libs/shared/store/error-store-feature";
 @source "../../../libs/users/data";
 @source "../../../libs/users/features";

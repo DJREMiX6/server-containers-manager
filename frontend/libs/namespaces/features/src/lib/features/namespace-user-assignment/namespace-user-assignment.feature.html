@@ -1,1 +1,30 @@
-<p>namespace-user-assignment works!</p>
+<div class="w-[80vw] xl:w-4xl lg:w-3xl md:w-2xl sm:w-xl h-fit flex flex-col gap-4 p-2">
+  <div class="w-full">
+    <p-picklist
+      [source]="sourceUsers()"
+      [target]="targetUsers()"
+      [dragdrop]="true"
+      [showSourceFilter]="shouldShowSourceFilter()"
+      [showTargetFilter]="shouldShowTargetFilter()"
+      [responsive]="true"
+      breakpoint="1280px"
+      filterBy="username"
+      sourceFilterPlaceholder="Search by username"
+      targetFilterPlaceholder="Search by username"
+      dataKey="id"
+      sourceHeader="Unassigned"
+      targetHeader="Assigned"
+      scrollHeight="8rem"
+    >
+      <ng-template let-item #item> {{item.username}} </ng-template>
+    </p-picklist>
+  </div>
+  <div class="w-full flex flex-row justify-end gap-4">
+    <p-button severity="danger" label="Cancel" (onClick)="onCancelBtnClick()" />
+    <p-button
+      severity="success"
+      label="Confirm"
+      (onClick)="onConfirmBtnClick()"
+    />
+  </div>
+</div>
