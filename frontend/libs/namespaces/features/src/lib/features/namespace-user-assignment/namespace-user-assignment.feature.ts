@@ -1,58 +1,64 @@
 import {
   ChangeDetectionStrategy,
   Component,
-  computed,
+  effect,
+  inject,
   input,
   output,
   signal,
 } from '@angular/core';
 import { PickListModule } from 'primeng/picklist';
 import { Button } from 'primeng/button';
-
-type User = { id: string; username: string };
+import {
+  NamespaceAssignUsersStore,
+  provideNamespaceAssignUserStore,
+} from '@scm/namespaces/store';
+import { User } from '@scm/users/store';
 
 @Component({
   selector: 'lib-namespace-user-assignment',
   imports: [PickListModule, Button],
+  providers: [provideNamespaceAssignUserStore()],
   templateUrl: './namespace-user-assignment.feature.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class NamespaceUserAssignmentFeature {
+  protected readonly namespaceAssignUserStore = inject(
+    NamespaceAssignUsersStore,
+  );
+
   public readonly selectedNamespaceId = input.required<undefined | string>();
 
   public readonly operationCanceled = output<void>();
   public readonly operationCompleted = output<void>();
 
-  protected readonly sourceUsers = signal<User[]>([
-    {
-      id: '1',
-      username: 'testUser1',
-    },
-    {
-      id: '2',
-      username: 'testUser2',
-    },
-    {
-      id: '3',
-      username: 'testUser3',
-    },
-    {
-      id: '4',
-      username: 'testUser4',
-    },
-    {
-      id: '5',
-      username: 'testUser5',
-    },
-  ]);
+  private readonly onSelectedNamespaceIdChanges = effect(async () => {
+    const selectedNamespaceId = this.selectedNamespaceId();
+    if (!selectedNamespaceId) return;
+
+    await this.namespaceAssignUserStore.selectNamespace(selectedNamespaceId);
+  });
+
   protected readonly targetUsers = signal<User[]>([]);
 
+  protected readonly picklistPt = {
+    root: {
+      class: 'h-full',
+    },
+    sourceControls: {
+      hidden: true,
+    },
+    targetControls: {
+      hidden: true,
+    },
+  };
+
   protected shouldShowSourceFilter() {
-    return this.sourceUsers().length > 3;
+    return this.namespaceAssignUserStore.unassignedUsers().length >= 6;
   }
 
   protected shouldShowTargetFilter() {
-    return this.targetUsers().length > 3;
+    return this.namespaceAssignUserStore.assignedUsers().length >= 6;
   }
 
   protected onConfirmBtnClick(): void {

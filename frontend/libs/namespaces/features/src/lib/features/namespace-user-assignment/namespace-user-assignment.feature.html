@@ -1,21 +1,33 @@
-<div class="w-[80vw] xl:w-4xl lg:w-3xl md:w-2xl sm:w-xl h-fit flex flex-col gap-4 p-2">
-  <div class="w-full">
+<div
+  class="w-[80vw] xl:w-4xl lg:w-3xl md:w-2xl sm:w-xl min-h-100 flex flex-col gap-4 p-2"
+>
+  <div class="w-full grow flex">
     <p-picklist
-      [source]="sourceUsers()"
-      [target]="targetUsers()"
+      [pt]="picklistPt"
+      class="grow block"
+      [source]="namespaceAssignUserStore.unassignedUsers()"
+      [target]="namespaceAssignUserStore.assignedUsers()"
       [dragdrop]="true"
       [showSourceFilter]="shouldShowSourceFilter()"
       [showTargetFilter]="shouldShowTargetFilter()"
       [responsive]="true"
-      breakpoint="1280px"
+      breakpoint="1024px"
       filterBy="username"
       sourceFilterPlaceholder="Search by username"
       targetFilterPlaceholder="Search by username"
       dataKey="id"
       sourceHeader="Unassigned"
       targetHeader="Assigned"
-      scrollHeight="8rem"
+      scrollHeight="15rem"
     >
+      <ng-template #sourceHeader>
+        <div class="font-semibold text-lg">Unassigned</div>
+      </ng-template>
+
+      <ng-template #targetHeader>
+        <div class="font-semibold text-lg">Assigned</div>
+      </ng-template>
+
       <ng-template let-item #item> {{item.username}} </ng-template>
     </p-picklist>
   </div>

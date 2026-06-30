@@ -5,6 +5,8 @@ import { Environment } from '@scm/environments';
 import {
   CreateNamespaceResponse,
   CreateNamespaceResponseSchema,
+  GetNamespaceAssignedUsersResponse,
+  GetNamespaceAssignedUsersResponseSchema,
   GetNamespacesResponse,
   GetNamespacesResponseSchema,
 } from '../models';
@@ -13,7 +15,9 @@ import {
   CheckNameAvailabilityRequestSchema,
   CreateNamespaceRequest,
   CreateNamespaceRequestSchema,
+  GetNamespaceAssignedUsersRequest,
 } from '../models/requests';
+import { GetNamespaceAssignedUsersRequestSchema } from '../models/requests/get-namespace-assigned-users.request.schema';
 
 export const ApiBaseUrl = `${Environment.serverOrigin}/api/namespaces`;
 
@@ -50,5 +54,15 @@ export class NamespacesService {
       },
       observe: 'response',
     });
+  }
+
+  public getNamespaceAssignedUsers(
+    request: GetNamespaceAssignedUsersRequest,
+  ): Observable<GetNamespaceAssignedUsersResponse> {
+    const parsedRequest = GetNamespaceAssignedUsersRequestSchema.parse(request);
+
+    return this.httpClient
+      .get<unknown>(`${ApiBaseUrl}/${parsedRequest.namespaceId}/users`)
+      .pipe(map((raw) => GetNamespaceAssignedUsersResponseSchema.parse(raw)));
   }
 }
