@@ -23,4 +23,8 @@ var serverContainerManagerApi = builder.AddProject<ServerContainerManager_API>("
     .WithReference(sqliteDb)
     .WaitFor(sqliteDb);
 
+var frontendApp = builder.AddJavaScriptApp("FrontendApp", "../../frontend", "serve")
+    .WithPnpm(install: true)
+    .WithHttpEndpoint(port: 4200, isProxied: false);
+
 await builder.Build().RunAsync();

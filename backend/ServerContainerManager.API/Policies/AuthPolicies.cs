@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authorization;
+using ServerContainerManager.Application.Consts;
 using ServerContainerManager.Application.Identity;
 
 namespace ServerContainerManager.API.Policies
@@ -28,6 +29,16 @@ namespace ServerContainerManager.API.Policies
             public readonly static AuthorizationPolicy Policy = new AuthorizationPolicyBuilder()
                 .RequireAuthenticatedUser()
                 .RequireClaim(UserClaims.IsUserConfirmed, "false")
+                .Build();
+        }
+
+        public static class ConfirmedAdminPolicy
+        {
+            public const string Name = "ConfirmedAdmin";
+            public readonly static AuthorizationPolicy Policy = new AuthorizationPolicyBuilder()
+                .RequireAuthenticatedUser()
+                .RequireClaim(UserClaims.IsUserConfirmed, "true")
+                .RequireRole(UserRoles.Admin)
                 .Build();
         }
     }

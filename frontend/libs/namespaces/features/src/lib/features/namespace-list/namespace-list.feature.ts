@@ -15,9 +15,11 @@ import { Dialog } from 'primeng/dialog';
 import {
   provideNamespaceListStore,
   NamespaceListStore,
+  Namespace,
 } from '@scm/namespaces/store';
 import { MessageService } from 'primeng/api';
 import { CreateNamespaceFeature } from '../create-namespace/create-namespace.feature';
+import { NamespaceUserAssignmentFeature } from '../namespace-user-assignment/namespace-user-assignment.feature';
 
 @Component({
   selector: 'lib-namespace-list-feature',
@@ -28,6 +30,7 @@ import { CreateNamespaceFeature } from '../create-namespace/create-namespace.fea
     Tooltip,
     Dialog,
     CreateNamespaceFeature,
+    NamespaceUserAssignmentFeature,
   ],
   providers: [provideNamespaceListStore()],
   templateUrl: './namespace-list.feature.html',
@@ -53,6 +56,12 @@ export class NamespaceListFeature implements OnInit {
   });
 
   protected readonly isCreateNamespaceModalShown = signal<boolean>(false);
+  protected readonly isNamespaceUserAssignmentModalShown =
+    signal<boolean>(false);
+
+  protected readonly selectedNamespaceForUserAssignment = signal<
+    undefined | Namespace
+  >(undefined);
 
   ngOnInit(): void {
     this.namespaceListStore.ensureLoaded();
@@ -72,6 +81,20 @@ export class NamespaceListFeature implements OnInit {
 
   protected onCreateNamespaceOperationCompleted(): void {
     this.isCreateNamespaceModalShown.set(false);
+    this.namespaceListStore.refresh();
+  }
+
+  protected onAssignUsersBtnClick(namespace: Namespace): void {
+    this.selectedNamespaceForUserAssignment.set(namespace);
+    this.isNamespaceUserAssignmentModalShown.set(true);
+  }
+
+  protected onNamespaceUsersAssignmentOperationCanceled(): void {
+    this.isNamespaceUserAssignmentModalShown.set(false);
+  }
+
+  protected onNamespaceUsersAssignmentOperationCompleted(): void {
+    this.isNamespaceUserAssignmentModalShown.set(false);
     this.namespaceListStore.refresh();
   }
 }

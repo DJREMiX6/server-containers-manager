@@ -20,7 +20,7 @@ namespace ServerContainerManager.Application.Queries.Namespace.GetNamespacesList
                     {
                         Id = n.Id,
                         Name = n.Name,
-                        AssociatedUsersCount = _dbContext.Users.Count(u => u.Namespaces.Contains(n)),
+                        AssociatedUsersCount = n.AssociatedUsers.Count,
                         AssociatedContainersCount = _dbContext.Containers.Count(c => c.Namespaces.Contains(n)),
                     })
                 .ToListAsync(cancellationToken);

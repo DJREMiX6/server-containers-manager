@@ -45,6 +45,7 @@ try
         .AddPolicy(AuthPolicies.AuthenticatedUserPolicy.Name, AuthPolicies.AuthenticatedUserPolicy.Policy)
         .AddPolicy(AuthPolicies.ConfirmedUserPolicy.Name, AuthPolicies.ConfirmedUserPolicy.Policy)
         .AddPolicy(AuthPolicies.UnconfirmedUserPolicy.Name, AuthPolicies.UnconfirmedUserPolicy.Policy)
+        .AddPolicy(AuthPolicies.ConfirmedAdminPolicy.Name, AuthPolicies.ConfirmedAdminPolicy.Policy)
         .SetDefaultPolicy(AuthPolicies.ConfirmedUserPolicy.Policy);
 
     builder.Services.ConfigureHttpJsonOptions(options =>

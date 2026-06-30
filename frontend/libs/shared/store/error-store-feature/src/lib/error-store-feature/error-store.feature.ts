@@ -1,5 +1,10 @@
-import { signalStoreFeature, withComputed, withState } from '@ngrx/signals';
-import { computed } from '@angular/core';
+import {
+  signalStoreFeature,
+  withComputed,
+  withHooks,
+  withState,
+} from '@ngrx/signals';
+import { computed, effect } from '@angular/core';
 import { StoreError } from '../models';
 
 export type ErrorState = {
@@ -15,6 +20,13 @@ export function withErrorFeature() {
     withState<ErrorState>(initialErrorState),
     withComputed(({ error }) => ({
       hasError: computed(() => error() !== null),
+    })),
+    withHooks((store) => ({
+      onInit: () =>
+        effect(() => {
+          const error = store.error();
+          if (error) console.error(error);
+        }),
     })),
   );
 }

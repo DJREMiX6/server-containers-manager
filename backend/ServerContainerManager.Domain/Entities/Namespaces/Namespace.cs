@@ -1,12 +1,16 @@
 ﻿using ErrorOr;
+using ServerContainerManager.Domain.Entities.Auth;
 using ServerContainerManager.Domain.Entities.Namespaces.Errors;
 
 namespace ServerContainerManager.Domain.Entities.Namespaces
 {
     public sealed class Namespace
     {
+        private List<AppUser> _associatedUsers = [];
+
         public Guid Id { get; private set; }
         public string Name { get; private set; }
+        public IReadOnlyList<AppUser> AssociatedUsers => _associatedUsers;
 
         private Namespace() { } // EF
 
@@ -24,6 +28,12 @@ namespace ServerContainerManager.Domain.Entities.Namespaces
                 return NamespaceValidationErrors.NameTooShort();
 
             return new Namespace(Guid.NewGuid(), name);
+        }
+
+        public ErrorOr<Success> UpdateAssociatedUsers(ICollection<AppUser> associatedUsers)
+        {
+            _associatedUsers = [.. associatedUsers];
+            return Result.Success;
         }
     }
 }
