@@ -4,9 +4,10 @@
   <div class="w-full grow flex">
     <p-picklist
       [pt]="picklistPt"
+      [disabled]="isLoading() || isUpdating()"
       class="grow block"
-      [source]="namespaceAssignUserStore.unassignedUsers()"
-      [target]="namespaceAssignUserStore.assignedUsers()"
+      [source]="unassociatedUsers()"
+      [target]="associatedUsers()"
       [dragdrop]="true"
       [showSourceFilter]="shouldShowSourceFilter()"
       [showTargetFilter]="shouldShowTargetFilter()"
@@ -16,24 +17,30 @@
       sourceFilterPlaceholder="Search by username"
       targetFilterPlaceholder="Search by username"
       dataKey="id"
-      sourceHeader="Unassigned"
-      targetHeader="Assigned"
       scrollHeight="15rem"
     >
       <ng-template #sourceHeader>
-        <div class="font-semibold text-lg">Unassigned</div>
+        <div class="font-semibold text-lg">Unassociated</div>
       </ng-template>
 
       <ng-template #targetHeader>
-        <div class="font-semibold text-lg">Assigned</div>
+        <div class="font-semibold text-lg">Associated</div>
       </ng-template>
 
       <ng-template let-item #item> {{item.username}} </ng-template>
     </p-picklist>
   </div>
   <div class="w-full flex flex-row justify-end gap-4">
-    <p-button severity="danger" label="Cancel" (onClick)="onCancelBtnClick()" />
     <p-button
+      [disabled]="isUpdating()"
+      severity="danger"
+      label="Cancel"
+      (onClick)="onCancelBtnClick()"
+    />
+    <p-button
+      [disabled]="isUpdating()"
+      [loading]="isUpdating()"
+      loadingIcon="spinner"
       severity="success"
       label="Confirm"
       (onClick)="onConfirmBtnClick()"

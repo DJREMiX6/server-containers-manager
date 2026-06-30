@@ -3,19 +3,21 @@ import { withErrorFeature } from '@scm/shared/store/error-store-feature';
 import { User } from '@scm/users/store';
 
 export type AssignUsersState = {
-  _usersLoadingStatus: 'notLoaded' | 'loading' | 'loaded';
-  _namespaceUsersLoadingStatus: 'notLoaded' | 'loading' | 'loaded';
-  _assignedUserIds: string[];
+  usersLoadingStatus: 'notLoaded' | 'loading' | 'loaded' | 'error';
+  namespaceUsersLoadingStatus: 'notLoaded' | 'loading' | 'loaded' | 'error';
+  _associatedUserIds: string[];
   users: User[];
   namespaceId: null | string;
+  associatedUsersUpdateStatus: 'unchanged' | 'pending' | 'changed' | 'error';
 };
 
 export const initialState: AssignUsersState = {
-  _usersLoadingStatus: 'notLoaded',
-  _namespaceUsersLoadingStatus: 'notLoaded',
-  _assignedUserIds: [],
+  usersLoadingStatus: 'notLoaded',
+  namespaceUsersLoadingStatus: 'notLoaded',
+  _associatedUserIds: [],
   users: [],
   namespaceId: null,
+  associatedUsersUpdateStatus: 'unchanged',
 };
 
 export function withAssignUsersState() {

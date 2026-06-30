@@ -16,6 +16,8 @@ import {
   CreateNamespaceRequest,
   CreateNamespaceRequestSchema,
   GetNamespaceAssignedUsersRequest,
+  UpdateNamespaceUsersRequest,
+  UpdateNamespaceUsersRequestSchema,
 } from '../models/requests';
 import { GetNamespaceAssignedUsersRequestSchema } from '../models/requests/get-namespace-assigned-users.request.schema';
 
@@ -64,5 +66,19 @@ export class NamespacesService {
     return this.httpClient
       .get<unknown>(`${ApiBaseUrl}/${parsedRequest.namespaceId}/users`)
       .pipe(map((raw) => GetNamespaceAssignedUsersResponseSchema.parse(raw)));
+  }
+
+  public updateNamespaceUsers(
+    request: UpdateNamespaceUsersRequest,
+  ): Observable<HttpResponse<void>> {
+    const parsedRequest = UpdateNamespaceUsersRequestSchema.parse(request);
+
+    return this.httpClient.patch<void>(
+      `${ApiBaseUrl}/${parsedRequest.namespaceId}/users`,
+      {
+        ...parsedRequest.data,
+      },
+      { observe: 'response' },
+    );
   }
 }
