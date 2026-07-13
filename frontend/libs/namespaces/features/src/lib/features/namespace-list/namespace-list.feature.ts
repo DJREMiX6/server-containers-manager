@@ -20,6 +20,7 @@ import {
 import { MessageService } from 'primeng/api';
 import { CreateNamespaceFeature } from '../create-namespace/create-namespace.feature';
 import { NamespaceUserAssignmentFeature } from '../namespace-user-assignment/namespace-user-assignment.feature';
+import { NamespaceContainerAssignmentFeature } from '../namespace-container-assignment/namespace-container-assignment.feature';
 
 @Component({
   selector: 'lib-namespace-list-feature',
@@ -31,6 +32,7 @@ import { NamespaceUserAssignmentFeature } from '../namespace-user-assignment/nam
     Dialog,
     CreateNamespaceFeature,
     NamespaceUserAssignmentFeature,
+    NamespaceContainerAssignmentFeature,
   ],
   providers: [provideNamespaceListStore()],
   templateUrl: './namespace-list.feature.html',
@@ -58,8 +60,14 @@ export class NamespaceListFeature implements OnInit {
   protected readonly isCreateNamespaceModalShown = signal<boolean>(false);
   protected readonly isNamespaceUserAssignmentModalShown =
     signal<boolean>(false);
+  protected readonly isNamespaceContainerAssignmentModalShown =
+    signal<boolean>(false);
 
   protected readonly selectedNamespaceForUserAssignment = signal<
+    undefined | Namespace
+  >(undefined);
+
+  protected readonly selectedNamespaceForContainerAssignment = signal<
     undefined | Namespace
   >(undefined);
 
@@ -95,6 +103,20 @@ export class NamespaceListFeature implements OnInit {
 
   protected onNamespaceUsersAssignmentOperationCompleted(): void {
     this.isNamespaceUserAssignmentModalShown.set(false);
+    this.namespaceListStore.refresh();
+  }
+
+  protected onAssignContainersBtnClick(namespace: Namespace): void {
+    this.selectedNamespaceForContainerAssignment.set(namespace);
+    this.isNamespaceContainerAssignmentModalShown.set(true);
+  }
+
+  protected onNamespaceContainersAssignmentOperationCanceled(): void {
+    this.isNamespaceContainerAssignmentModalShown.set(false);
+  }
+
+  protected onNamespaceContainersAssignmentOperationCompleted(): void {
+    this.isNamespaceContainerAssignmentModalShown.set(false);
     this.namespaceListStore.refresh();
   }
 }

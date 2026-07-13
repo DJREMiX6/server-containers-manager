@@ -80,6 +80,7 @@
                 showDelay="200"
                 hideDelay="100"
                 tooltipPosition="top"
+                (onClick)="onAssignContainersBtnClick(namespace)"
               ></p-button>
               <p-button
                 icon="pi pi-pencil"
@@ -137,4 +138,19 @@
   [selectedNamespaceId]="selectedNamespaceForUserAssignment()?.id"
   (operationCanceled)="onNamespaceUsersAssignmentOperationCanceled()"
   (operationCompleted)="onNamespaceUsersAssignmentOperationCompleted()"/>
+</p-dialog>
+
+<p-dialog
+  header="Assign Containers to {{ selectedNamespaceForUserAssignment()?.name }}"
+  [modal]="true"
+  [closable]="false"
+  [closeOnEscape]="false"
+  [dismissableMask]="false"
+  [draggable]="false"
+  [(visible)]="isNamespaceContainerAssignmentModalShown"
+>
+  <lib-namespace-container-assignment 
+  [selectedNamespaceId]="selectedNamespaceForContainerAssignment()?.id"
+  (operationCanceled)="onNamespaceContainersAssignmentOperationCanceled()"
+  (operationCompleted)="onNamespaceContainersAssignmentOperationCompleted()" />
 </p-dialog>

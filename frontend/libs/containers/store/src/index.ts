@@ -9,3 +9,5 @@ export type {
 export { ContainersOverviewStore } from './lib/stores';
 
 export { provideContainersOverviewStore } from './lib/providers';
+
+export { containersSummaryMapper } from './lib/mappers';
