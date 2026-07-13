@@ -25,6 +25,11 @@ namespace ServerContainerManager.Application.Extensions
                 _ => query.OrderBy(c => c.Name)
             };
 
+        public static IQueryable<Container> Sort(
+            this IQueryable<Container> query,
+            ContainerSortBy? sortBy,
+            SortOrder? order) => query.Sort(sortBy ?? ContainerSortBy.Name, order ?? SortOrder.Desc);
+
         public static IQueryable<GetContainerListQueryResultContainerInfo> Parse(this IQueryable<Container> query, IEnumerable<Guid> namespacesIds) =>
             query.Select(container => GetContainerListQueryResultContainerInfo.FromDomain(
                 container,

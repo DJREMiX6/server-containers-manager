@@ -28,7 +28,7 @@ namespace ServerContainerManager.Application.Queries.Container.GetContainerList
             var isUserAdmin = await _userManager.IsInRoleAsync(user, UserRoles.Admin);
 
             var namespacesIds = (isUserAdmin 
-                ? await dbContext.Namespaces.Select(n => n.Id).ToListAsync(cancellationToken) 
+                ? await _dbContext.Namespaces.Select(n => n.Id).ToListAsync(cancellationToken) 
                 : user.Namespaces.Select(n => n.Id))
                 .ToList();
             IQueryable<Domain.Entities.Containers.Container> containersQuery = _dbContext.Containers
