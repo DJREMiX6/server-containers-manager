@@ -38,5 +38,11 @@ namespace ServerContainerManager.Domain.Entities.Namespaces
             _associatedUsers = [.. associatedUsers];
             return Result.Success;
         }
+
+        public ErrorOr<Success> UpdateAssociatedContainers(ICollection<Container> associatedContainers)
+        {
+            _associatedContainers = [.. associatedContainers];
+            return Result.Success;
+        }
     }
 }
