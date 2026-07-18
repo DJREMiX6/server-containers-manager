@@ -6,7 +6,9 @@ import {
 
 export const UpdateNamespaceUsersRequestDataSchema: z.ZodType<UpdateNamespaceUsersRequestData> =
   z.object({
-    associatedUserIds: z.array(z.string()).nonoptional(),
+    associatedUserIds: z
+      .array(z.string().nonempty().nonoptional())
+      .nonoptional(),
   });
 
 export const UpdateNamespaceUsersRequestSchema: z.ZodType<UpdateNamespaceUsersRequest> =
