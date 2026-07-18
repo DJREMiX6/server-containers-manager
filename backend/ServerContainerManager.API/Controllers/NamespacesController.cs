@@ -13,6 +13,7 @@ using ServerContainerManager.Application.Commands.Namespace.UpdateNamespaceAssoc
 using ServerContainerManager.Application.Consts;
 using ServerContainerManager.Application.Queries.Abstraction;
 using ServerContainerManager.Application.Queries.Namespace.CheckNamespaceNameAvailability;
+using ServerContainerManager.Application.Queries.Namespace.GetNamespaceAssociatedContainers;
 using ServerContainerManager.Application.Queries.Namespace.GetNamespaceAssociatedUsers;
 using ServerContainerManager.Application.Queries.Namespace.GetNamespacesList;
 
@@ -48,7 +49,7 @@ namespace ServerContainerManager.API.Controllers
             CancellationToken cancellationToken = default)
         {
             var command = new CreateNamespaceCommand() { Name = request.Name };
-        
+
             var result = await commandHandler.HandleAsync(command, cancellationToken);
 
             if (result.IsError)
@@ -97,6 +98,25 @@ namespace ServerContainerManager.API.Controllers
                 return result.Errors.ToProblemHttpResult();
 
             return TypedResults.NoContent();
+        }
+
+        [Authorize(Policy = AuthPolicies.ConfirmedAdminPolicy.Name)]
+        [HttpGet("{namespaceId:guid}/containers")]
+        public async Task<Results<Ok<GetNamespaceAssociatedContainersResponse>, ProblemHttpResult>> GetNamespaceAssociatedContainers(
+            [FromRoute] Guid namespaceId,
+            [FromServices] IQueryHandler<GetNamespaceAssociatedContainersQuery, GetNamespaceAssociatedContainersQueryResult> queryHandler)
+        {
+            var query = new GetNamespaceAssociatedContainersQuery() // TODO: IMplement query handler and create endpoint to update associated containers
+            {
+                NamespaceId = namespaceId,
+            };
+
+            var result = await queryHandler.HandleAsync(query);
+
+            if (result.IsError)
+                return result.Errors.ToProblemHttpResult();
+
+            return TypedResults.Ok(result.Value.ToContract());
         }
 
         [HttpHead("check-name")]

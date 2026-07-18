@@ -58,7 +58,7 @@ namespace ServerContainerManager.Application.Entities.Configuration
             builder.ConfigureAuditableEntity();
 
             builder.HasMany(e => e.Namespaces)
-                .WithMany()
+                .WithMany(n => n.AssociatedContainers)
                 .UsingEntity("ContainerNamespace",
                     r => r.HasOne(typeof(Namespace)).WithMany().HasForeignKey("NamespacesId"),
                     l => l.HasOne(typeof(Container)).WithMany().HasForeignKey("ContainerId"));
