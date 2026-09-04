@@ -146,6 +146,7 @@ export class CreateUserComponent {
       username: '',
     });
     this.createUserForm().reset();
+    this.createUserStore.reset();
   }
 
   protected onCancelBtnClick(): void {
