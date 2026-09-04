@@ -7,6 +7,8 @@ import {
   CreateNamespaceResponseSchema,
   GetNamespaceAssignedUsersResponse,
   GetNamespaceAssignedUsersResponseSchema,
+  GetNamespaceAssociatedContainersResponse,
+  GetNamespaceAssociatedContainersResponseSchema,
   GetNamespacesResponse,
   GetNamespacesResponseSchema,
 } from '../models';
@@ -18,8 +20,12 @@ import {
   GetNamespaceAssignedUsersRequest,
   UpdateNamespaceUsersRequest,
   UpdateNamespaceUsersRequestSchema,
+  GetNamespaceAssignedUsersRequestSchema,
+  GetNamespaceAssociatedContainersRequest,
+  GetNamespaceAssociatedContainersRequestSchema,
+  UpdateNamespaceAssociatedContainersRequest,
+  UpdateNamespaceAssociatedContainersRequestSchema,
 } from '../models/requests';
-import { GetNamespaceAssignedUsersRequestSchema } from '../models/requests/get-namespace-assigned-users.request.schema';
 
 export const ApiBaseUrl = `${Environment.serverOrigin}/api/namespaces`;
 
@@ -75,6 +81,34 @@ export class NamespacesService {
 
     return this.httpClient.patch<void>(
       `${ApiBaseUrl}/${parsedRequest.namespaceId}/users`,
+      {
+        ...parsedRequest.data,
+      },
+      { observe: 'response' },
+    );
+  }
+
+  public getNamespaceAssociatedContainers(
+    request: GetNamespaceAssociatedContainersRequest,
+  ): Observable<GetNamespaceAssociatedContainersResponse> {
+    const parsedRequest =
+      GetNamespaceAssociatedContainersRequestSchema.parse(request);
+
+    return this.httpClient
+      .get<unknown>(`${ApiBaseUrl}/${parsedRequest.namespaceId}/containers`)
+      .pipe(
+        map((raw) => GetNamespaceAssociatedContainersResponseSchema.parse(raw)),
+      );
+  }
+
+  public updateNamespaceContainers(
+    request: UpdateNamespaceAssociatedContainersRequest,
+  ): Observable<HttpResponse<void>> {
+    const parsedRequest =
+      UpdateNamespaceAssociatedContainersRequestSchema.parse(request);
+
+    return this.httpClient.patch<void>(
+      `${ApiBaseUrl}/${parsedRequest.namespaceId}/containers`,
       {
         ...parsedRequest.data,
       },

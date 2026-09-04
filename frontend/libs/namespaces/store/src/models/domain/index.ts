@@ -1,1 +1,2 @@
-export * from "./namespace";
+export * from './namespace';
+export * from './container';

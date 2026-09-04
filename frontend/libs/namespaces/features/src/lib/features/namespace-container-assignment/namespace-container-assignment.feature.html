@@ -1,0 +1,49 @@
+<div
+  class="w-[80vw] xl:w-4xl lg:w-3xl md:w-2xl sm:w-xl min-h-100 flex flex-col gap-4 p-2"
+>
+  <div class="w-full grow flex">
+    <p-picklist
+      [pt]="picklistPt"
+      [disabled]="isLoading() || isUpdating()"
+      class="grow block"
+      [source]="unassociatedContainers()"
+      [target]="associatedContainers()"
+      [dragdrop]="true"
+      [showSourceFilter]="shouldShowSourceFilter()"
+      [showTargetFilter]="shouldShowTargetFilter()"
+      [responsive]="true"
+      breakpoint="1024px"
+      filterBy="name"
+      sourceFilterPlaceholder="Search by name"
+      targetFilterPlaceholder="Search by name"
+      dataKey="id"
+      scrollHeight="15rem"
+    >
+      <ng-template #sourceHeader>
+        <div class="font-semibold text-lg">Unassociated</div>
+      </ng-template>
+
+      <ng-template #targetHeader>
+        <div class="font-semibold text-lg">Associated</div>
+      </ng-template>
+
+      <ng-template let-item #item> {{item.name}} </ng-template>
+    </p-picklist>
+  </div>
+  <div class="w-full flex flex-row justify-end gap-4">
+    <p-button
+      [disabled]="isUpdating()"
+      severity="danger"
+      label="Cancel"
+      (onClick)="onCancelBtnClick()"
+    />
+    <p-button
+      [disabled]="isUpdating()"
+      [loading]="isUpdating()"
+      loadingIcon="spinner"
+      severity="success"
+      label="Confirm"
+      (onClick)="onConfirmBtnClick()"
+    />
+  </div>
+</div>

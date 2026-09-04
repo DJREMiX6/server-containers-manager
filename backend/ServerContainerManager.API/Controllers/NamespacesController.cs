@@ -9,10 +9,12 @@ using ServerContainerManager.API.Models.Responses.NamespacesController;
 using ServerContainerManager.API.Policies;
 using ServerContainerManager.Application.Commands.Abstraction;
 using ServerContainerManager.Application.Commands.Namespace.CreateNamespace;
+using ServerContainerManager.Application.Commands.Namespace.UpdateNamespaceAssociatedContainers;
 using ServerContainerManager.Application.Commands.Namespace.UpdateNamespaceAssociatedUsers;
 using ServerContainerManager.Application.Consts;
 using ServerContainerManager.Application.Queries.Abstraction;
 using ServerContainerManager.Application.Queries.Namespace.CheckNamespaceNameAvailability;
+using ServerContainerManager.Application.Queries.Namespace.GetNamespaceAssociatedContainers;
 using ServerContainerManager.Application.Queries.Namespace.GetNamespaceAssociatedUsers;
 using ServerContainerManager.Application.Queries.Namespace.GetNamespacesList;
 
@@ -48,7 +50,7 @@ namespace ServerContainerManager.API.Controllers
             CancellationToken cancellationToken = default)
         {
             var command = new CreateNamespaceCommand() { Name = request.Name };
-        
+
             var result = await commandHandler.HandleAsync(command, cancellationToken);
 
             if (result.IsError)
@@ -81,19 +83,61 @@ namespace ServerContainerManager.API.Controllers
         [HttpPatch("{namespaceId:guid}/users")]
         public async Task<Results<NoContent, ProblemHttpResult>> UpdateNamespaceUsers(
             [FromRoute] Guid namespaceId,
-            [FromBody] UpdateNamespaceUsersRequest updateNamespaceUsersRequest,
+            [FromBody] UpdateNamespaceUsersRequest request,
             [FromServices] ICommandHandler<UpdateNamespaceAssociatedUsersCommand, UpdateNamespaceAssociatedUsersCommandResult> commandHandler,
             CancellationToken cancellationToken = default)
         {
             var command = new UpdateNamespaceAssociatedUsersCommand()
             {
                 NamespaceId = namespaceId,
-                AssociatedUserIds = updateNamespaceUsersRequest.AssociatedUserIds
+                AssociatedUserIds = request.AssociatedUserIds
             };
 
             var result = await commandHandler.HandleAsync(command, cancellationToken);
 
             if (result.IsError)
+                return result.Errors.ToProblemHttpResult();
+
+            return TypedResults.NoContent();
+        }
+
+        [Authorize(Policy = AuthPolicies.ConfirmedAdminPolicy.Name)]
+        [HttpGet("{namespaceId:guid}/containers")]
+        public async Task<Results<Ok<GetNamespaceAssociatedContainersResponse>, ProblemHttpResult>> GetNamespaceAssociatedContainers(
+            [FromRoute] Guid namespaceId,
+            [FromServices] IQueryHandler<GetNamespaceAssociatedContainersQuery, GetNamespaceAssociatedContainersQueryResult> queryHandler,
+            CancellationToken cancellationToken = default)
+        {
+            var query = new GetNamespaceAssociatedContainersQuery()
+            {
+                NamespaceId = namespaceId,
+            };
+
+            var result = await queryHandler.HandleAsync(query, cancellationToken);
+
+            if (result.IsError)
+                return result.Errors.ToProblemHttpResult();
+
+            return TypedResults.Ok(result.Value.ToContract());
+        }
+
+        [Authorize(Policy = AuthPolicies.ConfirmedAdminPolicy.Name)]
+        [HttpPatch("{namespaceId:guid}/containers")]
+        public async Task<Results<NoContent, ProblemHttpResult>> UpdateNamespaceContainers(
+            [FromRoute] Guid namespaceId,
+            [FromBody] UpdateNamespaceContainersRequest request,
+            [FromServices] ICommandHandler<UpdateNamespaceAssociatedContainersCommand, UpdateNamespaceAssociatedContainersCommandResult> commandHandler,
+            CancellationToken cancellationToken = default)
+        {
+            var command = new UpdateNamespaceAssociatedContainersCommand()
+            {
+                NamespaceId = namespaceId,
+                AssociatedContainerIds = request.AssociatedContainersIds
+            };
+
+            var result = await commandHandler.HandleAsync(command, cancellationToken);
+
+            if(result.IsError)
                 return result.Errors.ToProblemHttpResult();
 
             return TypedResults.NoContent();

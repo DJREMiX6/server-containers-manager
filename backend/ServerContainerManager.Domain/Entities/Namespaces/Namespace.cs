@@ -1,5 +1,6 @@
 ﻿using ErrorOr;
 using ServerContainerManager.Domain.Entities.Auth;
+using ServerContainerManager.Domain.Entities.Containers;
 using ServerContainerManager.Domain.Entities.Namespaces.Errors;
 
 namespace ServerContainerManager.Domain.Entities.Namespaces
@@ -7,10 +8,12 @@ namespace ServerContainerManager.Domain.Entities.Namespaces
     public sealed class Namespace
     {
         private List<AppUser> _associatedUsers = [];
+        private List<Container> _associatedContainers = [];
 
         public Guid Id { get; private set; }
         public string Name { get; private set; }
         public IReadOnlyList<AppUser> AssociatedUsers => _associatedUsers;
+        public IReadOnlyList<Container> AssociatedContainers => _associatedContainers;
 
         private Namespace() { } // EF
 
@@ -33,6 +36,12 @@ namespace ServerContainerManager.Domain.Entities.Namespaces
         public ErrorOr<Success> UpdateAssociatedUsers(ICollection<AppUser> associatedUsers)
         {
             _associatedUsers = [.. associatedUsers];
+            return Result.Success;
+        }
+
+        public ErrorOr<Success> UpdateAssociatedContainers(ICollection<Container> associatedContainers)
+        {
+            _associatedContainers = [.. associatedContainers];
             return Result.Success;
         }
     }

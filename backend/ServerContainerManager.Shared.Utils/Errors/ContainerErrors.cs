@@ -11,5 +11,6 @@ namespace ServerContainerManager.Shared.Utils.Errors
         public static Error NotPaused(string containerId) => Error.Conflict($"{CodeKey}.{nameof(NotPaused)}", $"The container {containerId} is not paused.");
         public static Error AlreadyRunning(string containerId) => Error.Conflict($"{CodeKey}.{nameof(AlreadyRunning)}", $"The container {containerId} is already running.");
         public static Error Removing(string containerId) => Error.Conflict($"{CodeKey}.{nameof(Removing)}", $"The container {containerId} is being removed.");
+        public static Error NotFoundList(ICollection<string> containerIds) => Error.Validation($"{CodeKey}.{nameof(NotFoundList)}", $"Containers {string.Join(", ", containerIds)} not found.");
     }
 }
