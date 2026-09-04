@@ -4,5 +4,5 @@ export type UpdateNamespaceAssociatedContainersRequest = {
 }
 
 export type UpdateNamespaceAssociatedContainersRequestData = {
-  AssociatedContainersIds: string[];
-}
+  associatedContainersIds: string[];
+};

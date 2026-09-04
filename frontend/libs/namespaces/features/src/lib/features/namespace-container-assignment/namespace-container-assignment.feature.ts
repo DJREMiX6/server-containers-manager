@@ -37,14 +37,19 @@ export class NamespaceContainerAssignmentFeature {
     const selectedNamespaceId = this.selectedNamespaceId();
     if (!selectedNamespaceId) return;
 
-    await this.namespaceAssignContainerStore.selectNamespace(selectedNamespaceId);
+    await this.namespaceAssignContainerStore.selectNamespace(
+      selectedNamespaceId,
+    );
   });
 
   private readonly onError = effect(() => {
     const error = this.namespaceAssignContainerStore.error();
     if (!error) return;
 
-    if (this.namespaceAssignContainerStore.associatedContainersUpdateStatus() === 'error')
+    if (
+      this.namespaceAssignContainerStore.associatedContainersUpdateStatus() ===
+      'error'
+    )
       this.toastService.add({
         severity: 'error',
         summary: 'Updating associated users failed',
@@ -52,7 +57,8 @@ export class NamespaceContainerAssignmentFeature {
           'An error has ocurred updating the associated users, please retry.',
       });
     else if (
-      this.namespaceAssignContainerStore.namespaceContainersLoadingStatus() === 'error'
+      this.namespaceAssignContainerStore.namespaceContainersLoadingStatus() ===
+      'error'
     )
       this.toastService.add({
         severity: 'error',
@@ -60,7 +66,9 @@ export class NamespaceContainerAssignmentFeature {
         detail:
           'An error has ocurred loading the associated users for the current namespace, please retry.',
       });
-    else if (this.namespaceAssignContainerStore.containersLoadingStatus() === 'error')
+    else if (
+      this.namespaceAssignContainerStore.containersLoadingStatus() === 'error'
+    )
       this.toastService.add({
         severity: 'error',
         summary: 'Loading users failed',
@@ -70,7 +78,8 @@ export class NamespaceContainerAssignmentFeature {
 
   private readonly onOperationSuccess = effect(() => {
     if (
-      this.namespaceAssignContainerStore.associatedContainersUpdateStatus() !== 'changed'
+      this.namespaceAssignContainerStore.associatedContainersUpdateStatus() !==
+      'changed'
     )
       return;
 
@@ -93,12 +102,14 @@ export class NamespaceContainerAssignmentFeature {
     () =>
       this.namespaceAssignContainerStore.namespaceContainersLoadingStatus() ===
         'loading' ||
-      this.namespaceAssignContainerStore.namespaceContainersLoadingStatus() === 'loading',
+      this.namespaceAssignContainerStore.namespaceContainersLoadingStatus() ===
+        'loading',
   );
 
   protected readonly isUpdating = computed(
     () =>
-      this.namespaceAssignContainerStore.associatedContainersUpdateStatus() === 'pending',
+      this.namespaceAssignContainerStore.associatedContainersUpdateStatus() ===
+      'pending',
   );
 
   protected readonly picklistPt = {
@@ -114,11 +125,15 @@ export class NamespaceContainerAssignmentFeature {
   };
 
   protected shouldShowSourceFilter() {
-    return this.namespaceAssignContainerStore.unassociatedContainers().length >= 6;
+    return (
+      this.namespaceAssignContainerStore.unassociatedContainers().length >= 6
+    );
   }
 
   protected shouldShowTargetFilter() {
-    return this.namespaceAssignContainerStore.associatedContainers().length >= 6;
+    return (
+      this.namespaceAssignContainerStore.associatedContainers().length >= 6
+    );
   }
 
   protected async onConfirmBtnClick(): Promise<void> {

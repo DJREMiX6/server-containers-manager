@@ -6,7 +6,7 @@ import {
 
 export const UpdateNamespaceAssociatedContainersRequestDataSchema: z.ZodType<UpdateNamespaceAssociatedContainersRequestData> =
   z.object({
-    AssociatedContainersIds: z
+    associatedContainersIds: z
       .array(z.string().nonempty().nonoptional())
       .nonoptional(),
   });

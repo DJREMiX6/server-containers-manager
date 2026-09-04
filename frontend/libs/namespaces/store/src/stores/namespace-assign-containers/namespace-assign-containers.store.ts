@@ -92,17 +92,17 @@ export const NamespaceAssignContainersStore = signalStore(
           });
 
           const response = await firstValueFrom(
-            namespacesService.getNamespaceAssignedUsers({
+            namespacesService.getNamespaceAssociatedContainers({
               namespaceId,
             }),
           );
-          const assignedUserIds = response.associatedUsers.map(
-            (user) => user.id,
+          const associatedContainersIds = response.associatedContainers.map(
+            (container) => container.id,
           );
 
           patchState(store, {
             namespaceContainersLoadingStatus: 'loaded',
-            _associatedContainerIds: assignedUserIds,
+            _associatedContainerIds: associatedContainersIds,
           });
         } catch (error) {
           patchState(store, setError(error), {
@@ -110,6 +110,7 @@ export const NamespaceAssignContainersStore = signalStore(
           });
         }
       };
+      ///////////////////////////////////////////////////////////////TODO: CHECK FOR ASSOCIATED CONTAINERS WHICH ARE EMPTY
 
       const selectNamespace = async (
         namespaceId: string | null,
@@ -125,14 +126,49 @@ export const NamespaceAssignContainersStore = signalStore(
       };
 
       const updateAssociatedContainers = async (containers: Container[]) => {
-        // TODO: Implement
+        try {
+          const namespaceId = store.namespaceId();
+          if (!namespaceId) throw new Error('NamespaceId not set.');
+
+          const containersIds = containers.map((c) => c.id);
+
+          patchState(store, {
+            associatedContainersUpdateStatus: 'pending',
+            error: null,
+          });
+
+          await firstValueFrom(
+            namespacesService.updateNamespaceContainers({
+              namespaceId,
+              data: {
+                associatedContainersIds: containersIds,
+              },
+            }),
+          );
+
+          patchState(store, {
+            associatedContainersUpdateStatus: 'changed',
+            _associatedContainerIds: containersIds,
+          });
+        } catch (error) {
+          patchState(store, setError(error), {
+            associatedContainersUpdateStatus: 'error',
+          });
+        }
       };
 
       const resetAssociatedContainers = async () => {
-        // TODO: Implement
+        if (store.namespaceId() === null) return;
+        patchState(store, {
+          _associatedContainerIds: [...store._associatedContainerIds()],
+        });
       };
 
-      return { selectNamespace, updateAssociatedContainers, resetAssociatedContainers };
+      return {
+        selectNamespace,
+        updateAssociatedContainers,
+        resetAssociatedContainers,
+      };
     },
   ),
 );

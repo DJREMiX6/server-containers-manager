@@ -3,6 +3,6 @@ import { NamespaceAssociatedContainerDto } from './namespace-associated-containe
 
 export const NamespaceAssociatedContainerDtoSchema: z.ZodType<NamespaceAssociatedContainerDto> =
   z.object({
-    id: z.guid().nonempty().nonoptional(),
+    id: z.string().length(64).nonempty().nonoptional(),
     name: z.string().nonempty().nonoptional(),
   });
