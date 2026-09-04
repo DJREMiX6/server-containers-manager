@@ -1,5 +1,5 @@
 import { patchState, signalStore, withMethods } from '@ngrx/signals';
-import { withCreateUserState } from './create-user.state';
+import { initialState, withCreateUserState } from './create-user.state';
 import { CreateUserRequest as LocalCreateUserRequest } from '../../models';
 import { clearError, setError } from '@scm/shared/store/error-store-feature';
 import { generatePassword } from '../../utils';
@@ -57,6 +57,10 @@ export const CreateUserStore = signalStore(
       }
     };
 
-    return { createUser, checkUsernameAvailability };
+    const reset = () => {
+      patchState(store, { ...initialState });
+    };
+
+    return { createUser, checkUsernameAvailability, reset };
   }),
 );
