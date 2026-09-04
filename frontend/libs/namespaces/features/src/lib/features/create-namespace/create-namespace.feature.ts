@@ -23,7 +23,10 @@ import { Button } from 'primeng/button';
 import { InputText } from 'primeng/inputtext';
 import { MessageService } from 'primeng/api';
 import { TooltipModule } from 'primeng/tooltip';
-import { CreateNamespaceFormModel, initialCreateNamespaceFormState } from '../../models';
+import {
+  CreateNamespaceFormModel,
+  initialCreateNamespaceFormState,
+} from '../../models';
 import {
   provideCreateNamespaceStore,
   CreateNamespaceStore,
@@ -95,9 +98,9 @@ export class CreateNamespaceFeature {
           resource({
             params,
             loader: async ({ params }) =>
-              await this.createNamespaceStore.checkNameAvailability(params),
+              await this.createNamespaceStore.isNamespaceNameAvailable(params),
           }),
-        onSuccess: ({ isAvailable }) => {
+        onSuccess: (isAvailable) => {
           if (isAvailable) return undefined;
 
           return {
@@ -136,6 +139,7 @@ export class CreateNamespaceFeature {
       name: '',
     });
     this.createNamespaceForm().reset();
+    this.createNamespaceStore.reset();
   }
 
   protected onCancelBtnClick(): void {
