@@ -1,5 +1,8 @@
 import { patchState, signalStore, withMethods } from '@ngrx/signals';
-import { withCreateNamespaceState } from './create-namespace.state';
+import {
+  initialState,
+  withCreateNamespaceState,
+} from './create-namespace.state';
 import { CreateNamespaceRequest as LocalCreateNamespaceRequest } from '../../models';
 import { clearError, setError } from '@scm/shared/store/error-store-feature';
 import { firstValueFrom } from 'rxjs';
@@ -29,21 +32,19 @@ export const CreateNamespaceStore = signalStore(
       }
     };
 
-    const checkNameAvailability = async (
-      name: string,
-    ): Promise<{ isAvailable: boolean }> => {
+    const isNamespaceNameAvailable = async (name: string): Promise<boolean> => {
       try {
         patchState(store, clearError());
 
         await firstValueFrom(namespacesService.checkNameAvailability({ name }));
 
-        return { isAvailable: true };
+        return true;
       } catch (error) {
         if (
           error instanceof HttpErrorResponse &&
           error.status == HttpStatusCode.Conflict
         ) {
-          return { isAvailable: false };
+          return false;
         }
 
         patchState(store, setError(error));
@@ -51,6 +52,14 @@ export const CreateNamespaceStore = signalStore(
       }
     };
 
-    return { createNamespace, checkNameAvailability };
+    const reset = () => {
+      patchState(store, { ...initialState });
+    };
+
+    return {
+      createNamespace,
+      isNamespaceNameAvailable,
+      reset,
+    };
   }),
 );
