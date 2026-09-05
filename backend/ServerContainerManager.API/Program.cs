@@ -9,7 +9,7 @@ using ServerContainerManager.API.Json;
 using ServerContainerManager.API.Policies;
 using ServerContainerManager.Application;
 using ServerContainerManager.Application.Entities.Extensions;
-using ServerContainerManager.Application.Identity;
+using ServerContainerManager.Application.Entities;
 using SharpGrip.FluentValidation.AutoValidation.Mvc.Extensions;
 using System.Text.Json.Serialization;
 
@@ -20,7 +20,7 @@ Log.Logger = new LoggerConfiguration()
             .AddJsonFile("appsettings.json").Build())
     .CreateBootstrapLogger();
 
-try 
+try
 {
     Log.Information("Bootstrapping");
     var builder = WebApplication.CreateBuilder(args);
@@ -56,8 +56,8 @@ try
 
     builder.Services.RegisterApplicationLayerServices(
         appDbOptionsBuilder: options =>
-            options.UseSqlite(builder.Configuration.GetConnectionString("AppDb"), 
-            o => o.UseQuerySplittingBehavior(QuerySplittingBehavior.SplitQuery)));
+            options.UseSqlite(builder.Configuration.GetConnectionString("AppDb"),
+                o => o.UseQuerySplittingBehavior(QuerySplittingBehavior.SplitQuery)));
 
     builder.Services.Configure<IdentityOptions>(options =>
     {
@@ -92,6 +92,9 @@ try
     builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
     builder.Services.AddProblemDetails();
 
+#if DEBUG
+    // Only needed in development because Angular dev server is on a different origin
+    // In production the backend will serve its own files from wwwroot folder (same origin, no CORS needed)
     builder.Services.AddCors(options =>
     {
         var allowedOrigins = builder.Configuration
@@ -106,22 +109,39 @@ try
                 .AllowCredentials();
         });
     });
+#endif
 
+    Log.Information("Building");
     var app = builder.Build();
+    Log.Information("Built");
 
+    var isHttpsConfigured = builder.Configuration.GetSection("Kestrel:Endpoints:Https").Exists()
+        || (Environment.GetEnvironmentVariable("ASPNETCORE_URLS")?.Contains("https://", StringComparison.OrdinalIgnoreCase) ?? false);
+
+#if DEBUG
+    // Only needed in development because Angular dev server is on a different origin
+    // In production the backend will serve its own files from wwwroot folder (same origin, no CORS needed)
     app.UseCors("FrontendPolicy");
 
     // Configure the HTTP request pipeline.
-    if (app.Environment.IsDevelopment())
-    {
-        app.MapOpenApi();
-        app.MapScalarApiReference();
-    }
+    app.MapOpenApi();
+    app.MapScalarApiReference();
+#endif
 
     app.MapDefaultEndpoints();
-    app.UseHttpsRedirection();
+    if (isHttpsConfigured)
+        app.UseHttpsRedirection();
+
+    // Use wwwroot files for production environment
+    // NOTE: On development environment there will be no wwwroot folder but this won't throw
+    app.UseDefaultFiles();
+    app.UseStaticFiles();
+
     app.UseAuthorization();
     app.MapControllers();
+
+    // Map fallback to index.html to let Angular router handle any path that isn't an API route (/api/*).
+    app.MapFallbackToFile("index.html");
 
     app.UseExceptionHandler();
 
