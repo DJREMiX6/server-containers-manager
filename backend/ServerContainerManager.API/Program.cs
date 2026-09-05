@@ -1,5 +1,4 @@
 using FluentValidation;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Scalar.AspNetCore;
@@ -9,7 +8,6 @@ using ServerContainerManager.API.Json;
 using ServerContainerManager.API.Policies;
 using ServerContainerManager.Application;
 using ServerContainerManager.Application.Entities.Extensions;
-using ServerContainerManager.Application.Entities;
 using SharpGrip.FluentValidation.AutoValidation.Mvc.Extensions;
 using System.Text.Json.Serialization;
 
