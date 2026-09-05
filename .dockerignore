@@ -1,0 +1,15 @@
+**/bin
+**/obj
+**/node_modules
+**/dist
+**/.angular
+**/.claude
+**/.codex
+**/.gemini
+**/.nx
+**/.opencode
+**/.vscode
+.git
+.vs
+.github
+*.user
