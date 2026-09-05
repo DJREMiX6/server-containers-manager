@@ -27,7 +27,7 @@ import {
   UpdateNamespaceAssociatedContainersRequestSchema,
 } from '../models/requests';
 
-export const ApiBaseUrl = `${Environment.serverOrigin}/api/namespaces`;
+export const ApiBaseUrl = `${Environment.serverOrigin}/namespaces`;
 
 @Injectable()
 export class NamespacesService {

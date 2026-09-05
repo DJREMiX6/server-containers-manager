@@ -21,7 +21,7 @@ import {
   KillContainerRequestSchema,
 } from '../models';
 
-export const ApiBaseUrl = `${Environment.serverOrigin}/api/containers`;
+export const ApiBaseUrl = `${Environment.serverOrigin}/containers`;
 
 @Injectable()
 export class ContainersService {

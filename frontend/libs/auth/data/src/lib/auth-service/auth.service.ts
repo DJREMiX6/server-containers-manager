@@ -11,7 +11,7 @@ import {
   LoginRequestSchema,
 } from '../models';
 
-export const ApiBaseEndpoint = `${Environment.serverOrigin}/api/auth`;
+export const ApiBaseEndpoint = `${Environment.serverOrigin}/auth`;
 
 @Injectable()
 export class AuthService {

@@ -13,7 +13,7 @@ import {
   GetUsersResponseSchema,
 } from '../models';
 
-export const ApiBaseEndpoint = `${Environment.serverOrigin}/api/users`;
+export const ApiBaseEndpoint = `${Environment.serverOrigin}/users`;
 
 @Injectable()
 export class UsersService {
