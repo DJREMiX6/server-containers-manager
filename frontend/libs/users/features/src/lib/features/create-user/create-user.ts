@@ -166,7 +166,8 @@ export class CreateUserComponent {
     const password = this.createUserStore.generatedPassword();
     if (!password) throw new Error('Password is null or undefined.');
 
-    await globalThis.navigator.clipboard.writeText(password);
+    if (globalThis.isSecureContext) await this.secureContextCopy(password);
+    else this.unsecureContextCopy(password);
 
     this.userCopiedPassword.set(true);
   }
@@ -177,5 +178,26 @@ export class CreateUserComponent {
 
   private showCopyPasswordStep(): void {
     this.step.set(2);
+  }
+
+  private async secureContextCopy(text: string): Promise<void> {
+    await globalThis.navigator.clipboard.writeText(text);
+  }
+
+  // Legacy fallback for HTTP contexts
+  private unsecureContextCopy(text: string): void {
+    const textarea = document.createElement('textarea');
+    textarea.value = text;
+    textarea.style.position = 'fixed';
+    textarea.style.opacity = '0';
+    document.body.appendChild(textarea);
+    textarea.focus();
+    textarea.select();
+
+    try {
+      document.execCommand('copy');
+    } finally {
+      document.body.removeChild(textarea);
+    }
   }
 }
