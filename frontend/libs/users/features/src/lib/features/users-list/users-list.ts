@@ -17,6 +17,7 @@ import { MessageService } from 'primeng/api';
 import { Dialog } from 'primeng/dialog';
 import { UsersListStore, provideUsersListStore } from '@scm/users/store';
 import { CreateUserComponent } from '../create-user/create-user';
+import { DeleteUser } from '../delete-user/delete-user';
 
 @Component({
   selector: 'lib-users-list',
@@ -30,6 +31,7 @@ import { CreateUserComponent } from '../create-user/create-user';
     NgClass,
     Dialog,
     CreateUserComponent,
+    DeleteUser,
   ],
   providers: [provideUsersListStore()],
   templateUrl: './users-list.html',
@@ -54,6 +56,8 @@ export class UsersList implements OnInit, OnDestroy {
   });
 
   protected readonly isCreateUserModalShown = signal<boolean>(false);
+  protected readonly isDeleteUserModalShown = signal<boolean>(false);
+  protected readonly usernameOfUserToDelete = signal<string | null>(null);
 
   ngOnInit(): void {
     this.usersListStore.ensureLoaded();
@@ -77,6 +81,21 @@ export class UsersList implements OnInit, OnDestroy {
 
   protected onCreateUserOperationCompleted(): void {
     this.isCreateUserModalShown.set(false);
+    this.usersListStore.refresh();
+  }
+
+  protected onDeleteUserBtnClick(username: string): void {
+    this.usernameOfUserToDelete.set(username);
+    this.isDeleteUserModalShown.set(true);
+  }
+
+  protected onDeleteUserOperationCanceled(): void {
+    this.usernameOfUserToDelete.set(null);
+    this.isDeleteUserModalShown.set(false);
+  }
+
+  protected onDeleteUserOperationConfirmed(): void {
+    this.isDeleteUserModalShown.set(false);
     this.usersListStore.refresh();
   }
 }
