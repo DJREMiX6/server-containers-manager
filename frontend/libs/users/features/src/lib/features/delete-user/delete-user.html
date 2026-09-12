@@ -1,0 +1,50 @@
+<div class="flex flex-col gap-4">
+  <div>
+    <p class="text-lg">Warning!</p>
+    <p>
+      This operation is <b>irreversible</b>, you won't be able to recover a
+      deleted user.
+    </p>
+    <p>
+      After the user is deleted they will be immediately logged out and will no
+      loger be able to log back in.
+    </p>
+  </div>
+  <div>
+    <form [formRoot]="deleteUserForm">
+      <div class="flex flex-col gap-2">
+        <label for="usernameToDelete" class="text-md">
+          Please type <b>{{user()?.username}}</b> to confirm
+        </label>
+        <input
+          type="text"
+          id="usernameToDelete"
+          pInputText
+          [formField]="deleteUserForm.username"
+          [class.p-invalid]="deleteUserForm().invalid() && deleteUserForm.username().touched() && deleteUserForm.username().dirty()"
+        />
+        @if(deleteUserForm().invalid() && deleteUserForm.username().touched() &&
+        deleteUserForm.username().dirty()){
+        <p class="text-sm text-red-500">
+          {{deleteUserForm.username().errors()[0]?.message}}
+        </p>
+        }
+
+        <div class="flex flex-row justify-between">
+          <p-button
+            label="Cancel"
+            severity="secondary"
+            (onClick)="cancelOperation()"
+          />
+          <p-button
+            label="Confirm"
+            severity="danger"
+            type="submit"
+            [disabled]="!deleteUserForm().valid() || deleteUserForm().submitting()"
+            [loading]="deleteUserForm().submitting()"
+          />
+        </div>
+      </div>
+    </form>
+  </div>
+</div>

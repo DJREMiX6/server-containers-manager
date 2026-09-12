@@ -18,7 +18,7 @@
       [rowsPerPageOptions]="[5, 10, 20]"
       [showCurrentPageReport]="true"
       currentPageReportTemplate="Showing {first} to {last} of {totalRecords} users"
-      sortField="username" 
+      sortField="username"
       [sortOrder]="1"
       class="w-full"
     >
@@ -104,6 +104,7 @@
                 showDelay="200"
                 hideDelay="100"
                 tooltipPosition="top"
+                (onClick)="onDeleteUserBtnClick(user)"
               ></p-button>
             </p-button-group>
             }
@@ -119,6 +120,7 @@
   [modal]="true"
   [closable]="false"
   [closeOnEscape]="false"
+  [draggable]="false"
   [dismissableMask]="false"
   [(visible)]="isCreateUserModalShown"
   (onHide)="onCreateUserModalHide()"
@@ -128,4 +130,20 @@
     (operationCanceled)="onCreateUserOperationCanceled()"
     (operationCompleted)="onCreateUserOperationCompleted()"
   ></lib-create-user>
+</p-dialog>
+
+<p-dialog
+  styleClass="w-80 sm:w-120 md:w-150"
+  header="Delete user"
+  [modal]="true"
+  [closable]="false"
+  [resizable]="false"
+  [draggable]="false"
+  [dismissableMask]="false"
+  [(visible)]="isDeleteUserModalShown">
+  <lib-delete-user
+    [user]="userToDelete()"
+    (operationCompleted)="onDeleteUserOperationCompleted()"
+    (operationCanceled)="onDeleteUserOperationCanceled()"
+  />
 </p-dialog>
