@@ -2,6 +2,7 @@ import {
   ChangeDetectionStrategy,
   Component,
   effect,
+  inject,
   input,
   output,
   signal,
@@ -16,6 +17,12 @@ import {
 import { Button } from 'primeng/button';
 import { InputText } from 'primeng/inputtext';
 import { CommonModule } from '@angular/common';
+import {
+  DeleteUserStore,
+  provideDeleteUserStore,
+  User,
+} from '@scm/users/store';
+import { MessageService } from 'primeng/api';
 
 export type DeleteUserFormModel = {
   username: string;
@@ -24,42 +31,77 @@ export type DeleteUserFormModel = {
 @Component({
   selector: 'lib-delete-user',
   imports: [FormRoot, FormField, InputText, Button, CommonModule],
+  providers: [provideDeleteUserStore()],
   templateUrl: './delete-user.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DeleteUser {
-  public readonly username = input.required<string | null>();
+  protected readonly deleteUserStore = inject(DeleteUserStore);
+  private readonly toastService = inject(MessageService);
 
-  public readonly operationConfirmed = output<void>();
+  public readonly user = input.required<User | null>();
+
+  public readonly operationCompleted = output<void>();
   public readonly operationCanceled = output<void>();
 
   private readonly deleteUserFormModel = signal<DeleteUserFormModel>({
     username: '',
   });
 
-  protected readonly onUsernameChange = effect(() => {
-    this.reset();
+  private readonly onUserChange = effect(() => this.reset());
+
+  private readonly onUserDeleteSuccessful = effect(() => {
+    if (this.deleteUserStore.deleteUserStatus() !== 'completed') return;
+
+    this.toastService.add({
+      summary: 'User Deleted Successfully',
+      detail: `The user ${this.user()?.username} was deleted successfully`,
+      severity: 'success',
+    });
+
+    this.operationCompleted.emit();
   });
 
-  protected deleteUserForm = form(this.deleteUserFormModel, (schema) => {
-    required(schema.username, { message: 'The Username is required' });
-    validate(schema.username, ({ value }) => {
-      const usernameToDelete = this.username();
-      if (usernameToDelete === null || usernameToDelete == '')
-        return {
-          kind: 'UsernameNullOrEmpty',
-          message: 'Username of user to delete is null or empty',
-        };
+  private readonly onUserDeleteError = effect(() => {
+    const error = this.deleteUserStore.error();
+    if (!error) return;
 
-      if (value() !== this.username())
-        return {
-          kind: 'UsernamesNotMatch',
-          message: 'Username is not equal',
-        };
-
-      return null;
+    this.toastService.add({
+      summary: 'User Deletion Error',
+      detail: 'An unexpected error has ocurred',
+      severity: 'danger',
     });
   });
+
+  protected deleteUserForm = form(
+    this.deleteUserFormModel,
+    (schema) => {
+      required(schema.username, { message: 'The Username is required' });
+      validate(schema.username, ({ value }) => {
+        const userToDelete = this.user();
+        if (userToDelete === null)
+          return {
+            kind: 'UserNull',
+            message: 'User to delete is null',
+          };
+
+        if (value() !== userToDelete.username)
+          return {
+            kind: 'UsernamesNotMatch',
+            message: 'Username is not equal',
+          };
+
+        return null;
+      });
+    },
+    {
+      submission: {
+        action: async () => {
+          await this.deleteUserStore.deleteUser(this.user()!.id);
+        },
+      },
+    },
+  );
 
   protected cancelOperation(): void {
     this.operationCanceled.emit();
@@ -69,5 +111,6 @@ export class DeleteUser {
   private reset(): void {
     this.deleteUserFormModel.set({ username: '' });
     this.deleteUserForm().reset();
+    this.deleteUserStore.reset();
   }
 }

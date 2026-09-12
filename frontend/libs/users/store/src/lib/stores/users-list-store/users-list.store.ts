@@ -10,7 +10,7 @@ import { UsersService } from '@scm/users/data';
 import { clearError, setError } from '@scm/shared/store/error-store-feature';
 import { firstValueFrom } from 'rxjs';
 import { getUsersResponseMapper } from '../../mappers';
-import { setEntities } from '@ngrx/signals/entities';
+import { setAllEntities } from '@ngrx/signals/entities';
 
 export const UsersListStore = signalStore(
   withUsersListState(),
@@ -30,7 +30,7 @@ export const UsersListStore = signalStore(
           {
             loadingStatus: 'loaded',
           },
-          setEntities(users),
+          setAllEntities(users),
         );
       } catch (error) {
         patchState(store, { loadingStatus: 'notLoaded' }, setError(error));

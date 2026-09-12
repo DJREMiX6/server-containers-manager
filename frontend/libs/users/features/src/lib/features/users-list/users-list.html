@@ -104,7 +104,7 @@
                 showDelay="200"
                 hideDelay="100"
                 tooltipPosition="top"
-                (onClick)="onDeleteUserBtnClick(user.username)"
+                (onClick)="onDeleteUserBtnClick(user)"
               ></p-button>
             </p-button-group>
             }
@@ -142,8 +142,8 @@
   [dismissableMask]="false"
   [(visible)]="isDeleteUserModalShown">
   <lib-delete-user
-    [username]="usernameOfUserToDelete()"
-    (operationConfirmed)="onDeleteUserOperationConfirmed()"
+    [user]="userToDelete()"
+    (operationCompleted)="onDeleteUserOperationCompleted()"
     (operationCanceled)="onDeleteUserOperationCanceled()"
   />
 </p-dialog>

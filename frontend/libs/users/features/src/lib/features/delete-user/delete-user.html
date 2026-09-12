@@ -14,7 +14,7 @@
     <form [formRoot]="deleteUserForm">
       <div class="flex flex-col gap-2">
         <label for="usernameToDelete" class="text-md">
-          Please type <b>{{username()}}</b> to confirm
+          Please type <b>{{user()?.username}}</b> to confirm
         </label>
         <input
           type="text"
@@ -29,21 +29,22 @@
           {{deleteUserForm.username().errors()[0]?.message}}
         </p>
         }
+
+        <div class="flex flex-row justify-between">
+          <p-button
+            label="Cancel"
+            severity="secondary"
+            (onClick)="cancelOperation()"
+          />
+          <p-button
+            label="Confirm"
+            severity="danger"
+            type="submit"
+            [disabled]="!deleteUserForm().valid() || deleteUserForm().submitting()"
+            [loading]="deleteUserForm().submitting()"
+          />
+        </div>
       </div>
     </form>
-  </div>
-  <div class="flex flex-row justify-between">
-    <p-button
-      label="Cancel"
-      severity="secondary"
-      (onClick)="cancelOperation()"
-    />
-    <p-button
-      label="Confirm"
-      severity="danger"
-      [disabled]="!deleteUserForm().valid() || deleteUserForm().submitting()"
-      [loading]="deleteUserForm().submitting()"
-      (onClick)="operationConfirmed.emit()"
-    />
   </div>
 </div>
