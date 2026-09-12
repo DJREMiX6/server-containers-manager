@@ -97,7 +97,10 @@ export class DeleteUser {
     {
       submission: {
         action: async () => {
-          await this.deleteUserStore.deleteUser(this.user()!.id);
+          const userId = this.user()?.id;
+          if (!userId) throw new Error('User is null or undefined');
+
+          await this.deleteUserStore.deleteUser(userId);
         },
       },
     },
