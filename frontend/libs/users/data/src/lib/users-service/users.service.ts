@@ -9,6 +9,8 @@ import {
   CreateUserRequestSchema,
   CreateUserResponse,
   CreateUserResponseSchema,
+  DeleteUserRequest,
+  DeleteUserRequestSchema,
   GetUsersResponse,
   GetUsersResponseSchema,
 } from '../models';
@@ -48,5 +50,13 @@ export class UsersService {
       },
       observe: 'response',
     });
+  }
+
+  public deleteUser(request: DeleteUserRequest): Observable<void> {
+    const parsedRequest = DeleteUserRequestSchema.parse(request);
+
+    return this.httpClient.delete<void>(
+      `${ApiBaseEndpoint}/${parsedRequest.userId}`,
+    );
   }
 }
