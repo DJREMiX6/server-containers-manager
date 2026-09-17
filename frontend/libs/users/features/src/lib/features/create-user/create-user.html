@@ -60,7 +60,7 @@
             </div>
             <lib-copy-text-field
               [password]="createUserStore.generatedPassword() ?? ''"
-              (passwordCopied)="onCopyPasswordBtnClick()"
+              (passwordCopied)="onPasswordCopied()"
             />
 
             <div class="w-full flex flex-row gap-2 justify-end">
