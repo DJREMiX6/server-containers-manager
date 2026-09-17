@@ -95,6 +95,7 @@
                 showDelay="200"
                 hideDelay="100"
                 tooltipPosition="top"
+                (onClick)="onResetUserPasswordBtnClick(user)"
               ></p-button>
               <p-button
                 icon="pi pi-trash"
@@ -116,6 +117,7 @@
 </div>
 
 <p-dialog
+  styleClass="w-80 sm:w-120 md:w-150"
   header="Create user"
   [modal]="true"
   [closable]="false"
@@ -123,10 +125,8 @@
   [draggable]="false"
   [dismissableMask]="false"
   [(visible)]="isCreateUserModalShown"
-  (onHide)="onCreateUserModalHide()"
 >
   <lib-create-user
-    #CreateUserFeature
     (operationCanceled)="onCreateUserOperationCanceled()"
     (operationCompleted)="onCreateUserOperationCompleted()"
   ></lib-create-user>
@@ -134,16 +134,34 @@
 
 <p-dialog
   styleClass="w-80 sm:w-120 md:w-150"
-  header="Delete user"
+  header="Delete {{userToDelete()?.username}} user"
   [modal]="true"
   [closable]="false"
   [resizable]="false"
   [draggable]="false"
   [dismissableMask]="false"
-  [(visible)]="isDeleteUserModalShown">
+  [(visible)]="isDeleteUserModalShown"
+>
   <lib-delete-user
     [user]="userToDelete()"
     (operationCompleted)="onDeleteUserOperationCompleted()"
     (operationCanceled)="onDeleteUserOperationCanceled()"
+  />
+</p-dialog>
+
+<p-dialog
+  styleClass="w-80 sm:w-120 md:w-150"
+  header="Reset {{userToResetPassword()?.username}} Password"
+  [modal]="true"
+  [closable]="false"
+  [resizable]="false"
+  [draggable]="false"
+  [dismissableMask]="false"
+  [(visible)]="isResetUserPasswordModalShown"
+>
+  <lib-reset-user-password
+    [user]="userToResetPassword()"
+    (operationCanceled)="onResetUserPasswordOperationCanceled()"
+    (operationCompleted)="onResetUserPasswordOperationCompleted()"
   />
 </p-dialog>

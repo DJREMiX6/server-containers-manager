@@ -60,6 +60,7 @@ export class DeleteUser {
     });
 
     this.operationCompleted.emit();
+    this.reset();
   });
 
   private readonly onUserDeleteError = effect(() => {

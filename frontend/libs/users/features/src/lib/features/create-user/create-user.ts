@@ -21,8 +21,6 @@ import { InputIcon } from 'primeng/inputicon';
 import { Message } from 'primeng/message';
 import { Button } from 'primeng/button';
 import { InputText } from 'primeng/inputtext';
-import { InputGroup } from 'primeng/inputgroup';
-import { InputGroupAddon } from 'primeng/inputgroupaddon';
 import { StepperModule } from 'primeng/stepper';
 import { MessageService } from 'primeng/api';
 import { TooltipModule } from 'primeng/tooltip';
@@ -32,6 +30,7 @@ import {
   CreateUserStore,
   CreateUserRequest,
 } from '@scm/users/store';
+import { CopyTextField } from '@scm/users/ui';
 
 @Component({
   selector: 'lib-create-user',
@@ -44,10 +43,9 @@ import {
     Message,
     Button,
     InputText,
-    InputGroup,
-    InputGroupAddon,
     StepperModule,
     TooltipModule,
+    CopyTextField,
   ],
   providers: [provideCreateUserStore()],
   templateUrl: './create-user.html',
@@ -60,6 +58,9 @@ export class CreateUserComponent {
   private readonly toastService = inject(MessageService);
   protected readonly createUserStore = inject(CreateUserStore);
 
+  protected readonly CreateUserStepValue = 1;
+  protected readonly CopyTemporaryPasswordStepValue = 2;
+
   private readonly onCreateUserSuccessful = effect(() => {
     if (this.createUserStore.requestStatus() !== 'fulfilled') return;
 
@@ -68,7 +69,7 @@ export class CreateUserComponent {
       detail: `User ${this.formState().username} was created successfully`,
       severity: 'success',
     });
-    this.showCopyPasswordStep();
+    this.step.set(this.CopyTemporaryPasswordStepValue);
   });
 
   private readonly onCreateUserError = effect(() => {
@@ -137,10 +138,10 @@ export class CreateUserComponent {
   );
 
   protected readonly userCopiedPassword = signal(false);
-  protected readonly step = signal(1);
+  protected readonly step = signal(this.CreateUserStepValue);
 
-  public reset(): void {
-    this.showFormStep();
+  private reset(): void {
+    this.step.set(this.CreateUserStepValue);
     this.userCopiedPassword.set(false);
     this.formState.set({
       username: '',
@@ -151,6 +152,7 @@ export class CreateUserComponent {
 
   protected onCancelBtnClick(): void {
     this.operationCanceled.emit();
+    this.reset();
   }
 
   protected onCloseBtnClick(): void {
@@ -160,44 +162,10 @@ export class CreateUserComponent {
     this.operationCompleted.emit({
       userId: createdUserId,
     });
+    this.reset();
   }
 
-  protected async onCopyPasswordBtnClick(): Promise<void> {
-    const password = this.createUserStore.generatedPassword();
-    if (!password) throw new Error('Password is null or undefined.');
-
-    if (globalThis.isSecureContext) await this.secureContextCopy(password);
-    else this.unsecureContextCopy(password);
-
+  protected async onPasswordCopied(): Promise<void> {
     this.userCopiedPassword.set(true);
-  }
-
-  private showFormStep(): void {
-    this.step.set(1);
-  }
-
-  private showCopyPasswordStep(): void {
-    this.step.set(2);
-  }
-
-  private async secureContextCopy(text: string): Promise<void> {
-    await globalThis.navigator.clipboard.writeText(text);
-  }
-
-  // Legacy fallback for HTTP contexts
-  private unsecureContextCopy(text: string): void {
-    const textarea = document.createElement('textarea');
-    textarea.value = text;
-    textarea.style.position = 'fixed';
-    textarea.style.opacity = '0';
-    document.body.appendChild(textarea);
-    textarea.focus();
-    textarea.select();
-
-    try {
-      document.execCommand('copy');
-    } finally {
-      document.body.removeChild(textarea);
-    }
   }
 }

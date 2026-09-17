@@ -13,6 +13,8 @@ import {
   DeleteUserRequestSchema,
   GetUsersResponse,
   GetUsersResponseSchema,
+  ResetUserPasswordRequest,
+  ResetUserPasswordRequestSchema,
 } from '../models';
 
 export const ApiBaseEndpoint = `${Environment.serverOrigin}/users`;
@@ -57,6 +59,19 @@ export class UsersService {
 
     return this.httpClient.delete<void>(
       `${ApiBaseEndpoint}/${parsedRequest.userId}`,
+    );
+  }
+
+  public resetUserPassword(
+    request: ResetUserPasswordRequest,
+  ): Observable<void> {
+    const parsedRequest = ResetUserPasswordRequestSchema.parse(request);
+
+    return this.httpClient.post<void>(
+      `${ApiBaseEndpoint}/${parsedRequest.userId}/reset-password`,
+      {
+        password: parsedRequest.password,
+      },
     );
   }
 }

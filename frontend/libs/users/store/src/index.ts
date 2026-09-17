@@ -1,8 +1,14 @@
-export { UsersListStore, CreateUserStore, DeleteUserStore } from './lib/stores';
+export {
+  UsersListStore,
+  CreateUserStore,
+  DeleteUserStore,
+  ResetUserPasswordStore,
+} from './lib/stores';
 export {
   provideUsersListStore,
   provideCreateUserStore,
   provideDeleteUserStore,
+  provideResetUserPasswordStore,
 } from './lib/providers';
 export type {
   User,

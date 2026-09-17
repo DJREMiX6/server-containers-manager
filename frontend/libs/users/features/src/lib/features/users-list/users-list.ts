@@ -6,7 +6,6 @@ import {
   OnDestroy,
   OnInit,
   signal,
-  viewChild,
 } from '@angular/core';
 import { TableModule } from 'primeng/table';
 import { Tag } from 'primeng/tag';
@@ -18,6 +17,7 @@ import { Dialog } from 'primeng/dialog';
 import { User, UsersListStore, provideUsersListStore } from '@scm/users/store';
 import { CreateUserComponent } from '../create-user/create-user';
 import { DeleteUser } from '../delete-user/delete-user';
+import { ResetUserPassword } from '../reset-user-password/reset-user-password';
 
 @Component({
   selector: 'lib-users-list',
@@ -32,14 +32,12 @@ import { DeleteUser } from '../delete-user/delete-user';
     Dialog,
     CreateUserComponent,
     DeleteUser,
+    ResetUserPassword,
   ],
   providers: [provideUsersListStore()],
   templateUrl: './users-list.html',
 })
 export class UsersList implements OnInit, OnDestroy {
-  private readonly createUserFeature =
-    viewChild<CreateUserComponent>('CreateUserFeature');
-
   private readonly toastService = inject(MessageService);
   protected readonly usersListStore = inject(UsersListStore);
 
@@ -56,7 +54,9 @@ export class UsersList implements OnInit, OnDestroy {
 
   protected readonly isCreateUserModalShown = signal<boolean>(false);
   protected readonly isDeleteUserModalShown = signal<boolean>(false);
+  protected readonly isResetUserPasswordModalShown = signal<boolean>(false);
   protected readonly userToDelete = signal<User | null>(null);
+  protected readonly userToResetPassword = signal<User | null>(null);
 
   ngOnInit(): void {
     this.usersListStore.ensureLoaded();
@@ -68,10 +68,6 @@ export class UsersList implements OnInit, OnDestroy {
 
   protected onCreateUserBtnClick() {
     this.isCreateUserModalShown.set(true);
-  }
-
-  protected onCreateUserModalHide(): void {
-    this.createUserFeature()?.reset();
   }
 
   protected onCreateUserOperationCanceled(): void {
@@ -89,12 +85,29 @@ export class UsersList implements OnInit, OnDestroy {
   }
 
   protected onDeleteUserOperationCanceled(): void {
-    this.userToDelete.set(null);
     this.isDeleteUserModalShown.set(false);
+    this.userToDelete.set(null);
   }
 
   protected onDeleteUserOperationCompleted(): void {
     this.isDeleteUserModalShown.set(false);
+    this.userToDelete.set(null);
+    this.usersListStore.refresh();
+  }
+
+  protected onResetUserPasswordBtnClick(user: User): void {
+    this.userToResetPassword.set(user);
+    this.isResetUserPasswordModalShown.set(true);
+  }
+
+  protected onResetUserPasswordOperationCanceled(): void {
+    this.isResetUserPasswordModalShown.set(false);
+    this.userToResetPassword.set(null);
+  }
+
+  protected onResetUserPasswordOperationCompleted(): void {
+    this.isResetUserPasswordModalShown.set(false);
+    this.userToResetPassword.set(null);
     this.usersListStore.refresh();
   }
 }

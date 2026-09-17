@@ -1,7 +1,7 @@
 const PasswordUppercaseChars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
 const PasswordLowercaseChars = 'abcdefghijklmnopqrstuvwxyz';
 const PasswordDigitChars = '0123456789';
-const PasswordSpecialChars = '!@#$%^&*()_-+=[]{};;:\'",./<>?\\|`~';
+const PasswordSpecialChars = '!@#$%^&*()_+[]{}<>?~';
 const AllPasswordChars =
   PasswordUppercaseChars +
   PasswordLowercaseChars +
