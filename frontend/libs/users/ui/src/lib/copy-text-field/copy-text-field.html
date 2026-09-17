@@ -1,0 +1,21 @@
+<div class="w-full">
+  <p-input-group>
+    <input
+      [value]="password()"
+      id="generatedUserPassword"
+      class="w-full"
+      type="text"
+      pInputText
+      readonly
+    />
+    <p-inputgroup-addon>
+      <p-button
+        severity="primary"
+        (onClick)="onCopyPasswordBtnClick()"
+        icon="pi pi-clipboard"
+        pTooltip="Copied!"
+        tooltipEvent="focus"
+      ></p-button>
+    </p-inputgroup-addon>
+  </p-input-group>
+</div>
