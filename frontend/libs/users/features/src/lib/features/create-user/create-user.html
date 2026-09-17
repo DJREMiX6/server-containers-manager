@@ -58,27 +58,11 @@
                 >Copy the password to close this modal</p-message
               >
             </div>
-            <div class="w-full">
-              <p-input-group>
-                <input
-                  [value]="createUserStore.generatedPassword()"
-                  id="generatedUserPassword"
-                  class="w-full"
-                  type="text"
-                  pInputText
-                  readonly
-                />
-                <p-inputgroup-addon>
-                  <p-button
-                    severity="primary"
-                    (onClick)="onCopyPasswordBtnClick()"
-                    icon="pi pi-clipboard"
-                    pTooltip="Copied!"
-                    tooltipEvent="focus"
-                  ></p-button>
-                </p-inputgroup-addon>
-              </p-input-group>
-            </div>
+            <lib-copy-text-field
+              [password]="createUserStore.generatedPassword() ?? ''"
+              (passwordCopied)="onCopyPasswordBtnClick()"
+            />
+
             <div class="w-full flex flex-row gap-2 justify-end">
               <p-button
                 (onClick)="onCloseBtnClick()"

@@ -21,8 +21,6 @@ import { InputIcon } from 'primeng/inputicon';
 import { Message } from 'primeng/message';
 import { Button } from 'primeng/button';
 import { InputText } from 'primeng/inputtext';
-import { InputGroup } from 'primeng/inputgroup';
-import { InputGroupAddon } from 'primeng/inputgroupaddon';
 import { StepperModule } from 'primeng/stepper';
 import { MessageService } from 'primeng/api';
 import { TooltipModule } from 'primeng/tooltip';
@@ -32,6 +30,7 @@ import {
   CreateUserStore,
   CreateUserRequest,
 } from '@scm/users/store';
+import { CopyTextField } from '@scm/users/ui';
 
 @Component({
   selector: 'lib-create-user',
@@ -44,10 +43,9 @@ import {
     Message,
     Button,
     InputText,
-    InputGroup,
-    InputGroupAddon,
     StepperModule,
     TooltipModule,
+    CopyTextField,
   ],
   providers: [provideCreateUserStore()],
   templateUrl: './create-user.html',
