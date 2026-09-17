@@ -6,4 +6,5 @@ export type {
   CreateUserRequest,
   CreateUserResponse,
   DeleteUserRequest,
+  ResetUserPasswordRequest,
 } from './lib/models';
