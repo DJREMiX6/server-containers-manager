@@ -6,7 +6,6 @@ import {
   OnDestroy,
   OnInit,
   signal,
-  viewChild,
 } from '@angular/core';
 import { TableModule } from 'primeng/table';
 import { Tag } from 'primeng/tag';
@@ -39,9 +38,6 @@ import { ResetUserPassword } from '../reset-user-password/reset-user-password';
   templateUrl: './users-list.html',
 })
 export class UsersList implements OnInit, OnDestroy {
-  private readonly createUserFeature =
-    viewChild.required<CreateUserComponent>('CreateUserFeature');
-
   private readonly toastService = inject(MessageService);
   protected readonly usersListStore = inject(UsersListStore);
 
@@ -89,12 +85,13 @@ export class UsersList implements OnInit, OnDestroy {
   }
 
   protected onDeleteUserOperationCanceled(): void {
-    this.userToDelete.set(null);
     this.isDeleteUserModalShown.set(false);
+    this.userToDelete.set(null);
   }
 
   protected onDeleteUserOperationCompleted(): void {
     this.isDeleteUserModalShown.set(false);
+    this.userToDelete.set(null);
     this.usersListStore.refresh();
   }
 
