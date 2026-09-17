@@ -3,13 +3,13 @@ import { withErrorFeature } from '@scm/shared/store/error-store-feature';
 
 export type ResetUserPasswordState = {
   resetStatus: 'idle' | 'pending' | 'successful' | 'error';
-  generatedPassword: string | null;
+  generatedPassword: string;
   userIdToReset: string | null;
 };
 
 export const initialState: ResetUserPasswordState = {
   resetStatus: 'idle',
-  generatedPassword: null,
+  generatedPassword: '',
   userIdToReset: null,
 };
 

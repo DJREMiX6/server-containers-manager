@@ -19,4 +19,5 @@
 @source "../../../libs/users/data";
 @source "../../../libs/users/features";
 @source "../../../libs/users/store";
+@source "../../../libs/users/ui";
 /* nx-tailwind-sources:end */

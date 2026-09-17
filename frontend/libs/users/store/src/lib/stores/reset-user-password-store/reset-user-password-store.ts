@@ -37,7 +37,7 @@ export const ResetUserPasswordStore = signalStore(
           setError(error),
           {
             resetStatus: 'error',
-            generatedPassword: null,
+            generatedPassword: '',
           },
           clearError(),
         );

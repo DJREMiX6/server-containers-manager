@@ -4,8 +4,8 @@
   "license": "MIT",
   "packageManager": "pnpm@10.33.0",
   "scripts": {
-    "serve": "nx serve",
-    "build": "nx run build"
+    "serve": "nx sync && nx serve",
+    "build": "nx sync && nx run build"
   },
   "private": true,
   "dependencies": {
