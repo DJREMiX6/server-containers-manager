@@ -117,6 +117,7 @@
 </div>
 
 <p-dialog
+  styleClass="w-80 sm:w-120 md:w-150"
   header="Create user"
   [modal]="true"
   [closable]="false"
@@ -124,7 +125,6 @@
   [draggable]="false"
   [dismissableMask]="false"
   [(visible)]="isCreateUserModalShown"
-  (onHide)="onCreateUserModalHide()"
 >
   <lib-create-user
     #CreateUserFeature

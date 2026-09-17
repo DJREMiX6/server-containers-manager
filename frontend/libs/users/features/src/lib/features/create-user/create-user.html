@@ -1,8 +1,8 @@
-<div class="w-150 h-fit flex flex-col items-center justify-center">
+<div class="w-full h-fit flex flex-col items-center justify-center">
   <p-stepper [value]="step()" [linear]="true" class="w-full">
     <p-step-list>
-      <p-step [value]="1">Create User</p-step>
-      <p-step [value]="2">Copy Temporary Password</p-step>
+      <p-step [value]="CreateUserStepValue">Create User</p-step>
+      <p-step [value]="CopyTemporaryPasswordStepValue">Copy Temporary Password</p-step>
     </p-step-list>
     <p-step-panels>
       <p-step-panel [value]="1">

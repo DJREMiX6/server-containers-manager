@@ -74,10 +74,6 @@ export class UsersList implements OnInit, OnDestroy {
     this.isCreateUserModalShown.set(true);
   }
 
-  protected onCreateUserModalHide(): void {
-    this.createUserFeature().reset();
-  }
-
   protected onCreateUserOperationCanceled(): void {
     this.isCreateUserModalShown.set(false);
   }
