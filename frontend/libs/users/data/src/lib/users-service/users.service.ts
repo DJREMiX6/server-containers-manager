@@ -15,6 +15,8 @@ import {
   GetUsersResponseSchema,
   ResetUserPasswordRequest,
   ResetUserPasswordRequestSchema,
+  UpdateUserNamespacesRequest,
+  UpdateUserNamespacesRequestSchema,
 } from '../models';
 
 export const ApiBaseEndpoint = `${Environment.serverOrigin}/users`;
@@ -71,6 +73,19 @@ export class UsersService {
       `${ApiBaseEndpoint}/${parsedRequest.userId}/reset-password`,
       {
         password: parsedRequest.password,
+      },
+    );
+  }
+
+  public updateUserNamespaces(
+    request: UpdateUserNamespacesRequest,
+  ): Observable<void> {
+    const parsedRequest = UpdateUserNamespacesRequestSchema.parse(request);
+
+    return this.httpClient.patch<void>(
+      `${ApiBaseEndpoint}/${parsedRequest.userId}/namespaces`,
+      {
+        namespacesIds: parsedRequest.namespacesIds,
       },
     );
   }

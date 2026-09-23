@@ -6,3 +6,5 @@ export * from './delete-user.request';
 export * from './delete-user.request.schema';
 export * from './reset-user-password.request';
 export * from './reset-user-password.request.schema';
+export * from './update-user-namespaces.request';
+export * from './update-user-namespaces.request.schema';
