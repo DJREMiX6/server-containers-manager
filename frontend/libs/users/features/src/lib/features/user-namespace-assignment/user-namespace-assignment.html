@@ -1,0 +1,44 @@
+<div class="flex flex-col h-full">
+  <p-picklist
+    [pt]="picklistPt"
+    [disabled]="isLoading() || isUpdating()"
+    class="grow block"
+    [source]="unassociatedNamespaces()"
+    [target]="associatedNamespaces()"
+    [dragdrop]="true"
+    [showSourceFilter]="shouldShowSourceFilter()"
+    [showTargetFilter]="shouldShowTargetFilter()"
+    [responsive]="true"
+    breakpoint="1024px"
+    filterBy="name"
+    sourceFilterPlaceholder="Search by name"
+    targetFilterPlaceholder="Search by name"
+    dataKey="id"
+    scrollHeight="15rem"
+  >
+    <ng-template #sourceHeader>
+      <div class="font-semibold text-lg">Unassociated</div>
+    </ng-template>
+
+    <ng-template #targetHeader>
+      <div class="font-semibold text-lg">Associated</div>
+    </ng-template>
+
+    <ng-template let-item #item> {{item.name}} </ng-template>
+  </p-picklist>
+  <div class="flex flex-row justify-between">
+    <p-button
+      [disabled]="isUpdating()"
+      label="Cancel"
+      severity="danger"
+      (onClick)="onCancelBtnClick()"
+    />
+    <p-button
+      [loading]="isUpdating()"
+      loadingIcon="spinner"
+      label="Confirm"
+      severity="primary"
+      (onClick)="onConfirmBtnClick()"
+    />
+  </div>
+</div>

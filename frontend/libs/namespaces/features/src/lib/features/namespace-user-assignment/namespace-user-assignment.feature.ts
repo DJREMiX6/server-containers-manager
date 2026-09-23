@@ -6,7 +6,6 @@ import {
   inject,
   input,
   output,
-  signal,
 } from '@angular/core';
 import { PickListModule } from 'primeng/picklist';
 import { Button } from 'primeng/button';
@@ -14,7 +13,6 @@ import {
   NamespaceAssignUsersStore,
   provideNamespaceAssignUserStore,
 } from '@scm/namespaces/store';
-import { User } from '@scm/users/store';
 import { MessageService } from 'primeng/api';
 
 @Component({

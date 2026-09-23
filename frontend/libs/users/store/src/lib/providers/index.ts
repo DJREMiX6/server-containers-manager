@@ -2,3 +2,4 @@ export * from './users-list-store.provider';
 export * from './create-user-store.provider';
 export * from './delete-user-store.provider';
 export * from './reset-user-password-store.provider';
+export * from './user-namespace-assignment-store.provider';

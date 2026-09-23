@@ -86,6 +86,7 @@
                 showDelay="200"
                 hideDelay="100"
                 tooltipPosition="top"
+                (onClick)="onUserNamespacesAssignmentBtnClick(user)"
               ></p-button>
               <p-button
                 icon="pi pi-unlock"
@@ -163,5 +164,22 @@
     [user]="userToResetPassword()"
     (operationCanceled)="onResetUserPasswordOperationCanceled()"
     (operationCompleted)="onResetUserPasswordOperationCompleted()"
+  />
+</p-dialog>
+
+<p-dialog
+  styleClass="w-80 sm:w-120 md:w-150"
+  header="{{userToResetPassword()?.username}} Namespaces Assignment"
+  [modal]="true"
+  [closable]="false"
+  [resizable]="false"
+  [draggable]="false"
+  [dismissableMask]="false"
+  [(visible)]="isUserNamespacesAssignmentModalShown"
+>
+  <lib-user-namespace-assignment
+    [user]="userToAssignNamespaces()"
+    (operationCanceled)="onUserNamespacesAssignmentOperationCanceled()"
+    (operationCompleted)="onUserNamespacesAssignmentOperationCompleted()"
   />
 </p-dialog>

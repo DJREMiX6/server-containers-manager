@@ -3,9 +3,9 @@ import { withErrorFeature } from '@scm/shared/store/error-store-feature';
 import { User } from '@scm/users/store';
 
 export type AssignUsersState = {
+  _associatedUserIds: string[];
   usersLoadingStatus: 'notLoaded' | 'loading' | 'loaded' | 'error';
   namespaceUsersLoadingStatus: 'notLoaded' | 'loading' | 'loaded' | 'error';
-  _associatedUserIds: string[];
   users: User[];
   namespaceId: null | string;
   associatedUsersUpdateStatus: 'unchanged' | 'pending' | 'changed' | 'error';
