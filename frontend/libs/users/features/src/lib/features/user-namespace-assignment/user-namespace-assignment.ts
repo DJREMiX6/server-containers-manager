@@ -7,6 +7,7 @@ import {
   input,
   output,
 } from '@angular/core';
+import { DialogComponent } from '@scm/shared/utils/common';
 import {
   provideUserNamespaceAssignmentStore,
   User,
@@ -23,7 +24,7 @@ import { PickList } from 'primeng/picklist';
   templateUrl: './user-namespace-assignment.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class UserNamespaceAssignment {
+export class UserNamespaceAssignment implements DialogComponent {
   private readonly toastService = inject(MessageService);
   protected readonly userNamespacesAssignmentStore = inject(
     UserNamespaceAssignmentStore,

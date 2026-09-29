@@ -16,6 +16,7 @@ import { Button } from 'primeng/button';
 import { CopyTextField } from '@scm/users/ui';
 import { StepperModule } from 'primeng/stepper';
 import { MessageService } from 'primeng/api';
+import { DialogComponent } from '@scm/shared/utils/common';
 
 @Component({
   selector: 'lib-reset-user-password',
@@ -24,7 +25,7 @@ import { MessageService } from 'primeng/api';
   templateUrl: './reset-user-password.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ResetUserPassword {
+export class ResetUserPassword implements DialogComponent {
   private readonly toastService = inject(MessageService);
   protected readonly resetUserPasswordStore = inject(ResetUserPasswordStore);
 

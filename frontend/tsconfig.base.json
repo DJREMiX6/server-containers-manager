@@ -33,7 +33,8 @@
       "@scm/namespaces/data": ["libs/namespaces/data/src/index.ts"],
       "@scm/namespaces/store": ["libs/namespaces/store/src/index.ts"],
       "@scm/namespaces/features": ["libs/namespaces/features/src/index.ts"],
-      "@scm/users/ui": ["libs/users/ui/src/index.ts"]
+      "@scm/users/ui": ["libs/users/ui/src/index.ts"],
+      "@scm/shared/utils/common": ["libs/shared/utils/common/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]

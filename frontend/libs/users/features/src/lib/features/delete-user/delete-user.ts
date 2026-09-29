@@ -23,6 +23,7 @@ import {
   User,
 } from '@scm/users/store';
 import { MessageService } from 'primeng/api';
+import { DialogComponent } from '@scm/shared/utils/common';
 
 export type DeleteUserFormModel = {
   username: string;
@@ -35,7 +36,7 @@ export type DeleteUserFormModel = {
   templateUrl: './delete-user.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class DeleteUser {
+export class DeleteUser implements DialogComponent {
   protected readonly deleteUserStore = inject(DeleteUserStore);
   private readonly toastService = inject(MessageService);
 

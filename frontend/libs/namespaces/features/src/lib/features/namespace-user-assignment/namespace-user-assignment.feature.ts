@@ -14,6 +14,7 @@ import {
   provideNamespaceAssignUserStore,
 } from '@scm/namespaces/store';
 import { MessageService } from 'primeng/api';
+import { DialogComponent } from '@scm/shared/utils/common';
 
 @Component({
   selector: 'lib-namespace-user-assignment',
@@ -22,7 +23,7 @@ import { MessageService } from 'primeng/api';
   templateUrl: './namespace-user-assignment.feature.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class NamespaceUserAssignmentFeature {
+export class NamespaceUserAssignmentFeature implements DialogComponent {
   private readonly toastService = inject(MessageService);
   protected readonly namespaceAssignUserStore = inject(
     NamespaceAssignUsersStore,

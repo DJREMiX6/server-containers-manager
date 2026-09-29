@@ -32,6 +32,7 @@ import {
   CreateNamespaceStore,
   CreateNamespaceRequest,
 } from '@scm/namespaces/store';
+import { DialogComponent } from '@scm/shared/utils/common';
 
 @Component({
   selector: 'lib-create-namespace',
@@ -50,7 +51,7 @@ import {
   templateUrl: './create-namespace.feature.html',
   styleUrl: './create-namespace.feature.css',
 })
-export class CreateNamespaceFeature {
+export class CreateNamespaceFeature implements DialogComponent {
   public readonly operationCanceled = output<void>();
   public readonly operationCompleted = output<void>();
 

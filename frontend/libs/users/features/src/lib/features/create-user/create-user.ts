@@ -31,6 +31,7 @@ import {
   CreateUserRequest,
 } from '@scm/users/store';
 import { CopyTextField } from '@scm/users/ui';
+import { DialogComponent } from '@scm/shared/utils/common';
 
 @Component({
   selector: 'lib-create-user',
@@ -51,7 +52,9 @@ import { CopyTextField } from '@scm/users/ui';
   templateUrl: './create-user.html',
   styleUrl: './create-user.css',
 })
-export class CreateUserComponent {
+export class CreateUserComponent
+  implements DialogComponent<{ userId: string }>
+{
   public readonly operationCanceled = output<void>();
   public readonly operationCompleted = output<{ userId: string }>();
 
